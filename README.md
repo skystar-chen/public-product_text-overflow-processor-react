@@ -1,70 +1,72 @@
-# Getting Started with Create React App
+# 文本溢出处理
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+当文案在给定容器显示不下，要对文案进行折叠/展开切换处理，获取文案是否被折叠的状态进行多功能定制时，可以尝试使用本组件TextOverflowProcessor，它也许能帮到你！目前提供`ellipsis`和`shadow`两种处理方式。
 
-## Available Scripts
+> 作者：陈星~
 
-In the project directory, you can run:
+## 一、安装
 
-### `npm start`
+```shell
+npm i text-overflow-processor-react -S
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+或
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```shell
+yarn add text-overflow-processor-react
+```
 
-### `npm test`
+## 二、使用
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```react
+import TextOverFlowProcessor from 'text-overflow-processor-react'
+```
 
-### `npm run build`
+## 三、参数注解及默认值
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```typescript
+参数含义：
+interface TextProcessProps {
+  type?: 'shadow' | 'ellipsis'; // 文案处理类型
+  isRenderShowAllDOM?: boolean; // 是否渲染被隐藏的全部文案展示DOM
+  unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
+  foldButtonText?: string  | JSX.Element | JSX.Element[]; // 折叠时按钮文案
+  buttonBeforeSlot?: string | JSX.Element | JSX.Element[]; // 按钮前面的空格可以传''空去除
+  buttonClassName?: string;
+  buttonStyle?: React.CSSProperties;
+  text: string; // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
+  lineHeight?: number;
+  ellipsisLineClamp?: number; // type类型为ellipsis时控制显示的行数
+  className?: string;
+  style?: React.CSSProperties;
+  isShowAllContent?: boolean;
+  isMustButton?: boolean; // 是否常驻显示按钮
+  isMustNoButton?: boolean; // 是否不要显示按钮
+  shadowInitBoxShowH?: number; // shadow时显示的高度，超出这个高度才出现操作按钮
+  onClick?: () => void;
+  getIsFold?: (v: boolean) => void; // 获取文案是否超出范围被折叠
+}
+对应默认值：
+TextOverflowProcessor.defaultProps = {
+  type: 'shadow',
+  isRenderShowAllDOM: false,
+  unfoldButtonText: 'Show Less',
+  foldButtonText: 'Show All',
+  buttonBeforeSlot: undefined,
+  buttonClassName: '',
+  buttonStyle: {},
+  text: '',
+  lineHeight: 24,
+  ellipsisLineClamp: 2,
+  className: '',
+  style: {},
+  isShowAllContent: false,
+  isMustButton: false,
+  isMustNoButton: false,
+  shadowInitBoxShowH: 76,
+  onClick: null,
+  getIsFold: null,
+}
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+注：提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
