@@ -6,6 +6,7 @@ type ProcessTypeArr = ['shadow', 'ellipsis'];
 
 interface TextProcessProps {
   type?: ProcessType; // 文案处理类型
+  isDefaultFold?: boolean; // 是否默认折叠，false为默认展开
   isRenderShowAllDOM?: boolean; // 是否渲染被隐藏的全部文案展示DOM
   // clickEffectType?: 'default' | 'modal'; // 点击按钮效果
   unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
@@ -18,7 +19,7 @@ interface TextProcessProps {
   ellipsisLineClamp?: number; // type类型为ellipsis时控制显示的行数
   className?: string;
   style?: React.CSSProperties;
-  isShowAllContent?: boolean;
+  isShowAllContent?: boolean; // 当选择展示所有内容时将不提供操作按钮
   isMustButton?: boolean; // 是否常驻显示按钮
   isMustNoButton?: boolean; // 是否不要显示按钮
   shadowInitBoxShowH?: number; // shadow时显示的高度，超出这个高度才出现操作按钮
@@ -47,6 +48,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
 
   const {
     type,
+    isDefaultFold,
     isRenderShowAllDOM,
     unfoldButtonText,
     foldButtonText,
@@ -97,10 +99,11 @@ function TextOverflowProcessor(props: TextProcessProps) {
 
   const handleResize = useCallback(() => {
     if (getIsShowBtn()) {
-      setIsShowBtn(true);
+      isMustNoButton || setIsShowBtn(true);
       getIsFold?.(true);
     } else {
-      setIsShowBtn(false);
+      isMustButton || setIsShowBtn(false);
+      // 当isMustButton为true时，按钮占据一定空间，此时文案可能因此被折叠而返回结果有误，待优化...
       getIsFold?.(false);
     }
   }, []);
@@ -136,26 +139,21 @@ function TextOverflowProcessor(props: TextProcessProps) {
     if (isShowAllContent) {
       getIsFold?.(false);
       setIsFold(false);
-      if (isMustButton) setIsShowBtn(true);
       return;
     }
     // @ts-ignore
     shadowShowH.current = shadowInitBoxShowH - 10; // 减去shadow阴影的一半高度
 
     if (getIsShowBtn()) {
-      getIsFold?.(true);
+      getIsFold?.(isDefaultFold as boolean);
+      setIsFold(isDefaultFold as boolean);
       setIsShowBtn(true);
     } else {
       getIsFold?.(false);
     }
-    if (isMustButton) {
-      setIsShowBtn(true);
-      return;
-    }
-    if (isMustNoButton) {
-      setIsShowBtn(false);
-      return;
-    }
+
+    if (isMustButton) setIsShowBtn(true);
+    if (isMustNoButton) setIsShowBtn(false);
 
     // 页面缩放时判断是否显示操作按钮
     window.addEventListener('resize', handleResize);
@@ -163,7 +161,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     return () => {
       window.removeEventListener('resize', handleResize);
     }
-  }, []);
+  }, [text]);
 
   return (
     <section className={`text-overflow-processor-content ${className}`} style={style}>
@@ -232,6 +230,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
 TextOverflowProcessor.defaultProps = {
   // text: 'In all the parting, I like it best see you tomorrow.Of all the blessings I prefer, as you wish. Sometimes you look at the wrong person, not because you are jealous, but because you are kind. You never know how strong you really are until being strong is the only choice you have. Never bend your head. Always hold it high. Look the world straight in the face. Life is alive, there is not much, only helpless. Life is a wonderful journey. Make it your journey and not someone else\'s.',
   type: 'shadow',
+  isDefaultFold: true,
   isRenderShowAllDOM: false,
   unfoldButtonText: 'Show Less',
   foldButtonText: 'Show All',

@@ -1,6 +1,6 @@
 {
   "name": "text-overflow-processor-react",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "description": "text overflow process for react",
@@ -12,6 +12,10 @@
   ],
   "author": "chenxingxing",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skystar-chen/public-product"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "webpack --progress"

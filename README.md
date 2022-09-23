@@ -28,6 +28,7 @@ import TextOverFlowProcessor from 'text-overflow-processor-react'
 参数含义：
 interface TextProcessProps {
   type?: 'shadow' | 'ellipsis'; // 文案处理类型
+  isDefaultFold?: boolean; // 是否默认折叠，false为默认展开
   isRenderShowAllDOM?: boolean; // 是否渲染被隐藏的全部文案展示DOM
   unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
   foldButtonText?: string  | JSX.Element | JSX.Element[]; // 折叠时按钮文案
@@ -39,7 +40,7 @@ interface TextProcessProps {
   ellipsisLineClamp?: number; // type类型为ellipsis时控制显示的行数
   className?: string;
   style?: React.CSSProperties;
-  isShowAllContent?: boolean;
+  isShowAllContent?: boolean; // 当选择展示所有内容时将不提供操作按钮
   isMustButton?: boolean; // 是否常驻显示按钮
   isMustNoButton?: boolean; // 是否不要显示按钮
   shadowInitBoxShowH?: number; // shadow时显示的高度，超出这个高度才出现操作按钮
