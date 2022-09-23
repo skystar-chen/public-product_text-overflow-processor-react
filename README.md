@@ -50,6 +50,7 @@ interface TextProcessProps {
 对应默认值：
 TextOverflowProcessor.defaultProps = {
   type: 'shadow',
+  isDefaultFold: true,
   isRenderShowAllDOM: false,
   unfoldButtonText: 'Show Less',
   foldButtonText: 'Show All',
