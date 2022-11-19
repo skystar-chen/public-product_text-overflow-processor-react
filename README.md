@@ -91,8 +91,8 @@ TextOverflowProcessor.defaultProps = {
 
 ## 四、更新日志
 
-###↪1.1.0
+### ↪1.1.0
 
 `2022-11-19`
 
-☆增加isJsComputed/fontSize属性，以适配不支持display: -webkit-box的浏览器去`...`折叠展示文案。
+☆ 增加isJsComputed/fontSize属性，以适配不支持display: -webkit-box的浏览器去`...`折叠展示文案。
