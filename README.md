@@ -46,6 +46,16 @@ interface TextProcessProps {
   shadowInitBoxShowH?: number; // shadow时显示的高度，超出这个高度才出现操作按钮
   onClick?: () => void;
   getIsFold?: (v: boolean) => void; // 获取文案是否超出范围被折叠
+  /**
+   * 是否使用Js逻辑计算文字开始折叠时显示的文案，可以传字号大小
+   * 注意：
+   * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box;属性的使用（或出现异常）
+   * 2、计算出来的文案可能不够完美，可能存在按钮被挤到下面的情况
+   * 3、这时只支持传string类型内容
+   * 4、按钮文案尽量传DOM结构
+   */
+  isJsComputed?: boolean;
+  fontSize?: number; // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
 }
 对应默认值：
 TextOverflowProcessor.defaultProps = {
@@ -68,7 +78,17 @@ TextOverflowProcessor.defaultProps = {
   shadowInitBoxShowH: 76,
   onClick: null,
   getIsFold: null,
+  isJsComputed: false,
+  fontSize: 12,
 }
 ```
 
-注：提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
+注：
+1、type为`ellipsis`时，默认`...`省略号的展示是通过CSS属性display: -webkit-box实现的，顾不是谷歌内核的浏览器使用时无法达到预期折叠省略的效果（甚至可能出现文案展示为空白的情况，例如：低版本的safari浏览器），为此在`1.1.0`版增加isJsComputed属性，文案内容在折叠时通过js计算得出，但计算结果也存在些许误差无法避免。
+2、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
+
+## 四、更新日志
+
+###↪1.1.0
+`2022-11-19`
+☆增加isJsComputed/fontSize属性，以适配不支持display: -webkit-box的浏览器去`...`折叠展示文案。

@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect, memo, useCallback } from 'react';
+import { useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
+import { getFixedWidthText, getClassNames } from './utils';
 import './index.scss';
 
 type ProcessType = 'shadow' | 'ellipsis';
@@ -25,24 +26,19 @@ interface TextProcessProps {
   shadowInitBoxShowH?: number; // shadow时显示的高度，超出这个高度才出现操作按钮
   onClick?: () => void;
   getIsFold?: (v: boolean) => void; // 获取文案是否超出范围被折叠
+  /**
+   * 是否使用Js逻辑计算文字开始折叠时显示的文案，可以传字号大小
+   * 注意：
+   * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box;属性的使用（或出现异常）
+   * 2、计算出来的文案可能不够完美，可能存在按钮被挤到下面的情况
+   * 3、这时只支持传string类型内容
+   * 4、按钮文案尽量传DOM结构
+   */
+  isJsComputed?: boolean;
+  fontSize?: number; // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
 }
 
 const TYPE: ProcessTypeArr = ['shadow', 'ellipsis'];
-
-const getClassNames = (obj: {[keyName: string]: boolean}): string => {
-  try {
-    const classNamesArr: string[] = [];
-    const objArr = Object.entries(obj);
-    for (let i = 0; i < objArr.length; i++) {
-      const t = objArr[i];
-      !!t[1] && classNamesArr.push(t[0]);
-    }
-    return classNamesArr.join(' ');
-  } catch (error) {
-    console.error(error);
-    return '';
-  }
-}
 
 function TextOverflowProcessor(props: TextProcessProps) {
 
@@ -66,6 +62,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
     shadowInitBoxShowH,
     onClick,
     getIsFold,
+    isJsComputed,
+    fontSize,
   } = props;
 
   // 文案是否折叠
@@ -77,6 +75,60 @@ function TextOverflowProcessor(props: TextProcessProps) {
   // 文案整体容器DOM
   const textArea = useRef<HTMLSpanElement>(null);
   const shadowShowH = useRef<number>(66);
+
+  // 使用js来计算展示的文案时使用
+  const [width, setWidth] = useState(0);
+  const computedList = useMemo(() => {
+    let finalText = '', isFold = false;
+    // 为了获取该组件的宽度，组件第一次render时按所有text文字显示
+    if (width) {
+      const sumWidth = width * (ellipsisLineClamp as number);
+      const str = getFixedWidthText(text, sumWidth, fontSize);
+      // 如果返回有省略号，说明文字超出了范围
+      if (str?.endsWith('...')) {
+        isFold = true;
+        setIsShowBtn(true);
+      }
+      if (isFold) {
+        // 需要展示按钮时
+        if ((foldButtonText || isMustButton) && !isMustNoButton) {
+          const span = document.createElement('span');
+          span.style.visibility = 'hidden';
+          span.style.padding = '0';
+          span.style.whiteSpace = 'nowrap';
+          span.style.overflowX = 'auto';
+          span.style.fontSize = fontSize + 'px';
+          document.body.appendChild(span);
+          span.innerHTML = `...${foldButtonText}`;
+          const sumWidth = width * (ellipsisLineClamp as number) - span.offsetWidth;
+          document.body.removeChild(span);
+          finalText = getFixedWidthText(
+            text,
+            sumWidth - 10, // 由于计算出来的文案有精确度误差，屏幕缩放时保留10px范围距离确保按钮不会被挤下来
+            fontSize,
+          );
+        } else {
+          finalText = str?.substr(0, str.length - 6) + '...';
+        }
+      } else {
+        finalText = text;
+      }
+    }
+    getIsFold?.(isFold);
+
+    return {
+      finalText,
+      isFold,
+    };
+  }, [
+    text,
+    width,
+    ellipsisLineClamp,
+    foldButtonText,
+    fontSize,
+    isMustButton,
+    isMustNoButton,
+  ]);
 
   const getIsShowBtn = useCallback(() => {
     const childrens: any = textArea.current?.childNodes;
@@ -98,15 +150,19 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }, []);
 
   const handleResize = useCallback(() => {
-    if (getIsShowBtn()) {
-      isMustNoButton || setIsShowBtn(true);
-      getIsFold?.(true);
+    if (isJsComputed && viewingArea?.current) {
+      setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
     } else {
-      isMustButton || setIsShowBtn(false);
-      // 当isMustButton为true时，按钮占据一定空间，此时文案可能因此被折叠而返回结果有误，待优化...
-      getIsFold?.(false);
+      if (getIsShowBtn()) {
+        isMustNoButton || setIsShowBtn(true);
+        getIsFold?.(true);
+      } else {
+        isMustButton || setIsShowBtn(false);
+        // 当isMustButton为true时，按钮占据一定空间，此时文案可能因此被折叠而返回结果有误，待优化...
+        getIsFold?.(false);
+      }
     }
-  }, []);
+  }, [isMustButton]);
 
   const handleClick = useCallback(() => {
     onClick ? onClick?.() : setIsFold(!isFold);
@@ -116,7 +172,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     return isFold ? foldButtonText : unfoldButtonText ;
   }, [isFold, unfoldButtonText, foldButtonText]);
 
-  const getButtonStyle = () => {
+  const getButtonStyle = useCallback(() => {
     const defalutStyle = {
       display: isShowBtn ? 'inline-block' : 'none',
       lineHeight: lineHeight + 'px',
@@ -128,7 +184,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     }
 
     return Object?.assign(defalutStyle, buttonStyle);
-  }
+  }, [isShowBtn, lineHeight, buttonStyle]);
 
   // 初始化判断是否显示操作按钮
   useEffect(() => {
@@ -154,6 +210,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
 
     if (isMustButton) setIsShowBtn(true);
     if (isMustNoButton) setIsShowBtn(false);
+    if (isJsComputed) handleResize();
 
     // 页面缩放时判断是否显示操作按钮
     window.addEventListener('resize', handleResize);
@@ -176,6 +233,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
           'text-show-all': !isFold,
         })}
         style={{
+          display: isJsComputed ? 'inline-block' : '',
           WebkitLineClamp: ellipsisLineClamp,
           lineHeight: lineHeight + 'px',
         }}
@@ -192,7 +250,9 @@ function TextOverflowProcessor(props: TextProcessProps) {
               style={{height: isShowBtn ? shadowInitBoxShowH : 'auto'}}
               dangerouslySetInnerHTML={{ __html: text }}
             ></span>
-            {(isShowBtn && isFold) && <span className="shadow" style={{bottom: lineHeight}}></span>}
+            {(isShowBtn && isFold) && (
+              <span className="shadow" style={{bottom: lineHeight}}></span>
+            )}
             <span
               className={getClassNames({
                 'click-btn': true,
@@ -207,7 +267,12 @@ function TextOverflowProcessor(props: TextProcessProps) {
         {type === 'ellipsis'
           ? (
             <>
-              <i className="click-btn-before" style={{height: `calc(100% - ${lineHeight}px)`}}></i>
+              {isMustNoButton || (
+                <i
+                  className="click-btn-before"
+                  style={{height: `calc(100% - ${lineHeight}px)`}}
+                ></i>
+              )}
               <span
                 className={getClassNames({
                   'click-btn': true,
@@ -215,10 +280,17 @@ function TextOverflowProcessor(props: TextProcessProps) {
                 })}
                 style={getButtonStyle()}
               >
-                {buttonBeforeSlot === undefined ? <>&nbsp;&nbsp;&nbsp;&nbsp;</> : buttonBeforeSlot}
+                {buttonBeforeSlot === undefined
+                  ? (isJsComputed ? null : <>&nbsp;&nbsp;&nbsp;&nbsp;</>)
+                  : buttonBeforeSlot
+                }
                 <label onClick={handleClick}>{getButtonContent()}</label>
               </span>
-              <span className="text" ref={textArea} dangerouslySetInnerHTML={{ __html: text }}></span>
+              <span
+                ref={textArea}
+                className="text"
+                dangerouslySetInnerHTML={{ __html: (isJsComputed && isFold) ? computedList?.finalText || '' : text }}
+              ></span>
             </>
           )
           : null}
@@ -248,6 +320,8 @@ TextOverflowProcessor.defaultProps = {
   shadowInitBoxShowH: 76,
   onClick: null,
   getIsFold: null,
+  isJsComputed: false,
+  fontSize: 12,
 }
 
 export default memo(TextOverflowProcessor);
