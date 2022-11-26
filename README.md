@@ -27,21 +27,21 @@ import TextOverFlowProcessor from 'text-overflow-processor-react'
 ```typescript
 参数含义：
 interface TextProcessProps {
+  text: string; // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
   type?: 'shadow' | 'ellipsis'; // 文案处理类型
   isDefaultFold?: boolean; // 是否默认折叠，false为默认展开
   isRenderShowAllDOM?: boolean; // 是否渲染被隐藏的全部文案展示DOM
   unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
   foldButtonText?: string  | JSX.Element | JSX.Element[]; // 折叠时按钮文案
-  buttonBeforeSlot?: string | JSX.Element | JSX.Element[]; // 按钮前面的空格可以传''空去除
+  buttonBeforeSlot?: string | JSX.Element | JSX.Element[]; // 按钮前面的空格可以传''空去除（注：仅ellipsis时有效）
   buttonClassName?: string;
   buttonStyle?: React.CSSProperties;
-  text: string; // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
   lineHeight?: number;
   ellipsisLineClamp?: number; // type类型为ellipsis时控制显示的行数
   className?: string;
   style?: React.CSSProperties;
   isShowAllContent?: boolean; // 当选择展示所有内容时将不提供操作按钮
-  isMustButton?: boolean; // 是否常驻显示按钮
+  isMustButton?: boolean; // 是否常驻显示按钮（注：shadow时考虑到可以传DOM模板字符串，按钮将始终展示在文案的下方）
   isMustNoButton?: boolean; // 是否不要显示按钮
   shadowInitBoxShowH?: number; // shadow时显示的高度，超出这个高度才出现操作按钮
   onClick?: () => void;
@@ -50,24 +50,35 @@ interface TextProcessProps {
    * 是否使用Js逻辑计算文字开始折叠时显示的文案，可以传字号大小
    * 注意：
    * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box;属性的使用（或出现异常）
-   * 2、计算出来的文案可能不够完美，可能存在按钮被挤到下面的情况
+   * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
    * 3、这时只支持传string类型内容
    * 4、按钮文案尽量传DOM结构
+   * 5、仅ellipsis时有效
    */
   isJsComputed?: boolean;
   fontSize?: number; // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
+  /**
+   * 紧跟文字内容尾部的额外内容，可以是icon等任意内容，例如超链接icon，点击跳转到外部网站
+   * 文案溢出时显示在...后面，不溢出时在文字尾部
+   * 注意：
+   * 1、启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
+   * 2、仅ellipsis时有效
+   */
+  textEndSlot?: any;
+  // 占用文本的额外宽度，启用isJsComputed时，此属性可以精确的调整计算误差（注：仅ellipsis时有效）
+  extraOccupiedW?: number;
 }
 对应默认值：
 TextOverflowProcessor.defaultProps = {
+  text: '',
   type: 'shadow',
   isDefaultFold: true,
   isRenderShowAllDOM: false,
   unfoldButtonText: 'Show Less',
   foldButtonText: 'Show All',
-  buttonBeforeSlot: undefined,
+  buttonBeforeSlot: null,
   buttonClassName: '',
   buttonStyle: {},
-  text: '',
   lineHeight: 24,
   ellipsisLineClamp: 2,
   className: '',
@@ -80,6 +91,8 @@ TextOverflowProcessor.defaultProps = {
   getIsFold: null,
   isJsComputed: false,
   fontSize: 12,
+  textEndSlot: null,
+  extraOccupiedW: 0,
 }
 ```
 
@@ -91,8 +104,16 @@ TextOverflowProcessor.defaultProps = {
 
 ## 四、更新日志
 
+### ↪1.1.2
+
+`2022-11-26`
+
+☆ 增加textEndSlot和extraOccupiedW属性，extraOccupiedW解决isJsComputed计算不精确问题；
+
+☆ 修复isShowAllContent属性传`true`时，isMustButton传`true`按钮没有显示。
+
 ### ↪1.1.0
 
 `2022-11-19`
 
-☆ 增加isJsComputed/fontSize属性，以适配不支持display: -webkit-box的浏览器去`...`折叠展示文案。
+☆ 增加isJsComputed和fontSize属性，以适配不支持display: -webkit-box的浏览器去`...`折叠展示文案。
