@@ -52,7 +52,8 @@ interface TextProcessProps {
    * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box;属性的使用（或出现异常）
    * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
    * 3、这时只支持传string类型内容
-   * 4、按钮文案尽量传DOM结构
+   * 4、此时textEndSlot、buttonBeforeSlot，以及foldButtonText是非string类型（string类型除外）
+   * 所额外占用的宽度，都需要通过extraOccupiedW告知组件
    * 5、仅ellipsis时有效
    */
   isJsComputed?: boolean;
@@ -65,7 +66,7 @@ interface TextProcessProps {
    * 2、仅ellipsis时有效
    */
   textEndSlot?: any;
-  // 占用文本的额外宽度，启用isJsComputed时，此属性可以精确的调整计算误差（注：仅ellipsis时有效）
+  // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差（注：仅ellipsis时有效）
   extraOccupiedW?: number;
 }
 对应默认值：
@@ -98,11 +99,17 @@ TextOverflowProcessor.defaultProps = {
 
 注：
 
-1、type为`ellipsis`时，默认`...`省略号的展示是通过CSS属性display: -webkit-box实现的，顾不是谷歌内核的浏览器使用时无法达到预期折叠省略的效果（甚至可能出现文案展示为空白的情况，例如：低版本的safari浏览器），为此在`1.1.0`版增加isJsComputed属性，文案内容在折叠时通过js计算得出，但计算结果也存在些许误差无法避免。
+1、type为`ellipsis`时，默认`...`省略号的展示是通过CSS属性display: -webkit-box实现的，顾不是谷歌内核的浏览器使用时无法达到预期折叠省略的效果（甚至可能出现文案展示为空白的情况，例如：低版本的safari浏览器），为此在`1.1.0`版增加isJsComputed属性，文案内容在折叠时通过js计算得出。
 
 2、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪1.1.3
+
+`2022-11-28`
+
+☆ 修复isJsComputed开启时，“按钮文案尽量传DOM结构”的错误描述。
 
 ### ↪1.1.2
 

@@ -32,7 +32,8 @@ interface TextProcessProps {
    * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box;属性的使用（或出现异常）
    * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
    * 3、这时只支持传string类型内容
-   * 4、按钮文案尽量传DOM结构
+   * 4、此时textEndSlot、buttonBeforeSlot，以及foldButtonText是非string类型（string类型除外）
+   * 所额外占用的宽度，都需要通过extraOccupiedW告知组件
    * 5、仅ellipsis时有效
    */
   isJsComputed?: boolean;
@@ -45,7 +46,7 @@ interface TextProcessProps {
    * 2、仅ellipsis时有效
    */
   textEndSlot?: any;
-  // 占用文本的额外宽度，启用isJsComputed时，此属性可以精确的调整计算误差（注：仅ellipsis时有效）
+  // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差（注：仅ellipsis时有效）
   extraOccupiedW?: number;
 }
 
@@ -111,7 +112,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
           span.style.overflowX = 'auto';
           span.style.fontSize = fontSize + 'px';
           document.body.appendChild(span);
-          span.innerHTML = `...${foldButtonText}`;
+          span.innerHTML = `...${(typeof foldButtonText === 'string') ? foldButtonText : ''}`;
           const sumWidth = width * (ellipsisLineClamp as number) - span.offsetWidth;
           document.body.removeChild(span);
           finalText = getFixedWidthText(
