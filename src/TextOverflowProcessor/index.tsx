@@ -6,26 +6,26 @@ type ProcessType = 'shadow' | 'ellipsis';
 type ProcessTypeArr = ['shadow', 'ellipsis'];
 
 interface TextProcessProps {
+  /** >>>>>>公共配置 */
   text: string; // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
   type?: ProcessType; // 文案处理类型
-  isDefaultFold?: boolean; // 是否默认折叠，false为默认展开
-  isRenderShowAllDOM?: boolean; // 是否渲染被隐藏的全部文案展示DOM
-  // clickEffectType?: 'default' | 'modal'; // 点击按钮效果
-  unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
-  foldButtonText?: string  | JSX.Element | JSX.Element[]; // 折叠时按钮文案
-  buttonBeforeSlot?: string | JSX.Element | JSX.Element[]; // 按钮前面的空格可以传''空去除（注：仅ellipsis时有效）
-  buttonClassName?: string;
-  buttonStyle?: React.CSSProperties;
-  lineHeight?: number;
-  ellipsisLineClamp?: number; // type类型为ellipsis时控制显示的行数
   className?: string;
   style?: React.CSSProperties;
+  buttonClassName?: string;
+  buttonStyle?: React.CSSProperties;
+  onClick?: (() => void) | null;
+  getIsFold?: ((v: boolean) => void) | null; // 获取文案的折叠状态
+  isDefaultFold?: boolean; // 是否默认折叠
+  unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
+  foldButtonText?: string  | JSX.Element | JSX.Element[]; // 折叠时按钮文案
   isShowAllContent?: boolean; // 当选择展示所有内容时将不提供操作按钮
-  isMustButton?: boolean; // 是否常驻显示按钮（注：shadow时考虑到可以传DOM模板字符串，按钮将始终展示在文案的下方）
+  isMustButton?: boolean; // 是否常驻显示按钮
   isMustNoButton?: boolean; // 是否不要显示按钮
-  shadowInitBoxShowH?: number; // shadow时显示的高度，超出这个高度才出现操作按钮
-  onClick?: () => void;
-  getIsFold?: (v: boolean) => void; // 获取文案是否超出范围被折叠
+  lineHeight?: number;
+  isRenderShowAllDOM?: boolean; // 是否渲染被隐藏的全部文案展示DOM
+  
+  /** >>>>>>仅ellipsis配置 */
+  ellipsisLineClamp?: number; // 控制显示的行数
   /**
    * 是否使用Js逻辑计算文字开始折叠时显示的文案，可以传字号大小
    * 注意：
@@ -34,56 +34,93 @@ interface TextProcessProps {
    * 3、这时只支持传string类型内容
    * 4、此时textEndSlot、buttonBeforeSlot，以及foldButtonText是非string类型（string类型除外）
    * 所额外占用的宽度，都需要通过extraOccupiedW告知组件
-   * 5、仅ellipsis时有效
    */
   isJsComputed?: boolean;
   fontSize?: number; // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
   /**
    * 紧跟文字内容尾部的额外内容，可以是icon等任意内容，例如超链接icon，点击跳转到外部网站
    * 文案溢出时显示在...后面，不溢出时在文字尾部
-   * 注意：
-   * 1、启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
-   * 2、仅ellipsis时有效
+   * 注意：启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
    */
   textEndSlot?: any;
-  // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差（注：仅ellipsis时有效）
+  // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
   extraOccupiedW?: number;
-}
+  // 按钮前面的占位内容，isJsComputed为false时默认会有一些空格，isJsComputed为true时此属性无效
+  buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null;
+
+  /** >>>>>>仅shadow配置 */
+  shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
+};
 
 const TYPE: ProcessTypeArr = ['shadow', 'ellipsis'];
+const DEFAULT_PROPS: TextProcessProps = {
+  text: '',
+  type: 'shadow',
+  className: '',
+  style: {},
+  buttonClassName: '',
+  buttonStyle: {},
+  onClick: null,
+  getIsFold: null,
+  isDefaultFold: true,
+  unfoldButtonText: 'Show Less',
+  foldButtonText: 'Show All',
+  isShowAllContent: false,
+  isMustButton: false,
+  isMustNoButton: false,
+  lineHeight: 24,
+  isRenderShowAllDOM: false,
+  /** >>>>>>仅ellipsis配置 */
+  ellipsisLineClamp: 2,
+  isJsComputed: false,
+  fontSize: 12,
+  textEndSlot: null,
+  extraOccupiedW: 0,
+  buttonBeforeSlot: null,
+  /** >>>>>>仅shadow配置 */
+  shadowInitBoxShowH: 76,
+};
 
 function TextOverflowProcessor(props: TextProcessProps) {
 
   const {
-    type,
-    isDefaultFold,
-    isRenderShowAllDOM,
-    unfoldButtonText,
-    foldButtonText,
-    buttonBeforeSlot,
-    buttonClassName,
-    buttonStyle,
     text,
-    lineHeight,
-    ellipsisLineClamp,
+    type,
     className,
     style,
+    buttonClassName,
+    buttonStyle,
+    onClick,
+    getIsFold,
+    isDefaultFold,
+    unfoldButtonText,
+    foldButtonText,
     isShowAllContent,
     isMustButton,
     isMustNoButton,
-    shadowInitBoxShowH,
-    onClick,
-    getIsFold,
+    lineHeight,
+    isRenderShowAllDOM,
+    /** >>>>>>仅ellipsis配置 */
+    ellipsisLineClamp,
     isJsComputed,
     fontSize,
     textEndSlot,
     extraOccupiedW,
+    buttonBeforeSlot,
+    /** >>>>>>仅shadow配置 */
+    shadowInitBoxShowH,
   } = props;
 
   // 文案是否折叠
   const [isFold, setIsFold] = useState<boolean>(true);
   // 判断是否出现操作按钮
   const [isShowBtn, setIsShowBtn] = useState<boolean>(false);
+  // 是否触发handleResize
+  const [isViewResize, setIsViewResize] = useState<boolean>(false);
+  // 上一次触发handleResize时的时间戳
+  const [lastViewResizeTime, setLastViewResizeTime] = useState<number>(0);
+  // 触发handleResize时启用的定时器
+  const intervalTimer = useRef<any>(null);
   // 文案可视区域DOM
   const viewingArea = useRef<HTMLParagraphElement>(null);
   // 文案整体容器DOM
@@ -171,6 +208,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }, []);
 
   const handleResize = useCallback(() => {
+    setIsViewResize(true);
+    setLastViewResizeTime(Date.now());
     if (isJsComputed && viewingArea?.current) {
       setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
     } else {
@@ -267,6 +306,19 @@ function TextOverflowProcessor(props: TextProcessProps) {
     }
   }, [text]);
 
+  // 触发handleResize时，开启定时器，当不触发时关闭定时器
+  useEffect(() => {
+    if (isViewResize && !intervalTimer.current) {
+      intervalTimer.current = setInterval(() => {
+        if ((Date.now() - lastViewResizeTime) > 100) {
+          setIsViewResize(false);
+          clearInterval(intervalTimer.current);
+          intervalTimer.current = null;
+        }
+      }, 100);
+    }
+  }, [isViewResize]);
+
   return (
     <section className={`text-overflow-processor-content ${className}`} style={style}>
       {isRenderShowAllDOM && <p className="all-text text-overflow-processor-off" style={{display: 'none'}} dangerouslySetInnerHTML={{ __html: text }}></p>}
@@ -280,9 +332,10 @@ function TextOverflowProcessor(props: TextProcessProps) {
           'text-show-all': !isFold,
         })}
         style={{
-          display: isJsComputed ? 'inline-block' : '',
+          display: isJsComputed ? 'inline-block' : (type === 'ellipsis' && isViewResize) ? '-webkit-box' : '',
           WebkitLineClamp: ellipsisLineClamp,
           lineHeight: lineHeight + 'px',
+          textAlign: ((type === 'ellipsis') && isShowBtn && isFold && !isJsComputed) ? 'justify' : 'inherit',
         }}
       >
         {type === 'shadow' && (
@@ -349,31 +402,6 @@ function TextOverflowProcessor(props: TextProcessProps) {
   )
 }
 
-TextOverflowProcessor.defaultProps = {
-  // text: 'In all the parting, I like it best see you tomorrow.Of all the blessings I prefer, as you wish. Sometimes you look at the wrong person, not because you are jealous, but because you are kind. You never know how strong you really are until being strong is the only choice you have. Never bend your head. Always hold it high. Look the world straight in the face. Life is alive, there is not much, only helpless. Life is a wonderful journey. Make it your journey and not someone else\'s.',
-  text: '',
-  type: 'shadow',
-  isDefaultFold: true,
-  isRenderShowAllDOM: false,
-  unfoldButtonText: 'Show Less',
-  foldButtonText: 'Show All',
-  buttonBeforeSlot: null,
-  buttonClassName: '',
-  buttonStyle: {},
-  lineHeight: 24,
-  ellipsisLineClamp: 2,
-  className: '',
-  style: {},
-  isShowAllContent: false,
-  isMustButton: false,
-  isMustNoButton: false,
-  shadowInitBoxShowH: 76,
-  onClick: null,
-  getIsFold: null,
-  isJsComputed: false,
-  fontSize: 12,
-  textEndSlot: null,
-  extraOccupiedW: 0,
-}
+TextOverflowProcessor.defaultProps = DEFAULT_PROPS;
 
 export default memo(TextOverflowProcessor);

@@ -1,6 +1,7 @@
 /node_modules
 /src
 /public
+/testDemo
 .babelrc
 .gitignore
 tsconfig.json

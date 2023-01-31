@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>copyText</title>
+</head>
+<body>
+  <main style="text-align: center; padding: 0px 300px;">
+    <hgroup id="copyBtnGroup">
+      <button id="customAddBtn" onclick="customAddCopy()" title="add a customize the copy button">+</button>
+      <!-- <button id="delBtn" onclick="customDelCopy()" title="delete a button">-</button> -->
+    </hgroup>
+    <section id="customEditBox">
+      <input
+        id="buttonNameBox"
+        placeholder="please input the buttonName"
+        style="
+          width: 300px;
+          height: 25px;
+          margin: 10px 0;
+          padding: 0 10px;
+          box-sizing: border-box;
+        "
+      />
+      <br />
+      <textarea
+        id="copyInfoBox"
+        placeholder="please input the copyInfo"
+        style="
+          width: 300px;
+          height: 300px;
+          padding: 10px;
+          box-sizing: border-box;
+        "
+      ></textarea>
+      <br />
+      <button id="submitBtn" style="margin-top: 10px;" onclick="confirmAdd()">确认</button>
+      <button id="cancelBtn" style="margin-left: 10px;" onclick="cancelAdd()">取消</button>
+    </section>
+  </main>
+  <script>
+    const copyBtnGroupEl = document.getElementById('copyBtnGroup');
+    const customAddBtnEl = document.getElementById('customAddBtn');
+    // const delBtnEl = document.getElementById('delBtn');
+    const customEditBoxEl = document.getElementById('customEditBox');
+    const buttonNameBoxEl = document.getElementById('buttonNameBox');
+    const copyInfoBoxEl = document.getElementById('copyInfoBox');
+    const submitBtnEl = document.getElementById('submitBtn');
+    customEditBoxEl.style.display = 'none';
+    let inputButtonName = '', inputCopyInfo = '';
+
+    // 储存按钮名及按钮的copy内容
+    const MAP = {
+      "for": `for(let i = 0; i < arr?.length; i ++) {
+        const t = arr?.[i];
+      }`,
+    };
+    // 初始化把MAP中的内容添加成按钮
+    for (const key in MAP) {
+      const val = MAP?.[key];
+      if (val) {
+        const newButtonEl = document.createElement('button');
+        newButtonEl.innerHTML = key;
+        newButtonEl.style.marginRight = '10px';
+        newButtonEl.style.marginBottom = '5px';
+        newButtonEl.setAttribute('title', val);
+        newButtonEl.setAttribute('onclick', `copy('${key}')`);
+        copyBtnGroupEl.insertBefore(newButtonEl, customAddBtnEl);
+      }
+    }
+
+    // 复制对应内容
+    function copyContent(v = '') {
+      if (!v) return;
+      const inputEl = document.createElement('textarea');
+      inputEl.value = v;
+      inputEl.style.position = 'fixed';
+      inputEl.style.top = '-9999px';
+      inputEl.style.left = '-9999px';
+      document.body.appendChild(inputEl);
+      inputEl.setSelectionRange(0, 9999); // 兼容ios
+      inputEl.select();
+      try {
+        document.execCommand('copy');
+        console.log('copy成功！');
+      } catch (error) {
+        console.log('copy失败！，报错信息：' + error);
+      }
+      document.body.removeChild(inputEl);
+    }
+
+    // 点击每个复制按钮
+    function copy(type = '') {
+      copyContent(MAP?.[type] || '');
+    }
+
+    // 判断确认按钮是否可以点击
+    function getIsRelease() {
+      if (inputButtonName && inputCopyInfo) {
+        submitBtnEl.removeAttribute('disabled');
+      } else {
+        submitBtnEl.setAttribute('disabled', true);
+      }
+    }
+
+    // buttonName输入内容变化
+    function handleInputButtonName(e) {
+      const realVal = e?.target?.value?.trim();
+      inputButtonName = realVal;
+      getIsRelease();
+    }
+
+    // copyInfo输入内容变化
+    function handleInputCopyInfo(e) {
+      const val = e?.target?.value;
+      inputCopyInfo = val?.trim() ? val : '';
+      getIsRelease();
+    }
+
+    // 点击加号按钮
+    function customAddCopy() {
+      customAddBtnEl.setAttribute('disabled', true);
+      customEditBoxEl.style.display = 'block';
+      buttonNameBoxEl.value = '';
+      copyInfoBoxEl.value = '';
+      getIsRelease();
+      buttonNameBoxEl.addEventListener('input', handleInputButtonName);
+      copyInfoBoxEl.addEventListener('input', handleInputCopyInfo);
+    }
+
+    // 确认自定义添加
+    function confirmAdd() {
+      MAP[inputButtonName] = inputCopyInfo;
+      const newButtonEl = document.createElement('button');
+      newButtonEl.innerHTML = inputButtonName;
+      newButtonEl.style.marginRight = '10px';
+      newButtonEl.style.marginBottom = '5px';
+      newButtonEl.setAttribute('title', inputCopyInfo);
+      newButtonEl.setAttribute('onclick', `copy('${inputButtonName}')`);
+      copyBtnGroupEl.insertBefore(newButtonEl, customAddBtnEl);
+      inputButtonName = '';
+      inputCopyInfo = '';
+      customEditBoxEl.style.display = 'none';
+      customAddBtnEl.removeAttribute('disabled');
+    }
+
+    // 取消自定义添加
+    function cancelAdd() {
+      inputButtonName = '';
+      inputCopyInfo = '';
+      customEditBoxEl.style.display = 'none';
+      customAddBtnEl.removeAttribute('disabled');
+    }
+  </script>
+</body>
+</html>

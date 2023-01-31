@@ -27,25 +27,26 @@ import TextOverFlowProcessor from 'text-overflow-processor-react'
 ```typescript
 参数含义：
 interface TextProcessProps {
+  /** >>>>>>公共配置 */
   text: string; // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
-  type?: 'shadow' | 'ellipsis'; // 文案处理类型
-  isDefaultFold?: boolean; // 是否默认折叠，false为默认展开
-  isRenderShowAllDOM?: boolean; // 是否渲染被隐藏的全部文案展示DOM
-  unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
-  foldButtonText?: string  | JSX.Element | JSX.Element[]; // 折叠时按钮文案
-  buttonBeforeSlot?: string | JSX.Element | JSX.Element[]; // 按钮前面的空格可以传''空去除（注：仅ellipsis时有效）
-  buttonClassName?: string;
-  buttonStyle?: React.CSSProperties;
-  lineHeight?: number;
-  ellipsisLineClamp?: number; // type类型为ellipsis时控制显示的行数
+  type?: ProcessType; // 文案处理类型
   className?: string;
   style?: React.CSSProperties;
+  buttonClassName?: string;
+  buttonStyle?: React.CSSProperties;
+  onClick?: (() => void) | null;
+  getIsFold?: ((v: boolean) => void) | null; // 获取文案的折叠状态
+  isDefaultFold?: boolean; // 是否默认折叠
+  unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
+  foldButtonText?: string  | JSX.Element | JSX.Element[]; // 折叠时按钮文案
   isShowAllContent?: boolean; // 当选择展示所有内容时将不提供操作按钮
-  isMustButton?: boolean; // 是否常驻显示按钮（注：shadow时考虑到可以传DOM模板字符串，按钮将始终展示在文案的下方）
+  isMustButton?: boolean; // 是否常驻显示按钮
   isMustNoButton?: boolean; // 是否不要显示按钮
-  shadowInitBoxShowH?: number; // shadow时显示的高度，超出这个高度才出现操作按钮
-  onClick?: () => void;
-  getIsFold?: (v: boolean) => void; // 获取文案是否超出范围被折叠
+  lineHeight?: number;
+  isRenderShowAllDOM?: boolean; // 是否渲染被隐藏的全部文案展示DOM
+  
+  /** >>>>>>仅ellipsis配置 */
+  ellipsisLineClamp?: number; // 控制显示的行数
   /**
    * 是否使用Js逻辑计算文字开始折叠时显示的文案，可以传字号大小
    * 注意：
@@ -54,46 +55,50 @@ interface TextProcessProps {
    * 3、这时只支持传string类型内容
    * 4、此时textEndSlot、buttonBeforeSlot，以及foldButtonText是非string类型（string类型除外）
    * 所额外占用的宽度，都需要通过extraOccupiedW告知组件
-   * 5、仅ellipsis时有效
    */
   isJsComputed?: boolean;
   fontSize?: number; // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
   /**
    * 紧跟文字内容尾部的额外内容，可以是icon等任意内容，例如超链接icon，点击跳转到外部网站
    * 文案溢出时显示在...后面，不溢出时在文字尾部
-   * 注意：
-   * 1、启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
-   * 2、仅ellipsis时有效
+   * 注意：启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
    */
   textEndSlot?: any;
-  // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差（注：仅ellipsis时有效）
+  // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
   extraOccupiedW?: number;
+   // 按钮前面的占位内容，isJsComputed为false时默认会有一些空格，isJsComputed为true时此属性无效
+  buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null;
+
+  /** >>>>>>仅shadow配置 */
+  shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
 }
 对应默认值：
 TextOverflowProcessor.defaultProps = {
   text: '',
   type: 'shadow',
-  isDefaultFold: true,
-  isRenderShowAllDOM: false,
-  unfoldButtonText: 'Show Less',
-  foldButtonText: 'Show All',
-  buttonBeforeSlot: null,
-  buttonClassName: '',
-  buttonStyle: {},
-  lineHeight: 24,
-  ellipsisLineClamp: 2,
   className: '',
   style: {},
+  buttonClassName: '',
+  buttonStyle: {},
+  onClick: null,
+  getIsFold: null,
+  isDefaultFold: true,
+  unfoldButtonText: 'Show Less',
+  foldButtonText: 'Show All',
   isShowAllContent: false,
   isMustButton: false,
   isMustNoButton: false,
-  shadowInitBoxShowH: 76,
-  onClick: null,
-  getIsFold: null,
+  lineHeight: 24,
+  isRenderShowAllDOM: false,
+  /** >>>>>>仅ellipsis配置 */
+  ellipsisLineClamp: 2,
   isJsComputed: false,
   fontSize: 12,
   textEndSlot: null,
   extraOccupiedW: 0,
+  buttonBeforeSlot: null,
+  /** >>>>>>仅shadow配置 */
+  shadowInitBoxShowH: 76,
 }
 ```
 
@@ -104,6 +109,16 @@ TextOverflowProcessor.defaultProps = {
 2、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪1.1.4
+
+`2023-01-31`
+
+☆ 修复在ellipsis下，屏幕缩放时，原本文案是折叠的，屏幕放大再缩小时文案不折叠；
+
+☆ 修改仅当ellipsis时，且没有开启isJsComputed、文案是折叠的、显示操作按钮时，文案对其方式才是`justify`，其他情况使用默认对齐方式；
+
+☆ 组件属性描述位置优化。
 
 ### ↪1.1.3
 
