@@ -50,6 +50,8 @@ interface TextProcessProps {
 
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
+  shadowClassName?: string;
+  shadowStyle?: React.CSSProperties;
 };
 
 const TYPE: ProcessTypeArr = ['shadow', 'ellipsis'];
@@ -79,6 +81,8 @@ const DEFAULT_PROPS: TextProcessProps = {
   buttonBeforeSlot: null,
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH: 76,
+  shadowClassName: '',
+  shadowStyle: {},
 };
 
 function TextOverflowProcessor(props: TextProcessProps) {
@@ -109,6 +113,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
     buttonBeforeSlot,
     /** >>>>>>仅shadow配置 */
     shadowInitBoxShowH,
+    shadowClassName,
+    shadowStyle,
   } = props;
 
   // 文案是否折叠
@@ -351,7 +357,10 @@ function TextOverflowProcessor(props: TextProcessProps) {
               dangerouslySetInnerHTML={{ __html: text }}
             ></span>
             {(isShowBtn && isFold) && (
-              <span className="shadow" style={{bottom: lineHeight}}></span>
+              <span
+                className={`shadow ${shadowClassName}`}
+                style={Object?.assign({bottom: lineHeight}, shadowStyle) || {bottom: lineHeight}}
+              ></span>
             )}
             <span
               className={getClassNames({

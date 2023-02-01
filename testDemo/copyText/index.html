@@ -67,7 +67,27 @@
         newButtonEl.style.marginBottom = '5px';
         newButtonEl.setAttribute('title', val);
         newButtonEl.setAttribute('onclick', `copy('${key}')`);
+        newButtonEl.setAttribute('ondblclick', `delCopyBtn('${key}')`);
         copyBtnGroupEl.insertBefore(newButtonEl, customAddBtnEl);
+      }
+    }
+
+    // 双击删除某个按钮
+    function delCopyBtn(key = '') {
+      const flag = MAP?.hasOwnProperty(key);
+      if (flag) {
+        const btnArr = copyBtnGroupEl?.children;
+        for (let i = 0; i < btnArr?.length; i ++) {
+          const t = btnArr?.[i];
+          if (t?.innerHTML === key) {
+            t?.remove();
+            break;
+          }
+        }
+        delete MAP?.[key];
+        console.log('删除按钮' + key + '成功！');
+      } else {
+        console.log('删除按钮' + key + '失败！');
       }
     }
 
@@ -92,8 +112,8 @@
     }
 
     // 点击每个复制按钮
-    function copy(type = '') {
-      copyContent(MAP?.[type] || '');
+    function copy(key = '') {
+      copyContent(MAP?.[key] || '');
     }
 
     // 判断确认按钮是否可以点击
@@ -139,11 +159,14 @@
       newButtonEl.style.marginBottom = '5px';
       newButtonEl.setAttribute('title', inputCopyInfo);
       newButtonEl.setAttribute('onclick', `copy('${inputButtonName}')`);
+      newButtonEl.setAttribute('ondblclick', `delCopyBtn('${inputButtonName}')`);
       copyBtnGroupEl.insertBefore(newButtonEl, customAddBtnEl);
       inputButtonName = '';
       inputCopyInfo = '';
       customEditBoxEl.style.display = 'none';
       customAddBtnEl.removeAttribute('disabled');
+      buttonNameBoxEl.removeEventListener('input', handleInputButtonName);
+      copyInfoBoxEl.removeEventListener('input', handleInputCopyInfo);
     }
 
     // 取消自定义添加
@@ -152,6 +175,8 @@
       inputCopyInfo = '';
       customEditBoxEl.style.display = 'none';
       customAddBtnEl.removeAttribute('disabled');
+      buttonNameBoxEl.removeEventListener('input', handleInputButtonName);
+      copyInfoBoxEl.removeEventListener('input', handleInputCopyInfo);
     }
   </script>
 </body>

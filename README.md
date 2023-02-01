@@ -71,6 +71,8 @@ interface TextProcessProps {
 
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
+  shadowClassName?: string;
+  shadowStyle?: React.CSSProperties;
 }
 对应默认值：
 TextOverflowProcessor.defaultProps = {
@@ -99,6 +101,8 @@ TextOverflowProcessor.defaultProps = {
   buttonBeforeSlot: null,
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH: 76,
+  shadowClassName: '',
+  shadowStyle: {},
 }
 ```
 
@@ -109,6 +113,14 @@ TextOverflowProcessor.defaultProps = {
 2、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪1.1.4-remedying
+
+`2023-02-01`
+
+☆ 修复下载下来的包自动下载了相关依赖；
+
+☆ 增加修改shadow阴影样式属性shadowClassName和shadowStyle。
 
 ### ↪1.1.4
 
