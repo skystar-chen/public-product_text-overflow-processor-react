@@ -49,7 +49,11 @@
     const copyInfoBoxEl = document.getElementById('copyInfoBox');
     const submitBtnEl = document.getElementById('submitBtn');
     customEditBoxEl.style.display = 'none';
-    let inputButtonName = '', inputCopyInfo = '';
+    let inputButtonName = '',
+        inputCopyInfo = '',
+        timer = null,
+        currentToastMessage = '',
+        currentToastEl = null;
 
     // 储存按钮名及按钮的copy内容
     const MAP = {
@@ -72,6 +76,41 @@
       }
     }
 
+    // 消息提示
+    function toast(text) {
+      if (!timer || (currentToastMessage !== text)) {
+        currentToastEl && currentToastEl.remove();
+        timer && clearTimeout(timer);
+        const messageEl = document.createElement('section');
+        messageEl.style.cssText = `
+          font-size: 12px;
+          text-align: center;
+          color: #fff;
+          line-height: 18px;
+          max-width: 300px;
+          background-color: rgba(0, 0, 0, .8);
+          box-shadow: 0 0 4px rgba(0, 0, 0, .8);
+          border-radius: 5px;
+          padding: 10px;
+          position: fixed;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 999;
+        `;
+        messageEl.innerHTML = text;
+        currentToastMessage = text;
+        currentToastEl = messageEl;
+        document.body.appendChild(messageEl);
+        timer = setTimeout(() => {
+          timer = null;
+          currentToastMessage = '';
+          currentToastEl = null;
+          messageEl.remove();
+        }, 1000);
+      }
+    }
+
     // 双击删除某个按钮
     function delCopyBtn(key = '') {
       const flag = MAP?.hasOwnProperty(key);
@@ -85,9 +124,11 @@
           }
         }
         delete MAP?.[key];
-        console.log('删除按钮' + key + '成功！');
+        const msg = '删除按钮' + key + '成功！';
+        toast(msg);
       } else {
-        console.log('删除按钮' + key + '失败！');
+        const msg = '删除按钮' + key + '失败！';
+        toast(msg);
       }
     }
 
@@ -104,9 +145,11 @@
       inputEl.select();
       try {
         document.execCommand('copy');
-        console.log('copy成功！');
+        const msg = '复制内容成功！';
+        toast(msg);
       } catch (error) {
-        console.log('copy失败！，报错信息：' + error);
+        const msg = '复制内容失败！，错误信息：' + error;
+        toast(msg);
       }
       document.body.removeChild(inputEl);
     }

@@ -50,8 +50,8 @@ interface TextProcessProps {
 
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
-  shadowClassName?: string;
-  shadowStyle?: React.CSSProperties;
+  shadowClassName?: string; // 阴影遮罩层自定义类名
+  shadowStyle?: React.CSSProperties; // 阴影遮罩层自定义样式
 };
 
 const TYPE: ProcessTypeArr = ['shadow', 'ellipsis'];
@@ -171,7 +171,6 @@ function TextOverflowProcessor(props: TextProcessProps) {
       }
     }
     if (isJsComputed) {
-      getIsFold?.(isEllipsis);
       setIsFold(isEllipsis);
       setIsShowBtn(isEllipsis);
       if (isMustButton) setIsShowBtn(true);
@@ -214,23 +213,20 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }, []);
 
   const handleResize = useCallback(() => {
+    const isNoReview = isShowAllContent || isMustButton || isMustNoButton;
+    if (isNoReview) return;
+
     setIsViewResize(true);
     setLastViewResizeTime(Date.now());
     if (isJsComputed && viewingArea?.current) {
       setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
     } else {
-      if (getIsShowBtn()) {
-        isMustNoButton || setIsShowBtn(true);
-        getIsFold?.(true);
-        setIsFold(true);
-      } else {
-        isMustButton || setIsShowBtn(false);
-        // 当isMustButton为true时，按钮占据一定空间，此时文案可能因此被折叠而返回结果有误，待优化...
-        getIsFold?.(false);
-        setIsFold(false);
-      }
+      const flag = getIsShowBtn();
+      setIsShowBtn(flag);
+      // 当isMustButton为true时，按钮占据一定空间，此时文案可能因此被折叠而返回结果有误，待优化...
+      setIsFold(flag);
     }
-  }, [isJsComputed, isMustButton, isMustNoButton]);
+  }, [isJsComputed, isMustButton, isMustNoButton, isShowAllContent]);
 
   const handleClick = useCallback(() => {
     onClick ? onClick?.() : setIsFold(!isFold);
@@ -277,7 +273,6 @@ function TextOverflowProcessor(props: TextProcessProps) {
     }
     if (isShowAllContent) {
       isMustButton && setIsShowBtn(true);
-      getIsFold?.(false);
       setIsFold(false);
       return;
     }
@@ -286,18 +281,18 @@ function TextOverflowProcessor(props: TextProcessProps) {
 
     if (!isJsComputed) {
       if (getIsShowBtn()) {
-        getIsFold?.(isDefaultFold as boolean);
         setIsFold(isDefaultFold as boolean);
         setIsShowBtn(true);
       } else {
         setIsFold(false);
-        getIsFold?.(false);
       }
     }
 
     if (isMustButton) setIsShowBtn(true);
     if (isMustNoButton) setIsShowBtn(false);
-    if (isJsComputed) handleResize();
+    if (isJsComputed && viewingArea?.current) {
+      setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
+    }
   }
 
   // 初始化判断是否显示操作按钮
@@ -324,6 +319,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
       }, 100);
     }
   }, [isViewResize]);
+
+  useEffect(() => { getIsFold?.(isFold); }, [isFold]);
 
   return (
     <section className={`text-overflow-processor-content ${className}`} style={style}>

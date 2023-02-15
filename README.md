@@ -71,8 +71,8 @@ interface TextProcessProps {
 
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
-  shadowClassName?: string;
-  shadowStyle?: React.CSSProperties;
+  shadowClassName?: string; // 阴影遮罩层自定义类名
+  shadowStyle?: React.CSSProperties; // 阴影遮罩层自定义样式
 }
 对应默认值：
 TextOverflowProcessor.defaultProps = {
@@ -114,11 +114,17 @@ TextOverflowProcessor.defaultProps = {
 
 ## 四、更新日志
 
+### ↪1.1.5
+
+`2023-02-15`
+
+☆ 修复isShowAllContent为true时，视口大小改变导致文案被折叠或出现按钮。
+
 ### ↪1.1.4-remedying
 
 `2023-02-01`
 
-☆ 修复下载下来的包自动下载了相关依赖；
+☆ 修复下载下来的包自动下载了相关额外无用依赖；
 
 ☆ 增加修改shadow阴影样式属性shadowClassName和shadowStyle。
 

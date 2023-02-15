@@ -12,6 +12,10 @@
     .click-btn {
       // line-height: 24px;
       float: right;
+
+      * {
+        user-select: none;
+      }
   
       & > label {
         cursor: pointer;
@@ -62,6 +66,10 @@
       // line-height: 24px;
       clear: both;
       float: right;
+
+      * {
+        user-select: none;
+      }
   
       & > label {
         cursor: pointer;
