@@ -172,7 +172,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     }
     if (isJsComputed) {
       setIsFold(isEllipsis);
-      setIsShowBtn(isEllipsis);
+      !isMustButton && !isMustNoButton && setIsShowBtn(isEllipsis);
       if (isMustButton) setIsShowBtn(true);
       if (isMustNoButton) setIsShowBtn(false);
     }
@@ -213,8 +213,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }, []);
 
   const handleResize = useCallback(() => {
-    const isNoReview = isShowAllContent || isMustButton || isMustNoButton;
-    if (isNoReview) return;
+    if (isShowAllContent) return;
 
     setIsViewResize(true);
     setLastViewResizeTime(Date.now());
@@ -222,7 +221,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
       setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
     } else {
       const flag = getIsShowBtn();
-      setIsShowBtn(flag);
+      !isMustButton && !isMustNoButton && setIsShowBtn(flag);
       // 当isMustButton为true时，按钮占据一定空间，此时文案可能因此被折叠而返回结果有误，待优化...
       setIsFold(flag);
     }
