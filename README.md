@@ -150,7 +150,7 @@ TextOverflowProcessor.defaultProps = {
 
 ☆ 修复在ellipsis下，屏幕缩放时，原本文案是折叠的，屏幕放大再缩小时文案不折叠；
 
-☆ 修改仅当ellipsis时，且没有开启isJsComputed、文案是折叠的、显示操作按钮时，文案对其方式才是`justify`，其他情况使用默认对齐方式；
+☆ 修改仅当ellipsis时，且没有开启isJsComputed、文案是折叠的、显示操作按钮时，文案对齐方式才是`justify`，其他情况使用默认对齐方式；
 
 ☆ 组件属性描述位置优化。
 
