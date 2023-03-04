@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>copyText</title>
+  <title>sticky note</title>
 </head>
 <body>
-  <main style="text-align: center; padding: 0px 300px;">
+  <main style="text-align: center; padding: 0px;">
     <hgroup id="copyBtnGroup">
-      <button id="customAddBtn" onclick="customAddCopy()" title="add a customize the copy button">+</button>
-      <!-- <button id="delBtn" onclick="customDelCopy()" title="delete a button">-</button> -->
+      <button
+        id="customAddBtn"
+        onclick="customAddCopy()"
+        title="add a customize the copy button"
+      >+</button>
     </hgroup>
     <section id="customEditBox">
       <input
@@ -36,24 +39,36 @@
         "
       ></textarea>
       <br />
-      <button id="submitBtn" style="margin-top: 10px;" onclick="confirmAdd()">确认</button>
-      <button id="cancelBtn" style="margin-left: 10px;" onclick="cancelAdd()">取消</button>
+      <button
+        id="submitBtn"
+        style="margin-top: 10px;"
+        onclick="confirmAdd()"
+        title='or press "ctrl + enter" to confirm'
+      >确认</button>
+      <button
+        id="cancelBtn"
+        style="margin-left: 10px;"
+        onclick="cancelAdd()"
+        title="to cancel"
+      >取消</button>
     </section>
   </main>
   <script>
     const copyBtnGroupEl = document.getElementById('copyBtnGroup');
     const customAddBtnEl = document.getElementById('customAddBtn');
-    // const delBtnEl = document.getElementById('delBtn');
     const customEditBoxEl = document.getElementById('customEditBox');
     const buttonNameBoxEl = document.getElementById('buttonNameBox');
     const copyInfoBoxEl = document.getElementById('copyInfoBox');
     const submitBtnEl = document.getElementById('submitBtn');
     customEditBoxEl.style.display = 'none';
-    let inputButtonName = '',
-        inputCopyInfo = '',
-        timer = null,
-        currentToastMessage = '',
-        currentToastEl = null;
+    let inputButtonName = '', // buttonName输入内容
+        inputCopyInfo = '', // copyInfo输入内容
+        timer = null, // 消息提示用到的定时器
+        currentToastMessage = '', // 当前消息提示文案
+        currentToastEl = null, // 当前消息提示的dom
+        isButtonNameEnter = false, // buttonName输入框是否回车
+        isCopyInfoBackspaceEmpty = false, // copyInfo输入框是否删除内容致空
+        focusPosition = 0; // 0: 没有聚焦，1: buttonName聚焦，2: copyInfo聚焦
 
     // 储存按钮名及按钮的copy内容
     const MAP = {
@@ -73,6 +88,68 @@
         newButtonEl.setAttribute('onclick', `copy('${key}')`);
         newButtonEl.setAttribute('ondblclick', `delCopyBtn('${key}')`);
         copyBtnGroupEl.insertBefore(newButtonEl, customAddBtnEl);
+      }
+    }
+
+    // 当按下ctrl + enter快捷键时
+    document.onkeydown = function(e) {
+      const keyCode = e.keyCode || e.which;
+      if (
+        keyCode === 13
+        && e.ctrlKey
+        && (e.code === 'Enter' || e.code === 'NumpadEnter')
+      ) {
+        const isAllow = getIsRelease();
+        isAllow ? confirmAdd() : toast('输入校验不通过哦！');
+      }
+
+      // 上下框聚焦效果
+      if (
+        (keyCode === 40 || keyCode === 38)
+        && (e.code === 'ArrowDown' || e.code === 'ArrowUp')
+      ) {
+        switch (focusPosition) {
+          case 1:
+            copyInfoBoxEl.focus();
+            focusPosition = 2;
+            break;
+
+          case 2:
+            buttonNameBoxEl.focus();
+            focusPosition = 1;
+            break;
+        
+          default:
+            buttonNameBoxEl.focus();
+            focusPosition = 1;
+            break;
+        }
+      }
+    }
+
+    // 鼠标按下判断是否点击的添加按钮/buttonName/copyInfo输入框
+    document.onmousedown = function(e) {
+      // 判断点击区域是否包含某个元素：e.path.includes(document.querySelector('某某某'))
+      const flag = ['customAddBtn', 'buttonNameBox', 'copyInfoBox'].includes(e?.target?.id);
+      if (flag) {
+        switch (clickElId) {
+          case 'customAddBtn':
+            focusPosition = 1;
+            break;
+
+          case 'buttonNameBox':
+            focusPosition = 1;
+            break;
+
+          case 'copyInfoBox':
+            focusPosition = 2;
+            break;
+        
+          default:
+            break;
+        }
+      } else {
+        focusPosition = 0;
       }
     }
 
@@ -124,10 +201,10 @@
           }
         }
         delete MAP?.[key];
-        const msg = '删除按钮' + key + '成功！';
+        const msg = '删除按钮"' + key + '"成功！';
         toast(msg);
       } else {
-        const msg = '删除按钮' + key + '失败！';
+        const msg = '删除按钮"' + key + '"失败！';
         toast(msg);
       }
     }
@@ -161,25 +238,79 @@
 
     // 判断确认按钮是否可以点击
     function getIsRelease() {
-      if (inputButtonName && inputCopyInfo) {
+      const isAllow = inputButtonName && inputCopyInfo;
+      if (isAllow) {
         submitBtnEl.removeAttribute('disabled');
       } else {
         submitBtnEl.setAttribute('disabled', true);
       }
+      return isAllow;
     }
 
     // buttonName输入内容变化
     function handleInputButtonName(e) {
+      // 防止copyInfo内容删除空再删除聚焦到buttonName输入框时，会删除buttonName原有内容一个字符
+      if (isCopyInfoBackspaceEmpty) {
+        buttonNameBoxEl.value = inputButtonName;
+        isCopyInfoBackspaceEmpty = false;
+        return;
+      }
       const realVal = e?.target?.value?.trim();
       inputButtonName = realVal;
       getIsRelease();
     }
 
+    // buttonName输入框回车，copyInfo输入框聚焦
+    function handleEnterButtonName(e) {
+      const keyCode = e.keyCode || e.which;
+      if (
+        keyCode === 13
+        && !e.ctrlKey
+        && (e.code === 'Enter' || e.code === 'NumpadEnter')
+      ) {
+        copyInfoBoxEl.focus();
+        isButtonNameEnter = true;
+        focusPosition = 2;
+      }
+    }
+    
     // copyInfo输入内容变化
     function handleInputCopyInfo(e) {
+      // 防止buttonName按回车聚焦到copyInfo输入框时，copyInfo内容会在原有基础上多一个回车
+      if (isButtonNameEnter) {
+        copyInfoBoxEl.value = inputCopyInfo;
+        isButtonNameEnter = false;
+        return;
+      }
       const val = e?.target?.value;
       inputCopyInfo = val?.trim() ? val : '';
       getIsRelease();
+    }
+
+    // copyInfo输入框删除到没有内容时，再按删除，buttonName聚焦
+    function handleBackspaceCopyInfo(e) {
+      const keyCode = e.keyCode || e.which;
+      if (
+        keyCode === 8
+        && e.code === 'Backspace'
+        && JSON.stringify(copyInfoBoxEl.value) === '""'
+      ) {
+        buttonNameBoxEl.focus();
+        isCopyInfoBackspaceEmpty = true;
+        focusPosition = 1;
+      }
+    }
+
+    // 重置数据及状态
+    function reset() {
+      inputButtonName = '';
+      inputCopyInfo = '';
+      customEditBoxEl.style.display = 'none';
+      customAddBtnEl.removeAttribute('disabled');
+      buttonNameBoxEl.removeEventListener('input', handleInputButtonName);
+      buttonNameBoxEl.removeEventListener('keydown', handleEnterButtonName);
+      copyInfoBoxEl.removeEventListener('input', handleInputCopyInfo);
+      copyInfoBoxEl.removeEventListener('keydown', handleBackspaceCopyInfo);
     }
 
     // 点击加号按钮
@@ -187,10 +318,14 @@
       customAddBtnEl.setAttribute('disabled', true);
       customEditBoxEl.style.display = 'block';
       buttonNameBoxEl.value = '';
+      buttonNameBoxEl.focus();
+      focusPosition = 1;
       copyInfoBoxEl.value = '';
       getIsRelease();
       buttonNameBoxEl.addEventListener('input', handleInputButtonName);
+      buttonNameBoxEl.addEventListener('keydown', handleEnterButtonName);
       copyInfoBoxEl.addEventListener('input', handleInputCopyInfo);
+      copyInfoBoxEl.addEventListener('keydown', handleBackspaceCopyInfo);
     }
 
     // 确认自定义添加
@@ -204,23 +339,11 @@
       newButtonEl.setAttribute('onclick', `copy('${inputButtonName}')`);
       newButtonEl.setAttribute('ondblclick', `delCopyBtn('${inputButtonName}')`);
       copyBtnGroupEl.insertBefore(newButtonEl, customAddBtnEl);
-      inputButtonName = '';
-      inputCopyInfo = '';
-      customEditBoxEl.style.display = 'none';
-      customAddBtnEl.removeAttribute('disabled');
-      buttonNameBoxEl.removeEventListener('input', handleInputButtonName);
-      copyInfoBoxEl.removeEventListener('input', handleInputCopyInfo);
+      reset();
     }
 
     // 取消自定义添加
-    function cancelAdd() {
-      inputButtonName = '';
-      inputCopyInfo = '';
-      customEditBoxEl.style.display = 'none';
-      customAddBtnEl.removeAttribute('disabled');
-      buttonNameBoxEl.removeEventListener('input', handleInputButtonName);
-      copyInfoBoxEl.removeEventListener('input', handleInputCopyInfo);
-    }
+    function cancelAdd() { reset(); }
   </script>
 </body>
 </html>

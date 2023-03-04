@@ -29,12 +29,13 @@ import TextOverFlowProcessor from 'text-overflow-processor-react'
 interface TextProcessProps {
   /** >>>>>>公共配置 */
   text: string; // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
-  type?: ProcessType; // 文案处理类型
+  type?: 'shadow' | 'ellipsis'; // 文案处理类型
   className?: string;
   style?: React.CSSProperties;
   buttonClassName?: string;
   buttonStyle?: React.CSSProperties;
   onClick?: (() => void) | null;
+  isClickOriginalEvent?: boolean; // 当传了onClick时，点击事件是否触发原始事件
   getIsFold?: ((v: boolean) => void) | null; // 获取文案的折叠状态
   isDefaultFold?: boolean; // 是否默认折叠
   unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
@@ -83,6 +84,7 @@ TextOverflowProcessor.defaultProps = {
   buttonClassName: '',
   buttonStyle: {},
   onClick: null,
+  isClickOriginalEvent: false,
   getIsFold: null,
   isDefaultFold: true,
   unfoldButtonText: 'Show Less',
@@ -110,9 +112,17 @@ TextOverflowProcessor.defaultProps = {
 
 1、type为`ellipsis`时，默认`...`省略号的展示是通过CSS属性display: -webkit-box实现的，顾不是谷歌内核的浏览器使用时无法达到预期折叠省略的效果（甚至可能出现文案展示为空白的情况，例如：低版本的safari浏览器），为此在`1.1.0`版增加isJsComputed属性，文案内容在折叠时通过js计算得出。
 
-2、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
+2、本组件在使用时，外层第一个父元素及本组件之内的元素标签尽量不要使用CSS属性white-space: nowrap，否则可能影响getIsFold获取的正确性。
+
+3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪1.1.6
+
+`2023-03-04`
+
+☆ 增加isClickOriginalEvent属性。
 
 ### ↪1.1.5-remedying
 

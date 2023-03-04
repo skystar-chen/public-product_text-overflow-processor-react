@@ -14,6 +14,7 @@ interface TextProcessProps {
   buttonClassName?: string;
   buttonStyle?: React.CSSProperties;
   onClick?: (() => void) | null;
+  isClickOriginalEvent?: boolean; // 当传了onClick时，点击事件是否触发原始事件
   getIsFold?: ((v: boolean) => void) | null; // 获取文案的折叠状态
   isDefaultFold?: boolean; // 是否默认折叠
   unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
@@ -63,6 +64,7 @@ const DEFAULT_PROPS: TextProcessProps = {
   buttonClassName: '',
   buttonStyle: {},
   onClick: null,
+  isClickOriginalEvent: false,
   getIsFold: null,
   isDefaultFold: true,
   unfoldButtonText: 'Show Less',
@@ -95,6 +97,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     buttonClassName,
     buttonStyle,
     onClick,
+    isClickOriginalEvent,
     getIsFold,
     isDefaultFold,
     unfoldButtonText,
@@ -228,8 +231,10 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }, [isJsComputed, isMustButton, isMustNoButton, isShowAllContent]);
 
   const handleClick = useCallback(() => {
-    onClick ? onClick?.() : setIsFold(!isFold);
-  }, [isFold]);
+    onClick && onClick?.();
+    onClick && isClickOriginalEvent && setIsFold(!isFold);
+    onClick || setIsFold(!isFold);
+  }, [isFold, isClickOriginalEvent]);
 
   const getButtonContent = useCallback(() => {
     return isFold ? foldButtonText : unfoldButtonText ;
