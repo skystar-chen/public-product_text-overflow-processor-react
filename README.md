@@ -112,11 +112,17 @@ TextOverflowProcessor.defaultProps = {
 
 1、type为`ellipsis`时，默认`...`省略号的展示是通过CSS属性display: -webkit-box实现的，顾不是谷歌内核的浏览器使用时无法达到预期折叠省略的效果（甚至可能出现文案展示为空白的情况，例如：低版本的safari浏览器），为此在`1.1.0`版增加isJsComputed属性，文案内容在折叠时通过js计算得出。
 
-2、本组件在使用时，外层第一个父元素及本组件之内的元素标签尽量不要使用CSS属性white-space: nowrap，否则可能影响getIsFold获取的正确性。
+2、本组件及本组件之内的元素标签尽量不要使用CSS属性white-space: nowrap，否则可能影响getIsFold获取的正确性。
 
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪1.1.7
+
+`2023-03-11`
+
+☆ 组件样式增加white-space: pre-wrap，以免被组件外部样式white-space: nowrap影响，导致getIsFold获取的结果不正确。
 
 ### ↪1.1.6
 

@@ -20,7 +20,12 @@ export default TextOverflowProcessor;
 //   </React.StrictMode>
 // );
 
-/* 注意：发布前镜像源切换成npm镜像源，package.json文件的相关依赖及其他无用配置全部暂时去掉（否则下载下来的包也会去下载相应的依赖耗费流量及下载时间）
-npm login --registry=https://registry.npmjs.org/
-npm publish --registry=https://registry.npmjs.org/
-npm version patch */
+/**
+ * 注意：发布前镜像源切换成npm镜像源，package.json文件的相关依赖及其他无用配置全部暂时去掉
+ * （否则低版本npm下载下来的包也会去下载相应的依赖耗费流量及下载时间）
+ */
+/**
+ * npm login --registry=https://registry.npmjs.org/
+ * npm publish --registry=https://registry.npmjs.org/
+ * 或：npm version patch
+ */
