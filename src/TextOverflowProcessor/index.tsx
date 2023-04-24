@@ -51,6 +51,7 @@ interface TextProcessProps {
 
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
+  isShadowLayer?: boolean; // 是否需要阴影遮罩层
   shadowClassName?: string; // 阴影遮罩层自定义类名
   shadowStyle?: React.CSSProperties; // 阴影遮罩层自定义样式
 };
@@ -83,6 +84,7 @@ const DEFAULT_PROPS: TextProcessProps = {
   buttonBeforeSlot: null,
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH: 76,
+  isShadowLayer: true,
   shadowClassName: '',
   shadowStyle: {},
 };
@@ -116,6 +118,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     buttonBeforeSlot,
     /** >>>>>>仅shadow配置 */
     shadowInitBoxShowH,
+    isShadowLayer,
     shadowClassName,
     shadowStyle,
   } = props;
@@ -357,7 +360,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
               style={{height: isShowBtn ? shadowInitBoxShowH : 'auto'}}
               dangerouslySetInnerHTML={{ __html: text }}
             ></span>
-            {(isShowBtn && isFold) && (
+            {(isShadowLayer && isShowBtn && isFold) && (
               <span
                 className={`shadow ${shadowClassName}`}
                 style={Object?.assign({bottom: lineHeight}, shadowStyle) || {bottom: lineHeight}}

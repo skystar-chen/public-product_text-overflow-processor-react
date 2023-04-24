@@ -72,6 +72,7 @@ interface TextProcessProps {
 
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
+  isShadowLayer?: boolean; // 是否需要阴影遮罩层
   shadowClassName?: string; // 阴影遮罩层自定义类名
   shadowStyle?: React.CSSProperties; // 阴影遮罩层自定义样式
 }
@@ -103,6 +104,7 @@ TextOverflowProcessor.defaultProps = {
   buttonBeforeSlot: null,
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH: 76,
+  isShadowLayer: true,
   shadowClassName: '',
   shadowStyle: {},
 }
@@ -117,6 +119,14 @@ TextOverflowProcessor.defaultProps = {
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪1.1.8
+
+`2023-04-24`
+
+☆ 组件样式white-space: nowrap修改为white-space: break-spaces，`ellipsis`时文案全是空格时兼容换行；
+
+☆ 增加isShadowLayer属性。
 
 ### ↪1.1.7
 
