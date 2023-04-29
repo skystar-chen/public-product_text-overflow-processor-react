@@ -118,13 +118,13 @@ TextOverflowProcessor.defaultProps = {
 
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
-## 四、更新日志
+## 四、更新日志（1.x.x低版本将不记录高版本更新日志）
 
 ### ↪1.1.8
 
 `2023-04-24`
 
-☆ 组件样式white-space: nowrap修改为white-space: break-spaces，`ellipsis`时文案全是空格时兼容换行；
+☆ 组件样式white-space: pre-wrap修改为white-space: break-spaces，`ellipsis`时文案全是空格时兼容换行；
 
 ☆ 增加isShadowLayer属性。
 
