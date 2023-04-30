@@ -6,20 +6,6 @@ import './index.scss';
 // #region
 type ProcessType = 'ellipsis' | 'shadow';
 type ProcessTypeArr = ['ellipsis', 'shadow'];
-type OptionType = {
-  type?: ProcessType, // 文案处理类型
-  buttonClassName?: string,
-  buttonStyle?: React.CSSProperties,
-  isClickOriginalEvent?: boolean, // 当传了onClick时，点击事件是否触发原始事件
-  isDefaultFold?: boolean, // 是否默认折叠
-  unfoldButtonText?: string  | JSX.Element | JSX.Element[], // 展开时按钮文案
-  foldButtonText?: string  | JSX.Element | JSX.Element[], // 折叠时按钮文案
-  isShowAllContent?: boolean, // 当选择展示所有内容时将不提供操作按钮
-  isMustButton?: boolean, // 是否常驻显示按钮
-  isMustNoButton?: boolean, // 是否不要显示按钮
-  lineHeight?: number,
-  isRenderShowAllDOM?: boolean, // 是否渲染被隐藏的全部文案展示DOM
-};
 type EllipsisOptionType = {
   ellipsisLineClamp?: number, // 控制显示的行数
   /**
@@ -50,18 +36,31 @@ type ShadowOptionType = {
   shadowClassName?: string, // 阴影遮罩层自定义类名
   shadowStyle?: React.CSSProperties, // 阴影遮罩层自定义样式
 };
+type OptionType = {
+  type?: ProcessType, // 文案处理类型
+  /** >>>>>>ellipsis配置 */
+  ellipsisOption?: EllipsisOptionType,
+  /** >>>>>>shadow配置 */
+  shadowOption?: ShadowOptionType,
+  buttonClassName?: string,
+  buttonStyle?: React.CSSProperties,
+  isClickOriginalEvent?: boolean, // 当传了onClick时，点击事件是否触发原始事件
+  isDefaultFold?: boolean, // 是否默认折叠
+  unfoldButtonText?: string  | JSX.Element | JSX.Element[], // 展开时按钮文案
+  foldButtonText?: string  | JSX.Element | JSX.Element[], // 折叠时按钮文案
+  isShowAllContent?: boolean, // 当选择展示所有内容时将不提供操作按钮
+  isMustButton?: boolean, // 是否常驻显示按钮
+  isMustNoButton?: boolean, // 是否不要显示按钮
+  lineHeight?: number,
+  isRenderShowAllDOM?: boolean, // 是否渲染被隐藏的全部文案展示DOM
+};
 interface TextProcessProps {
-  /** >>>>>>公共配置 */
   text: string, // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
   className?: string,
   style?: React.CSSProperties,
   onClick?: (() => void) | null,
   getIsFold?: ((v: boolean) => void) | null, // 获取文案的折叠状态
   option?: OptionType,
-  /** >>>>>>仅ellipsis配置 */
-  ellipsisOption?: EllipsisOptionType,
-  /** >>>>>>仅shadow配置 */
-  shadowOption?: ShadowOptionType,
 };
 // #endregion
 /**TS类型声明 end */
@@ -69,20 +68,6 @@ interface TextProcessProps {
 /**常量声明 start */
 // #region
 const TYPE: ProcessTypeArr = ['ellipsis', 'shadow'];
-const DEFAULT_OPTION: OptionType = {
-  type: 'ellipsis',
-  buttonClassName: '',
-  buttonStyle: {},
-  isClickOriginalEvent: false,
-  isDefaultFold: true,
-  unfoldButtonText: 'Show Less',
-  foldButtonText: 'Show All',
-  isShowAllContent: false,
-  isMustButton: false,
-  isMustNoButton: false,
-  lineHeight: 24,
-  isRenderShowAllDOM: false,
-};
 const DEFAULT_ELLIPSIS_OPTION: EllipsisOptionType = {
   ellipsisLineClamp: 2,
   isJsComputed: false,
@@ -97,6 +82,24 @@ const DEFAULT_SHADOW_OPTION: ShadowOptionType = {
   shadowClassName: '',
   shadowStyle: {},
 };
+const DEFAULT_OPTION: OptionType = {
+  type: 'ellipsis',
+  /** >>>>>>ellipsis配置 */
+  ellipsisOption: DEFAULT_ELLIPSIS_OPTION,
+  /** >>>>>>shadow配置 */
+  shadowOption: DEFAULT_SHADOW_OPTION,
+  buttonClassName: '',
+  buttonStyle: {},
+  isClickOriginalEvent: false,
+  isDefaultFold: true,
+  unfoldButtonText: 'Show Less',
+  foldButtonText: 'Show All',
+  isShowAllContent: false,
+  isMustButton: false,
+  isMustNoButton: false,
+  lineHeight: 24,
+  isRenderShowAllDOM: false,
+};
 const DEFAULT_PROPS: TextProcessProps = {
   text: '',
   className: '',
@@ -104,10 +107,6 @@ const DEFAULT_PROPS: TextProcessProps = {
   onClick: null,
   getIsFold: null,
   option: DEFAULT_OPTION,
-  /** >>>>>>仅ellipsis配置 */
-  ellipsisOption: DEFAULT_ELLIPSIS_OPTION,
-  /** >>>>>>仅shadow配置 */
-  shadowOption: DEFAULT_SHADOW_OPTION,
 };
 // #endregion
 /**常量声明 end */
@@ -121,14 +120,14 @@ function TextOverflowProcessor(props: TextProcessProps) {
     onClick,
     getIsFold,
     option,
-    ellipsisOption,
-    shadowOption,
   } = props;
 
   // #region
   /** >>>>>>公共配置 */
   const {
     type = 'ellipsis',
+    ellipsisOption = DEFAULT_ELLIPSIS_OPTION,
+    shadowOption = DEFAULT_SHADOW_OPTION,
     buttonClassName = '',
     buttonStyle = {},
     isClickOriginalEvent = false,
@@ -141,7 +140,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     lineHeight = 24,
     isRenderShowAllDOM = false,
   } = option || DEFAULT_OPTION;
-  /** >>>>>>仅ellipsis配置 */
+  /** >>>>>>ellipsis配置 */
   const {
     ellipsisLineClamp = 2,
     isJsComputed = false,
@@ -150,7 +149,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     extraOccupiedW = 0,
     buttonBeforeSlot = null,
   } = ellipsisOption || DEFAULT_ELLIPSIS_OPTION;
-  /** >>>>>>仅shadow配置 */
+  /** >>>>>>shadow配置 */
   const {
     shadowInitBoxShowH = 76,
     isShadowLayer = true,

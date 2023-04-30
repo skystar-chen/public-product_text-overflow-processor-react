@@ -35,6 +35,38 @@ interface TextProcessProps {
   getIsFold?: ((v: boolean) => void) | null, // 获取文案的折叠状态
   option?: {
     type?: 'ellipsis' | 'shadow', // 文案处理类型
+    /** >>>>>>ellipsis配置 */
+    ellipsisOption?: {
+      ellipsisLineClamp?: number, // 控制显示的行数
+      /**
+       * 是否使用Js逻辑计算文字开始折叠时显示的文案，可以传字号大小
+       * 注意：
+       * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box,属性的使用（或出现异常）
+       * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
+       * 3、这时只支持传string类型内容
+       * 4、此时textEndSlot、buttonBeforeSlot，以及foldButtonText是非string类型（string类型除外）
+       * 所额外占用的宽度，都需要通过extraOccupiedW告知组件
+       */
+      isJsComputed?: boolean,
+      fontSize?: number, // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
+      /**
+       * 紧跟文字内容尾部的额外内容，可以是icon等任意内容，例如超链接icon，点击跳转到外部网站
+       * 文案溢出时显示在...后面，不溢出时在文字尾部
+       * 注意：启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
+       */
+      textEndSlot?: any,
+      // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
+      extraOccupiedW?: number,
+      // 按钮前面的占位内容，isJsComputed为false时默认会有一些空格，isJsComputed为true时此属性无效
+      buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null,
+    },
+    /** >>>>>>shadow配置 */
+    shadowOption?: {
+      shadowInitBoxShowH?: number, // 折叠时显示的文案高度，超出这个高度才出现操作按钮
+      isShadowLayer?: boolean, // 是否需要阴影遮罩层
+      shadowClassName?: string, // 阴影遮罩层自定义类名
+      shadowStyle?: React.CSSProperties, // 阴影遮罩层自定义样式
+    },
     buttonClassName?: string,
     buttonStyle?: React.CSSProperties,
     isClickOriginalEvent?: boolean, // 当传了onClick时，点击事件是否触发原始事件
@@ -47,40 +79,6 @@ interface TextProcessProps {
     lineHeight?: number,
     isRenderShowAllDOM?: boolean, // 是否渲染被隐藏的全部文案展示DOM
   },
-  
-  /** >>>>>>仅ellipsis配置 */
-  ellipsisOption?: {
-    ellipsisLineClamp?: number, // 控制显示的行数
-    /**
-     * 是否使用Js逻辑计算文字开始折叠时显示的文案，可以传字号大小
-     * 注意：
-     * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box,属性的使用（或出现异常）
-     * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
-     * 3、这时只支持传string类型内容
-     * 4、此时textEndSlot、buttonBeforeSlot，以及foldButtonText是非string类型（string类型除外）
-     * 所额外占用的宽度，都需要通过extraOccupiedW告知组件
-     */
-    isJsComputed?: boolean,
-    fontSize?: number, // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
-    /**
-     * 紧跟文字内容尾部的额外内容，可以是icon等任意内容，例如超链接icon，点击跳转到外部网站
-     * 文案溢出时显示在...后面，不溢出时在文字尾部
-     * 注意：启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
-     */
-    textEndSlot?: any,
-    // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
-    extraOccupiedW?: number,
-    // 按钮前面的占位内容，isJsComputed为false时默认会有一些空格，isJsComputed为true时此属性无效
-    buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null,
-  },
-
-  /** >>>>>>仅shadow配置 */
-  shadowOption?: {
-    shadowInitBoxShowH?: number, // 折叠时显示的文案高度，超出这个高度才出现操作按钮
-    isShadowLayer?: boolean, // 是否需要阴影遮罩层
-    shadowClassName?: string, // 阴影遮罩层自定义类名
-    shadowStyle?: React.CSSProperties, // 阴影遮罩层自定义样式
-  },
 }
 对应默认值：
 TextOverflowProcessor.defaultProps = {
@@ -91,6 +89,22 @@ TextOverflowProcessor.defaultProps = {
   getIsFold: null,
   option: {
     type: 'ellipsis',
+    /** >>>>>>ellipsis配置 */
+    ellipsisOption: {
+      ellipsisLineClamp: 2,
+      isJsComputed: false,
+      fontSize: 12,
+      textEndSlot: null,
+      extraOccupiedW: 0,
+      buttonBeforeSlot: null,
+    },
+    /** >>>>>>shadow配置 */
+    shadowOption: {
+      shadowInitBoxShowH: 76,
+      isShadowLayer: true,
+      shadowClassName: '',
+      shadowStyle: {},
+    },
     buttonClassName: '',
     buttonStyle: {},
     isClickOriginalEvent: false,
@@ -102,22 +116,6 @@ TextOverflowProcessor.defaultProps = {
     isMustNoButton: false,
     lineHeight: 24,
     isRenderShowAllDOM: false,
-  },
-  /** >>>>>>仅ellipsis配置 */
-  ellipsisOption: {
-    ellipsisLineClamp: 2,
-    isJsComputed: false,
-    fontSize: 12,
-    textEndSlot: null,
-    extraOccupiedW: 0,
-    buttonBeforeSlot: null,
-  },
-  /** >>>>>>仅shadow配置 */
-  shadowOption: {
-    shadowInitBoxShowH: 76,
-    isShadowLayer: true,
-    shadowClassName: '',
-    shadowStyle: {},
   },
 }
 ```
@@ -131,6 +129,12 @@ TextOverflowProcessor.defaultProps = {
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪2.0.1
+
+`2023-04-30`
+
+☆ 属性配置项规则变化。
 
 ### ↪2.0.0
 
