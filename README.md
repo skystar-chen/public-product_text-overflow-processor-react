@@ -1,6 +1,9 @@
 # 文本溢出处理
 
-当文案在给定容器显示不下，要对文案进行折叠/展开切换处理，获取文案是否被折叠的状态进行多功能定制时，可以尝试使用本组件TextOverflowProcessor，它也许能帮到你！目前提供`ellipsis`和`shadow`两种处理方式。
+当文案在给定容器显示不下，要对文案进行折叠/展开切换处理，获取文案是否被折叠的状态（例如：被折叠时气泡展示全部）进行多功能定制时，可以尝试使用本组件TextOverflowProcessor，它也许能帮到你！目前提供`ellipsis`和`shadow`两种处理方式。
+
+效果展示：
+![demonstration GIF](./assets/images/demonstration.gif)
 
 > 作者：陈星~
 
