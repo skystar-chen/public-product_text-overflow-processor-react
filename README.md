@@ -133,6 +133,12 @@ TextOverflowProcessor.defaultProps = {
 
 ## 四、更新日志
 
+### ↪2.0.2
+
+`2023-05-03`
+
+☆ readme文档添加gif使用效果演示。
+
 ### ↪2.0.1
 
 `2023-04-30`
