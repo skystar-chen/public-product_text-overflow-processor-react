@@ -1,5 +1,7 @@
-import { useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
+import React, { useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
+import { renderToString } from 'react-dom/server';
 import { getFixedWidthText, getClassNames } from './utils';
+import { JS_COMPUTED_VALID_CSS_PROPERTIES, JS_COMPUTED_NUMBER_TO_PX_PROPERTIES } from './utils/constants';
 import './index.scss';
 
 type ProcessType = 'shadow' | 'ellipsis';
@@ -28,16 +30,23 @@ interface TextProcessProps {
   /** >>>>>>仅ellipsis配置 */
   ellipsisLineClamp?: number; // 控制显示的行数
   /**
-   * 是否使用Js逻辑计算文字开始折叠时显示的文案，可以传字号大小
+   * 是否使用JS逻辑计算文字开始折叠时显示的文案，可以传字号大小
    * 注意：
    * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box;属性的使用（或出现异常）
    * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
    * 3、这时只支持传string类型内容
-   * 4、此时textEndSlot、buttonBeforeSlot，以及foldButtonText是非string类型（string类型除外）
-   * 所额外占用的宽度，都需要通过extraOccupiedW告知组件
+   * 4、此时textEndSlot、buttonBeforeSlot所额外占用的宽度，都需要通过extraOccupiedW告知组件
    */
   isJsComputed?: boolean;
   fontSize?: number; // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
+  fontClassName?: string; // 字体容器类名，仅用于JS计算
+  /**
+   * 字体容器相关样式（当字体样式比较丰富时，代替掉fontSize属性），仅用于JS计算
+   * 注意：
+   * 1、字号大小将覆盖fontSize属性
+   * 2、仅JS_COMPUTED_VALID_CSS_PROPERTIES中的CSS属性有效
+   */
+  fontStyle?: React.CSSProperties;
   /**
    * 紧跟文字内容尾部的额外内容，可以是icon等任意内容，例如超链接icon，点击跳转到外部网站
    * 文案溢出时显示在...后面，不溢出时在文字尾部
@@ -79,6 +88,8 @@ const DEFAULT_PROPS: TextProcessProps = {
   ellipsisLineClamp: 2,
   isJsComputed: false,
   fontSize: 12,
+  fontClassName: '',
+  fontStyle: {},
   textEndSlot: null,
   extraOccupiedW: 0,
   buttonBeforeSlot: null,
@@ -113,6 +124,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
     ellipsisLineClamp,
     isJsComputed,
     fontSize,
+    fontClassName,
+    fontStyle,
     textEndSlot,
     extraOccupiedW,
     buttonBeforeSlot,
@@ -137,43 +150,90 @@ function TextOverflowProcessor(props: TextProcessProps) {
   const viewingArea = useRef<HTMLParagraphElement>(null);
   // 文案整体容器DOM
   const textArea = useRef<HTMLSpanElement>(null);
-  const shadowShowH = useRef<number>(66);
+  const shadowShowH = useRef<number>(76);
 
   // 使用js来计算展示的文案时使用
   const [width, setWidth] = useState(0);
+  const cssText = useMemo(() => {
+    let cssText = '';
+    if (fontStyle && JSON?.stringify(fontStyle) !== '{}') {
+      const reg = new RegExp('[A-Z]', 'g');
+      for (const styleKey in fontStyle) {
+        const realStyleKey = styleKey?.replaceAll(reg, (str: string) => ('-' + str?.toLowerCase()));
+        const styleValue = (fontStyle as any)?.[styleKey];
+        if (JS_COMPUTED_VALID_CSS_PROPERTIES?.includes(realStyleKey)) {
+          const flag = JS_COMPUTED_NUMBER_TO_PX_PROPERTIES?.includes(realStyleKey) && (typeof styleValue === 'number');
+          cssText += `${realStyleKey}:${styleValue}${flag ? 'px' : ''};`;
+        }
+      }
+    }
+
+    return cssText;
+  }, [fontStyle]);
   const computedList = useMemo(() => {
     let finalText = '', isEllipsis = false;
     // 为了获取该组件的宽度，组件第一次render时按所有text文字显示
     if (width && isJsComputed) {
       const sumWidth = width * (ellipsisLineClamp as number);
-      const str = getFixedWidthText(text, sumWidth - (extraOccupiedW as number), fontSize);
+      const span = document.createElement('span');
+      span.style.cssText = 'position:absolute;visibility:hidden;';
+      span.innerHTML = `${
+        React.isValidElement(foldButtonText)
+          ? renderToString(foldButtonText)
+          : (!!foldButtonText ? String(foldButtonText) : '')
+      }`;
+      viewingArea?.current ? viewingArea?.current?.appendChild(span) : document.body.appendChild(span);
+      const buttonWidth = span.offsetWidth || 0; // 按钮占的宽度
+      viewingArea?.current ? viewingArea?.current?.removeChild(span) : document.body.removeChild(span);
+      const str = getFixedWidthText(
+        text,
+        sumWidth - (extraOccupiedW as number),
+        fontSize,
+        400,
+        true,
+        cssText,
+        fontClassName,
+        viewingArea?.current,
+      );
       // 如果返回有省略号，说明文字超出了范围
-      if (str?.endsWith('...')) {
-        isEllipsis = true;
-      }
+      isEllipsis = str?.endsWith('...');
+      const noButtonSumWidth = sumWidth - buttonWidth;
+      // 下面计算折叠与否及是否展示按钮情况下得到的最终文案内容
       if (isEllipsis) {
         // 需要展示按钮时
         if ((foldButtonText || isMustButton) && !isMustNoButton) {
-          const span = document.createElement('span');
-          span.style.visibility = 'hidden';
-          span.style.padding = '0';
-          span.style.whiteSpace = 'nowrap';
-          span.style.overflowX = 'auto';
-          span.style.fontSize = fontSize + 'px';
-          document.body.appendChild(span);
-          span.innerHTML = `...${(typeof foldButtonText === 'string') ? foldButtonText : ''}`;
-          const sumWidth = width * (ellipsisLineClamp as number) - span.offsetWidth;
-          document.body.removeChild(span);
-          finalText = getFixedWidthText(
+          const str = getFixedWidthText(
             text,
-            sumWidth - 10 - (extraOccupiedW as number), // 由于计算出来的文案有精确度误差，屏幕缩放时保留10px范围距离确保按钮不会被挤下来
+            noButtonSumWidth - (extraOccupiedW as number),
             fontSize,
+            400,
+            true,
+            cssText,
+            fontClassName,
+            viewingArea?.current,
           );
+          finalText = str?.substr(0, str?.length - 6) + '...';
         } else {
-          finalText = str?.substr(0, str.length - 6) + '...';
+          finalText = str?.substr(0, str?.length - 6) + '...';
         }
       } else {
-        finalText = text;
+        // 需要展示按钮时
+        if (foldButtonText && isMustButton && !isMustNoButton) {
+          const str = getFixedWidthText(
+            text,
+            noButtonSumWidth - (extraOccupiedW as number),
+            fontSize,
+            400,
+            true,
+            cssText,
+            fontClassName,
+            viewingArea?.current,
+          );
+          isEllipsis = str?.endsWith('...');
+          finalText = isEllipsis ? str?.substr(0, str?.length - 6) + '...' : text;
+        } else {
+          finalText = text;
+        }
       }
     }
     if (isJsComputed) {
@@ -193,6 +253,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
     ellipsisLineClamp,
     foldButtonText,
     fontSize,
+    cssText,
+    fontClassName,
     isMustButton,
     isMustNoButton,
     isJsComputed,
@@ -283,8 +345,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
       setIsFold(false);
       return;
     }
-    // @ts-ignore
-    shadowShowH.current = shadowInitBoxShowH - 10; // 减去shadow阴影的一半高度
+    shadowShowH.current = shadowInitBoxShowH as number;
 
     if (!isJsComputed) {
       if (getIsShowBtn()) {
