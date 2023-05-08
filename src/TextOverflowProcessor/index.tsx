@@ -262,7 +262,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   ]);
 
   const getIsShowBtn = useCallback(() => {
-    const childrens: any = textArea.current?.childNodes;
+    const childrens: any = textArea?.current?.childNodes;
     let childSumH: number = 0; // 所有子元素标签加起来的高度
     for (let i = 0; i < childrens?.length; i++) {
       const t = childrens?.[i];
@@ -290,7 +290,6 @@ function TextOverflowProcessor(props: TextProcessProps) {
     } else {
       const flag = getIsShowBtn();
       !isMustButton && !isMustNoButton && setIsShowBtn(flag);
-      // 当isMustButton为true时，按钮占据一定空间，此时文案可能因此被折叠而返回结果有误，待优化...
       setIsFold(flag);
     }
   }, [isJsComputed, isMustButton, isMustNoButton, isShowAllContent]);
