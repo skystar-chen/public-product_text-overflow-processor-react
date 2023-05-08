@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
+import { useRef, useState, useEffect, memo, useCallback, useMemo, isValidElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { getFixedWidthText, getClassNames } from './utils';
 import { JS_COMPUTED_VALID_CSS_PROPERTIES, JS_COMPUTED_NUMBER_TO_PX_PROPERTIES } from './utils/constants';
@@ -178,7 +178,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
       const span = document.createElement('span');
       span.style.cssText = 'position:absolute;visibility:hidden;';
       span.innerHTML = `${
-        React.isValidElement(foldButtonText)
+        isValidElement(foldButtonText)
           ? renderToString(foldButtonText)
           : (!!foldButtonText ? String(foldButtonText) : '')
       }`;
