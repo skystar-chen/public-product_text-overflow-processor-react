@@ -308,7 +308,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }, [isMustNoButton, textEndSlot, isShowBtn]);
 
   const getIsShowBtn = useCallback(() => {
-    const childrens: any = textArea.current?.childNodes;
+    const childrens: any = textArea?.current?.childNodes;
     let childSumH: number = 0; // 所有子元素标签加起来的高度
     for (let i = 0; i < childrens?.length; i++) {
       const t = childrens?.[i];
