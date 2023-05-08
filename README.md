@@ -42,16 +42,23 @@ interface TextProcessProps {
     ellipsisOption?: {
       ellipsisLineClamp?: number, // 控制显示的行数
       /**
-       * 是否使用Js逻辑计算文字开始折叠时显示的文案，可以传字号大小
+       * 是否使用JS逻辑计算文字开始折叠时显示的文案，可以传字号大小
        * 注意：
        * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box,属性的使用（或出现异常）
        * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
        * 3、这时只支持传string类型内容
-       * 4、此时textEndSlot、buttonBeforeSlot，以及foldButtonText是非string类型（string类型除外）
-       * 所额外占用的宽度，都需要通过extraOccupiedW告知组件
+       * 4、此时textEndSlot、buttonBeforeSlot所额外占用的宽度，都需要通过extraOccupiedW告知组件
        */
       isJsComputed?: boolean,
       fontSize?: number, // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
+      fontClassName?: string; // 字体容器类名，仅用于JS计算
+      /**
+       * 字体容器相关样式（当字体样式比较丰富时，代替掉fontSize属性），仅用于JS计算
+       * 注意：
+       * 1、字号大小将覆盖fontSize属性
+       * 2、仅JS_COMPUTED_VALID_CSS_PROPERTIES（下方将标出）中的CSS属性有效
+       */
+      fontStyle?: React.CSSProperties;
       /**
        * 紧跟文字内容尾部的额外内容，可以是icon等任意内容，例如超链接icon，点击跳转到外部网站
        * 文案溢出时显示在...后面，不溢出时在文字尾部
@@ -97,6 +104,8 @@ TextOverflowProcessor.defaultProps = {
       ellipsisLineClamp: 2,
       isJsComputed: false,
       fontSize: 12,
+      fontClassName: '',
+      fontStyle: {},
       textEndSlot: null,
       extraOccupiedW: 0,
       buttonBeforeSlot: null,
@@ -121,6 +130,52 @@ TextOverflowProcessor.defaultProps = {
     isRenderShowAllDOM: false,
   },
 }
+fontStyle属性中有效的CSS属性：
+JS_COMPUTED_VALID_CSS_PROPERTIES = [
+  'font-size',
+  'font-weight',
+  'font-style',
+  'font-family',
+  'font-feature-settings',
+  'font-kerning',
+  'font-language-override',
+  'font-optical-sizing',
+  'font-stretch',
+  'font-size-adjust',
+  'font-smooth',
+  'font-synthesis',
+  'font-variant',
+  'font-variant-alternates',
+  'font-variant-caps',
+  'font-variant-east-asian',
+  'font-variant-emoji',
+  'font-variant-ligatures',
+  'font-variant-numeric',
+  'font-variant-position',
+  'font-variation-settings',
+  'initial-letter',
+  'inline-size',
+  'line-height',
+  'line-height-step',
+  'line-break',
+  'letter-spacing',
+  'text-shadow',
+  'text-transform',
+  'text-indent',
+  'text-combine-upright',
+  'text-emphasis',
+  'text-emphasis-position',
+  'text-emphasis-style',
+  'text-orientation',
+  'text-rendering',
+  'text-size-adjust',
+  'vertical-align',
+  'white-space',
+  'word-spacing',
+  'word-break',
+  'word-wrap',
+  'writing-mode',
+]
 ```
 
 注：
@@ -132,6 +187,14 @@ TextOverflowProcessor.defaultProps = {
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪2.0.3
+
+`2023-05-08`
+
+☆ `ellipsis`JS计算，增加fontClassName、fontStyle属性，弥补当文案样式比较丰富时，仅fontSize属性无法满足要求；
+
+☆ 优化isJsComputed计算逻辑。
 
 ### ↪2.0.2
 
