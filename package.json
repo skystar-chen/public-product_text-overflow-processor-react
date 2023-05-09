@@ -14,7 +14,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/skystar-chen/public-product_text-overflow-processor-react"
+    "url": "https://github.com/skystar-chen/public-product_text-overflow-processor-react/tree/version-1x"
   },
   "scripts": {
     "start": "react-scripts start",
