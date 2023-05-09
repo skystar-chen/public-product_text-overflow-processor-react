@@ -156,7 +156,11 @@ function TextOverflowProcessor(props: TextProcessProps) {
   const [width, setWidth] = useState(0);
   const cssText = useMemo(() => {
     let cssText = '';
-    if (fontStyle && JSON?.stringify(fontStyle) !== '{}') {
+    if (
+      fontStyle
+      && Object.prototype.toString.call(fontStyle) === '[object Object]'
+      && JSON?.stringify(fontStyle) !== '{}'
+    ) {
       const reg = new RegExp('[A-Z]', 'g');
       for (const styleKey in fontStyle) {
         const realStyleKey = styleKey?.replaceAll(reg, (str: string) => ('-' + str?.toLowerCase()));
