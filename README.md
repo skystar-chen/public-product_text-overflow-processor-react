@@ -178,6 +178,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ## 四、更新日志（1.x.x低版本将不记录高版本更新日志）
 
+### ↪1.1.10-optimize
+
+`2023-05-10`
+
+☆ package.json文件补充及代码优化。
+
 ### ↪1.1.10
 
 `2023-05-08`
