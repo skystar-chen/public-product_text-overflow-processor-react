@@ -1,126 +1,20 @@
 import { useRef, useState, useEffect, memo, useCallback, useMemo, isValidElement } from 'react';
 import { renderToString } from 'react-dom/server';
-import { JS_COMPUTED_VALID_CSS_PROPERTIES, JS_COMPUTED_NUMBER_TO_PX_PROPERTIES } from './utils/constants';
 import { getFixedWidthText, getClassNames } from './utils';
+import {
+  TYPE,
+  DEFAULT_ELLIPSIS_OPTION,
+  DEFAULT_SHADOW_OPTION,
+  DEFAULT_OPTION,
+  DEFAULT_PROPS,
+  JS_COMPUTED_VALID_CSS_PROPERTIES,
+  JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
+} from './constants';
+import {
+  ProcessType,
+  TextProcessProps,
+} from './types';
 import './index.scss';
-
-/**TS类型声明 start */
-// #region
-type ProcessType = 'ellipsis' | 'shadow';
-type ProcessTypeArr = ['ellipsis', 'shadow'];
-type EllipsisOptionType = {
-  ellipsisLineClamp?: number, // 控制显示的行数
-  /**
-   * 是否使用JS逻辑计算文字开始折叠时显示的文案，可以传字号大小
-   * 注意：
-   * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box,属性的使用（或出现异常）
-   * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
-   * 3、这时只支持传string类型内容
-   * 4、此时textEndSlot、buttonBeforeSlot所额外占用的宽度，都需要通过extraOccupiedW告知组件
-   */
-  isJsComputed?: boolean,
-  fontSize?: number, // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
-  fontClassName?: string; // 字体容器类名，仅用于JS计算
-  /**
-   * 字体容器相关样式（当字体样式比较丰富时，代替掉fontSize属性），仅用于JS计算
-   * 注意：
-   * 1、字号大小将覆盖fontSize属性
-   * 2、仅JS_COMPUTED_VALID_CSS_PROPERTIES中的CSS属性有效
-   */
-  fontStyle?: React.CSSProperties;
-  /**
-   * 紧跟文字内容尾部的额外内容，可以是icon等任意内容，例如超链接icon，点击跳转到外部网站
-   * 文案溢出时显示在...后面，不溢出时在文字尾部
-   * 注意：启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
-   */
-  textEndSlot?: any,
-  // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
-  extraOccupiedW?: number,
-  // 按钮前面的占位内容，isJsComputed为false时默认会有一些空格，isJsComputed为true时此属性无效
-  buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null,
-};
-type ShadowOptionType = {
-  shadowInitBoxShowH?: number, // 折叠时显示的文案高度，超出这个高度才出现操作按钮
-  isShadowLayer?: boolean, // 是否需要阴影遮罩层
-  shadowClassName?: string, // 阴影遮罩层自定义类名
-  shadowStyle?: React.CSSProperties, // 阴影遮罩层自定义样式
-};
-type OptionType = {
-  type?: ProcessType, // 文案处理类型
-  /** >>>>>>ellipsis配置 */
-  ellipsisOption?: EllipsisOptionType,
-  /** >>>>>>shadow配置 */
-  shadowOption?: ShadowOptionType,
-  buttonClassName?: string,
-  buttonStyle?: React.CSSProperties,
-  isClickOriginalEvent?: boolean, // 当传了onClick时，点击事件是否触发原始事件
-  isDefaultFold?: boolean, // 是否默认折叠
-  unfoldButtonText?: string  | JSX.Element | JSX.Element[], // 展开时按钮文案
-  foldButtonText?: string  | JSX.Element | JSX.Element[], // 折叠时按钮文案
-  isShowAllContent?: boolean, // 当选择展示所有内容时将不提供操作按钮
-  isMustButton?: boolean, // 是否常驻显示按钮
-  isMustNoButton?: boolean, // 是否不要显示按钮
-  lineHeight?: number,
-  isRenderShowAllDOM?: boolean, // 是否渲染被隐藏的全部文案展示DOM
-};
-interface TextProcessProps {
-  text: string, // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
-  className?: string,
-  style?: React.CSSProperties,
-  onClick?: (() => void) | null,
-  getIsFold?: ((v: boolean) => void) | null, // 获取文案的折叠状态
-  option?: OptionType,
-};
-// #endregion
-/**TS类型声明 end */
-
-/**常量声明 start */
-// #region
-const TYPE: ProcessTypeArr = ['ellipsis', 'shadow'];
-const DEFAULT_ELLIPSIS_OPTION: EllipsisOptionType = {
-  ellipsisLineClamp: 2,
-  isJsComputed: false,
-  fontSize: 12,
-  fontClassName: '',
-  fontStyle: {},
-  textEndSlot: null,
-  extraOccupiedW: 0,
-  buttonBeforeSlot: null,
-};
-const DEFAULT_SHADOW_OPTION: ShadowOptionType = {
-  shadowInitBoxShowH: 76,
-  isShadowLayer: true,
-  shadowClassName: '',
-  shadowStyle: {},
-};
-const DEFAULT_OPTION: OptionType = {
-  type: 'ellipsis',
-  /** >>>>>>ellipsis配置 */
-  ellipsisOption: DEFAULT_ELLIPSIS_OPTION,
-  /** >>>>>>shadow配置 */
-  shadowOption: DEFAULT_SHADOW_OPTION,
-  buttonClassName: '',
-  buttonStyle: {},
-  isClickOriginalEvent: false,
-  isDefaultFold: true,
-  unfoldButtonText: 'Show Less',
-  foldButtonText: 'Show All',
-  isShowAllContent: false,
-  isMustButton: false,
-  isMustNoButton: false,
-  lineHeight: 24,
-  isRenderShowAllDOM: false,
-};
-const DEFAULT_PROPS: TextProcessProps = {
-  text: '',
-  className: '',
-  style: {},
-  onClick: null,
-  getIsFold: null,
-  option: DEFAULT_OPTION,
-};
-// #endregion
-/**常量声明 end */
 
 function TextOverflowProcessor(props: TextProcessProps) {
 
@@ -311,6 +205,39 @@ function TextOverflowProcessor(props: TextProcessProps) {
     return (isMustNoButton && !textEndSlot) || !isShowBtn;
   }, [isMustNoButton, textEndSlot, isShowBtn]);
 
+  const buttonCon = useMemo(() => {
+    return isFold ? foldButtonText : unfoldButtonText ;
+  }, [isFold, unfoldButtonText, foldButtonText]);
+
+  const realButtonStyle = useMemo(() => {
+    const defalutStyle = {
+      display: isShowBtn ? 'inline-block' : 'none',
+      lineHeight: lineHeight + 'px',
+    };
+
+    if (Object.prototype.toString.call(buttonStyle) !== '[object Object]') {
+      console.error('buttonStyle格式不正确！');
+      return defalutStyle;
+    }
+
+    return Object?.assign(defalutStyle, buttonStyle);
+  }, [isShowBtn, lineHeight, buttonStyle]);
+
+  // 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来
+  const textFoldNoButtonEndSlot = useMemo(() => {
+    return (isMustNoButton && isFold && textEndSlot && (
+      <span
+        className="click-btn"
+        style={{
+          display: 'inline-block',
+          lineHeight: lineHeight + 'px',
+        }}
+      >
+        {textEndSlot}
+      </span>
+    ));
+  }, [isMustNoButton, isFold, textEndSlot, lineHeight]);
+
   const getIsShowBtn = useCallback(() => {
     const childrens: any = textArea?.current?.childNodes;
     let childSumH: number = 0; // 所有子元素标签加起来的高度
@@ -354,39 +281,6 @@ function TextOverflowProcessor(props: TextProcessProps) {
     onClick && isClickOriginalEvent && setIsFold(!isFold);
     onClick || setIsFold(!isFold);
   }, [isFold, isClickOriginalEvent]);
-
-  const getButtonContent = useCallback(() => {
-    return isFold ? foldButtonText : unfoldButtonText ;
-  }, [isFold, unfoldButtonText, foldButtonText]);
-
-  const getButtonStyle = useCallback(() => {
-    const defalutStyle = {
-      display: isShowBtn ? 'inline-block' : 'none',
-      lineHeight: lineHeight + 'px',
-    };
-
-    if (Object.prototype.toString.call(buttonStyle) !== '[object Object]') {
-      console.error('buttonStyle格式不正确！');
-      return defalutStyle;
-    }
-
-    return Object?.assign(defalutStyle, buttonStyle);
-  }, [isShowBtn, lineHeight, buttonStyle]);
-
-  // 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来
-  const getTextFoldNoButtonEndSlot = () => {
-    return (isMustNoButton && isFold && textEndSlot && (
-      <span
-        className="click-btn"
-        style={{
-          display: 'inline-block',
-          lineHeight: lineHeight + 'px',
-        }}
-      >
-        {textEndSlot}
-      </span>
-    ));
-  }
 
   // 初始化
   const init = () => {
@@ -493,9 +387,9 @@ function TextOverflowProcessor(props: TextProcessProps) {
                 'click-btn': true,
                 [buttonClassName as string]: !!buttonClassName,
               })}
-              style={getButtonStyle()}
+              style={realButtonStyle}
             >
-              <label onClick={handleClick}>{getButtonContent()}</label>
+              <label onClick={handleClick}>{buttonCon}</label>
             </span>
           </>
         )}
@@ -514,14 +408,14 @@ function TextOverflowProcessor(props: TextProcessProps) {
                   'click-btn': true,
                   [buttonClassName as string]: !!buttonClassName,
                 })}
-                style={getButtonStyle()}
+                style={realButtonStyle}
               >
                 {(textEndSlot && isFold) && textEndSlot}
                 {buttonBeforeSlot || (isJsComputed ? null : <>&nbsp;&nbsp;&nbsp;&nbsp;</>)}
-                <label onClick={handleClick}>{getButtonContent()}</label>
+                <label onClick={handleClick}>{buttonCon}</label>
               </span>
               {/* 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来 */}
-              {getTextFoldNoButtonEndSlot()}
+              {textFoldNoButtonEndSlot}
               <span
                 ref={textArea}
                 className="text"
