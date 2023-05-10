@@ -1,3 +1,44 @@
+import {
+  ProcessTypeArr,
+  TextProcessProps,
+} from '../types';
+
+const TYPE: ProcessTypeArr = ['shadow', 'ellipsis'];
+
+const DEFAULT_PROPS: TextProcessProps = {
+  text: '',
+  type: 'shadow',
+  className: '',
+  style: {},
+  buttonClassName: '',
+  buttonStyle: {},
+  onClick: null,
+  isClickOriginalEvent: false,
+  getIsFold: null,
+  isDefaultFold: true,
+  unfoldButtonText: 'Show Less',
+  foldButtonText: 'Show All',
+  isShowAllContent: false,
+  isMustButton: false,
+  isMustNoButton: false,
+  lineHeight: 24,
+  isRenderShowAllDOM: false,
+  /** >>>>>>仅ellipsis配置 */
+  ellipsisLineClamp: 2,
+  isJsComputed: false,
+  fontSize: 12,
+  fontClassName: '',
+  fontStyle: {},
+  textEndSlot: null,
+  extraOccupiedW: 0,
+  buttonBeforeSlot: null,
+  /** >>>>>>仅shadow配置 */
+  shadowInitBoxShowH: 76,
+  isShadowLayer: true,
+  shadowClassName: '',
+  shadowStyle: {},
+};
+
 const JS_COMPUTED_VALID_CSS_PROPERTIES = [
   'font-size',
   'font-weight',
@@ -54,6 +95,8 @@ const JS_COMPUTED_NUMBER_TO_PX_PROPERTIES = [
 ];
 
 export {
+  TYPE,
+  DEFAULT_PROPS,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
 };
