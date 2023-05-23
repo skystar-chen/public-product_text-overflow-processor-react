@@ -367,7 +367,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
                 'text-show-btn-box': isShowBtn,
                 'text-show-all-box': !isFold,
               })}
-              style={{height: isShowBtn ? shadowInitBoxShowH : 'auto'}}
+              style={{height: (isShowBtn && !isViewResize) ? shadowInitBoxShowH : 'auto'}}
               dangerouslySetInnerHTML={{ __html: text }}
             ></span>
             {isVisibleShadowLayer && (

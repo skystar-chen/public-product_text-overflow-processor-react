@@ -22,7 +22,7 @@ yarn add text-overflow-processor-react
 ## 二、使用
 
 ```react
-import TextOverFlowProcessor from 'text-overflow-processor-react'
+import TextOverflowProcessor from 'text-overflow-processor-react'
 ```
 
 ## 三、参数注解及默认值
@@ -187,6 +187,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪2.0.4
+
+`2023-05-23`
+
+☆ 修复`shadow`时，屏幕缩放文案展示状态错误。
 
 ### ↪2.0.3-optimize
 
