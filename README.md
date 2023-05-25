@@ -77,7 +77,7 @@ interface TextProcessProps {
   textEndSlot?: any;
   // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
   extraOccupiedW?: number;
-  // 按钮前面的占位内容，isJsComputed为false时默认会有一些空格，isJsComputed为true时此属性无效
+  // 按钮前面的占位内容，isJsComputed为false时默认会有4个空格（使用频率低）
   buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null;
 
   /** >>>>>>仅shadow配置 */
