@@ -119,6 +119,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
       viewingArea?.current ? viewingArea?.current?.removeChild(span) : document.body.removeChild(span);
       const str = getFixedWidthText(
         text,
+        width,
         sumWidth - (extraOccupiedW as number),
         fontSize,
         400,
@@ -136,6 +137,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
         if ((foldButtonText || isMustButton) && !isMustNoButton) {
           const str = getFixedWidthText(
             text,
+            width,
             noButtonSumWidth - (extraOccupiedW as number),
             fontSize,
             400,
@@ -144,15 +146,16 @@ function TextOverflowProcessor(props: TextProcessProps) {
             fontClassName,
             viewingArea?.current,
           );
-          finalText = str?.substr(0, str?.length - 6) + '...';
+          finalText = str;
         } else {
-          finalText = str?.substr(0, str?.length - 6) + '...';
+          finalText = str;
         }
       } else {
         // 需要展示按钮时
         if (foldButtonText && isMustButton && !isMustNoButton) {
           const str = getFixedWidthText(
             text,
+            width,
             noButtonSumWidth - (extraOccupiedW as number),
             fontSize,
             400,
@@ -162,7 +165,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
             viewingArea?.current,
           );
           isEllipsis = str?.endsWith('...');
-          finalText = isEllipsis ? str?.substr(0, str?.length - 6) + '...' : text;
+          finalText = isEllipsis ? str : text;
         } else {
           finalText = text;
         }

@@ -188,6 +188,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ## 四、更新日志
 
+### ↪2.0.5
+
+`2023-05-27`
+
+☆ isJsComputed开启时，支持textarea文本。
+
 ### ↪2.0.4
 
 `2023-05-23`
