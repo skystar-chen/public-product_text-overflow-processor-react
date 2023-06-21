@@ -142,7 +142,6 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
   'font-optical-sizing',
   'font-stretch',
   'font-size-adjust',
-  'font-smooth',
   'font-synthesis',
   'font-variant',
   'font-variant-alternates',
@@ -157,9 +156,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
   'inline-size',
   'line-height',
   'line-height-step',
-  'line-break',
   'letter-spacing',
-  'text-shadow',
   'text-transform',
   'text-indent',
   'text-combine-upright',
@@ -169,12 +166,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
   'text-orientation',
   'text-rendering',
   'text-size-adjust',
-  'vertical-align',
-  'white-space',
   'word-spacing',
-  'word-break',
-  'word-wrap',
-  'writing-mode',
 ]
 ```
 

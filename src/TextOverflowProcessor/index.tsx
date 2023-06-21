@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, memo, useCallback, useMemo, isValidElement } from 'react';
+import { useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
 import { renderToString } from 'react-dom/server';
 import { getFixedWidthText, getClassNames } from './utils';
 import {
@@ -109,11 +109,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
       const sumWidth = width * (ellipsisLineClamp as number);
       const span = document.createElement('span');
       span.style.cssText = 'position:absolute;visibility:hidden;';
-      span.innerHTML = `${
-        isValidElement(foldButtonText)
-          ? renderToString(foldButtonText)
-          : (!!foldButtonText ? String(foldButtonText) : '')
-      }`;
+      span.innerHTML = `${!!foldButtonText ? renderToString(<>{foldButtonText}</>) : ''}`;
       viewingArea?.current ? viewingArea?.current?.appendChild(span) : document.body.appendChild(span);
       const buttonWidth = span.offsetWidth || 0; // 按钮占的宽度
       viewingArea?.current ? viewingArea?.current?.removeChild(span) : document.body.removeChild(span);
