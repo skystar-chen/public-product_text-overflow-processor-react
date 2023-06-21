@@ -132,7 +132,6 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
   'font-optical-sizing',
   'font-stretch',
   'font-size-adjust',
-  'font-smooth',
   'font-synthesis',
   'font-variant',
   'font-variant-alternates',
@@ -147,9 +146,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
   'inline-size',
   'line-height',
   'line-height-step',
-  'line-break',
   'letter-spacing',
-  'text-shadow',
   'text-transform',
   'text-indent',
   'text-combine-upright',
@@ -159,12 +156,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
   'text-orientation',
   'text-rendering',
   'text-size-adjust',
-  'vertical-align',
-  'white-space',
   'word-spacing',
-  'word-break',
-  'word-wrap',
-  'writing-mode',
 ]
 ```
 
@@ -177,6 +169,14 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志（1.x.x低版本将不记录高版本更新日志）
+
+### ↪1.1.13
+
+`2023-`
+
+☆ fontStyle属性有效CSS属性更新，去除部分无效的属性；
+
+☆ 其他优化。
 
 ### ↪1.1.12
 
