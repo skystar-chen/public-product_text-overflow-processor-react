@@ -2,9 +2,9 @@
  * 获取固定宽度的字符串，如果传入的text的宽度不够width，则返回原字符串
  * @text 将要被提取的原字符串
  * @lineWidth 单行宽度，用于换行符\n计算
- * @width 想要提取的字符串长度
- * @fontSize 字符串显示时的字号大小
- * @isNeedEllipsis 当text的宽度大于width时是否需要省略号，会在传入的width基础上加，最后返回字符串宽度会>width
+ * @width 想要提取的字符串宽度
+ * @fontSize 字号大小
+ * @isNeedEllipsis 当text的宽度大于width时是否需要省略号
  * @fontStyleCSSText 文案样式
  * @fontClassName 文案类名
  * @containerEl 文案容器dom
