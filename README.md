@@ -182,9 +182,9 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ### ↪2.0.6
 
-`2023-`
+`2023-07-08`
 
-☆ fontStyle属性有效CSS属性更新，去除部分无效的属性；
+☆ fontStyle属性有效CSS属性更新，去除部分暂不支持的属性，例如white-space；
 
 ☆ 其他优化。
 
