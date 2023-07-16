@@ -52,4 +52,5 @@ export default TextOverflowProcessor;
  * npm login --registry=https://registry.npmjs.org/
  * npm publish --registry=https://registry.npmjs.org/
  * 或：npm version patch
+ * npm unpublish text-overflow-processor-react@版本号 --force
  */
