@@ -174,7 +174,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 `2023-07-23`
 
-☆ 优化代码，减少包提交。
+☆ 优化代码。
 
 ### ↪1.1.13
 
