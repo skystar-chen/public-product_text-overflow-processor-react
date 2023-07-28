@@ -56,6 +56,7 @@ export default function Con() {
  */
 /**
  * npm login --registry=https://registry.npmjs.org/
+ * 发布时先发1.x.x版本
  * npm publish --registry=https://registry.npmjs.org/
  * 或：npm version patch
  * npm unpublish 包名@版本号 --force
