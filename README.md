@@ -34,8 +34,12 @@ interface TextProcessProps {
   text: string, // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
   className?: string,
   style?: React.CSSProperties,
-  onClick?: (() => void) | null,
-  getIsFold?: ((v: boolean) => void) | null, // 获取文案的折叠状态
+  onClick?: ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void) | null,
+  getIsFold?: (( // 获取文案的折叠状态
+    isFold: boolean, // 文案是否是折叠的（文案是否溢出）
+    isInitState: boolean, // 返回的是否是初始化状态，有时初始化状态可能会影响组件的使用，可以用这个区分
+  ) => void) | null,
+  option?: OptionType,
   option?: {
     type?: 'ellipsis' | 'shadow', // 文案处理类型
     /** >>>>>>ellipsis配置 */
@@ -180,7 +184,17 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ## 四、更新日志
 
-### ↪2.0.7
+### ↪2.0.8
+
+`2023-07-31`
+
+☆ 修复shadow时，初始化折叠状态错误；
+
+☆ getIsFold方法增加返回的状态是否是初始化状态标识；
+
+☆ onClick方法增加事件对象返回，可用于阻止事件冒泡及默认行为等。
+
+### ↪2.0.7-correction
 
 `2023-07-23`
 

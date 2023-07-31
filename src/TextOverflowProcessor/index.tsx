@@ -64,6 +64,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
     shadowStyle = {},
   } = shadowOption || DEFAULT_SHADOW_OPTION;
 
+  // 用于初始化需要特殊处理的地方
+  const [isInitEntry, setIsInitEntry] = useState<boolean>(true);
   // 文案是否折叠
   const [isFold, setIsFold] = useState<boolean>(true);
   // 判断是否出现操作按钮
@@ -237,7 +239,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     ));
   }, [isMustNoButton, isFold, textEndSlot, lineHeight]);
 
-  const getIsShowBtn = useCallback(() => {
+  const getIsOverflow = useCallback(() => {
     const childrens: any = textArea?.current?.childNodes;
     let childSumH: number = 0; // 所有子元素标签加起来的高度
     for (let i = 0; i < childrens?.length; i++) {
@@ -249,11 +251,14 @@ function TextOverflowProcessor(props: TextProcessProps) {
     // @ts-ignore
     const generalFlag = textArea?.current?.offsetHeight > viewingArea?.current?.clientHeight;
     
+    let res;
     if (!!childSumH) {
-      return (shadowFlag && childSumH > shadowShowH.current) || generalFlag;
+      res = (shadowFlag && childSumH > shadowShowH.current) || generalFlag;
     } else {
-      return shadowFlag || generalFlag;
+      res = shadowFlag || generalFlag;
     }
+
+    return res;
   }, []);
 
   const handleResize = useCallback(() => {
@@ -264,7 +269,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     if (isJsComputed && viewingArea?.current) {
       setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
     } else {
-      const flag = getIsShowBtn();
+      const flag = getIsOverflow();
       !isMustButton && !isMustNoButton && setIsShowBtn(flag);
       setIsFold(flag);
     }
@@ -275,8 +280,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
     isShowAllContent,
   ]);
 
-  const handleClick = useCallback(() => {
-    onClick && onClick?.();
+  const handleClick = useCallback((e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    onClick && onClick?.(e);
     onClick && isClickOriginalEvent && setIsFold(!isFold);
     onClick || setIsFold(!isFold);
   }, [isFold, isClickOriginalEvent]);
@@ -295,7 +300,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     shadowShowH.current = shadowInitBoxShowH as number;
 
     if (!isJsComputed) {
-      if (getIsShowBtn()) {
+      if (getIsOverflow()) {
         setIsFold(isDefaultFold as boolean);
         setIsShowBtn(true);
       } else {
@@ -308,6 +313,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     if (isJsComputed && viewingArea?.current) {
       setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
     }
+    setIsInitEntry(false);
   }
 
   // 初始化判断是否显示操作按钮
@@ -335,7 +341,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     }
   }, [isViewResize]);
 
-  useEffect(() => { getIsFold?.(isFold); }, [isFold]);
+  useEffect(() => { getIsFold?.(isFold, isInitEntry); }, [isFold, isInitEntry]);
   // #endregion
 
   return (
@@ -366,7 +372,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
                 'text-show-btn-box': isShowBtn,
                 'text-show-all-box': !isFold,
               })}
-              style={{height: (isShowBtn && !isViewResize) ? shadowInitBoxShowH : 'auto'}}
+              style={{height: (isShowBtn && !isViewResize && !isInitEntry) ? shadowInitBoxShowH : 'auto'}}
               dangerouslySetInnerHTML={{ __html: text }}
             ></span>
             {isVisibleShadowLayer && (
