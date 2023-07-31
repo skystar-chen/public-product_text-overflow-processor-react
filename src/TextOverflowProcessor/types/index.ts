@@ -9,9 +9,12 @@ interface TextProcessProps {
   style?: React.CSSProperties;
   buttonClassName?: string;
   buttonStyle?: React.CSSProperties;
-  onClick?: (() => void) | null;
+  onClick?: ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void) | null;
   isClickOriginalEvent?: boolean; // 当传了onClick时，点击事件是否触发原始事件
-  getIsFold?: ((v: boolean) => void) | null; // 获取文案的折叠状态
+  getIsFold?: (( // 获取文案的折叠状态
+    isFold: boolean, // 文案是否是折叠的（文案是否溢出）
+    isInitState: boolean, // 返回的是否是初始化状态，有时初始化状态可能会影响组件的使用，可以用这个区分
+  ) => void) | null;
   isDefaultFold?: boolean; // 是否默认折叠
   unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
   foldButtonText?: string  | JSX.Element | JSX.Element[]; // 折叠时按钮文案
