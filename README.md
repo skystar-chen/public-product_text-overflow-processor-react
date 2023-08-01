@@ -184,6 +184,14 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ## 四、更新日志
 
+### ↪2.0.9
+
+`2023-08-01`
+
+☆ 修复shadow时，初始化折叠状态在按钮不显示时展示错误；
+
+☆ package.json文件repository地址修改。
+
 ### ↪2.0.8
 
 `2023-07-31`
