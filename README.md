@@ -173,6 +173,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ## 四、更新日志（1.x.x低版本将不记录高版本更新日志）
 
+### ↪1.1.16
+
+`2023-08-01`
+
+☆ package.json文件repository地址修改。
+
 ### ↪1.1.15
 
 `2023-07-31`
