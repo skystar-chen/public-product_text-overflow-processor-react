@@ -39,7 +39,6 @@ interface TextProcessProps {
     isFold: boolean, // 文案是否是折叠的（文案是否溢出）
     isInitState: boolean, // 返回的是否是初始化状态，有时初始化状态可能会影响组件的使用，可以用这个区分
   ) => void) | null,
-  option?: OptionType,
   option?: {
     type?: 'ellipsis' | 'shadow', // 文案处理类型
     /** >>>>>>ellipsis配置 */
@@ -183,6 +182,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪2.0.10
+
+`2023-11-19`
+
+☆ 代码优化。
 
 ### ↪2.0.9
 

@@ -81,7 +81,7 @@ const getFixedWidthText:
         } else {
           const strArr = oldText?.split('');
           // 计算尾部多少个字符等价...省略号占的宽度，并替换成...省略号
-          for (let j = 0; j < strArr?.length; j ++) {
+          for (let j = 0, l = strArr?.length; j < l; j ++) {
             const k = -(j + 1);
             const lastStr = oldText?.slice(k);
             span.innerHTML = lastStr;
@@ -111,7 +111,7 @@ const getClassNames = (obj: {[keyName: string]: boolean}): string => {
   try {
     const classNamesArr: string[] = [];
     const objArr = Object?.entries(obj);
-    for (let i = 0; i < objArr?.length; i++) {
+    for (let i = 0, l = objArr?.length; i < l; i++) {
       const t = objArr?.[i];
       !!t[1] && classNamesArr.push(t[0]);
     }
