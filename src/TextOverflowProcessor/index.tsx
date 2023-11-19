@@ -207,7 +207,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }, [isMustNoButton, textEndSlot, isShowBtn]);
 
   const buttonCon = useMemo(() => {
-    return isFold ? foldButtonText : unfoldButtonText ;
+    return isFold ? foldButtonText : unfoldButtonText;
   }, [isFold, unfoldButtonText, foldButtonText]);
 
   const realButtonStyle = useMemo(() => {
