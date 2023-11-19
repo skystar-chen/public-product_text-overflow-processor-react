@@ -215,7 +215,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   const getIsOverflow = useCallback(() => {
     const childrens: any = textArea?.current?.childNodes;
     let childSumH: number = 0; // 所有子元素标签加起来的高度
-    for (let i = 0; i < childrens?.length; i++) {
+    for (let i = 0, l = childrens?.length; i < l; i++) {
       const t = childrens?.[i];
       childSumH += t?.offsetHeight;
     }
