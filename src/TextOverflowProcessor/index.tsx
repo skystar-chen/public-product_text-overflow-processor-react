@@ -285,16 +285,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }
 
   // 初始化判断是否显示操作按钮
-  useEffect(() => {
-    init();
-
-    // 页面缩放时判断是否显示操作按钮
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    }
-  }, [text]);
+  useEffect(() => { init(); }, [text]);
 
   // 触发handleResize时，开启定时器，当不触发时关闭定时器
   useEffect(() => {
@@ -310,6 +301,15 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }, [isViewResize]);
 
   useEffect(() => { getIsFold?.(isFold, isInitEntry); }, [isFold, isInitEntry]);
+
+  useEffect(() => {
+    // 页面缩放时判断是否显示操作按钮
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   return (
     <section className={`text-overflow-processor-content ${className}`} style={style}>
