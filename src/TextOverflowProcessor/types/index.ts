@@ -1,5 +1,33 @@
 type ProcessType = 'ellipsis' | 'shadow';
 type ProcessTypeArr = ['ellipsis', 'shadow'];
+type reRenderDependentPropertiesEnum = 'all'
+| 'text'
+| 'type'
+| 'className'
+| 'style'
+| 'buttonClassName'
+| 'buttonStyle'
+| 'isClickOriginalEvent'
+| 'isDefaultFold'
+| 'unfoldButtonText'
+| 'foldButtonText'
+| 'isShowAllContent'
+| 'isMustButton'
+| 'isMustNoButton'
+| 'lineHeight'
+| 'isRenderShowAllDOM'
+| 'ellipsisLineClamp'
+| 'isJsComputed'
+| 'fontSize'
+| 'fontClassName'
+| 'fontStyle'
+| 'textEndSlot'
+| 'extraOccupiedW'
+| 'buttonBeforeSlot'
+| 'shadowInitBoxShowH'
+| 'isShadowLayer'
+| 'shadowClassName'
+| 'shadowStyle';
 type EllipsisOptionType = {
   ellipsisLineClamp?: number, // 控制显示的行数
   /**
@@ -38,6 +66,13 @@ type ShadowOptionType = {
   shadowStyle?: React.CSSProperties, // 阴影遮罩层自定义样式
 };
 type OptionType = {
+  /**
+   * 自定义组件刷新依赖的自身属性：依赖中的属性发生变化时，会触发组件刷新。建议不要使用all，伤性能
+   * 其实通过key或其它方式也能实现同样的效果，这里只是为了方便而提供，使用到的频率极小
+   * 注：由于2.x.x版本大部分配置在option属性中，属于引用状态类型，故配置变化一般都能够触发组件刷新，
+   *     因此本属性在2.x.x版本几乎用不上...
+   */
+  reRenderDependentProperties?: reRenderDependentPropertiesEnum[],
   type?: ProcessType, // 文案处理类型
   /** >>>>>>ellipsis配置 */
   ellipsisOption?: EllipsisOptionType,

@@ -40,6 +40,13 @@ interface TextProcessProps {
     isInitState: boolean, // 返回的是否是初始化状态，有时初始化状态可能会影响组件的使用，可以用这个区分
   ) => void) | null,
   option?: {
+    /**
+     * 自定义组件刷新依赖的自身属性：依赖中的属性发生变化时，会触发组件刷新。建议不要使用all，伤性能
+     * 其实通过key或其它方式也能实现同样的效果，这里只是为了方便而提供，使用到的频率极小
+     * 注：由于2.x.x版本大部分配置在option属性中，属于引用状态类型，故配置变化一般都能够触发组件刷新，
+     *     因此本属性在2.x.x版本几乎用不上...
+     */
+    reRenderDependentProperties?: reRenderDependentPropertiesEnum[],
     type?: 'ellipsis' | 'shadow', // 文案处理类型
     /** >>>>>>ellipsis配置 */
     ellipsisOption?: {
@@ -93,6 +100,34 @@ interface TextProcessProps {
     isRenderShowAllDOM?: boolean, // 是否渲染被隐藏的全部文案展示DOM
   },
 }
+type reRenderDependentPropertiesEnum = 'all'
+| 'text'
+| 'type'
+| 'className'
+| 'style'
+| 'buttonClassName'
+| 'buttonStyle'
+| 'isClickOriginalEvent'
+| 'isDefaultFold'
+| 'unfoldButtonText'
+| 'foldButtonText'
+| 'isShowAllContent'
+| 'isMustButton'
+| 'isMustNoButton'
+| 'lineHeight'
+| 'isRenderShowAllDOM'
+| 'ellipsisLineClamp'
+| 'isJsComputed'
+| 'fontSize'
+| 'fontClassName'
+| 'fontStyle'
+| 'textEndSlot'
+| 'extraOccupiedW'
+| 'buttonBeforeSlot'
+| 'shadowInitBoxShowH'
+| 'isShadowLayer'
+| 'shadowClassName'
+| 'shadowStyle';
 对应默认值：
 TextOverflowProcessor.defaultProps = {
   text: '',
@@ -101,6 +136,7 @@ TextOverflowProcessor.defaultProps = {
   onClick: null,
   getIsFold: null,
   option: {
+    reRenderDependentProperties: ['text'],
     type: 'ellipsis',
     /** >>>>>>ellipsis配置 */
     ellipsisOption: {
@@ -182,6 +218,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪2.0.11
+
+`2023-11-25`
+
+☆ 增加reRenderDependentProperties属性。
 
 ### ↪2.0.10
 

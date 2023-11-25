@@ -24,6 +24,7 @@ const DEFAULT_SHADOW_OPTION: ShadowOptionType = {
   shadowStyle: {},
 };
 const DEFAULT_OPTION: OptionType = {
+  reRenderDependentProperties: ['text'],
   type: 'ellipsis',
   /** >>>>>>ellipsis配置 */
   ellipsisOption: DEFAULT_ELLIPSIS_OPTION,

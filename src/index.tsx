@@ -13,14 +13,15 @@ root.render(
   </React.StrictMode>
 );
 
-export default function Con() {
-  const [a, setA] = useState<number>(46);
+function Con() {
+  const [a, setA] = useState<any>();
 
   return (
     <>
       <TextOverflowProcessor
         text="In all the parting, I like it best see you tomorrow.Of all the blessings I prefer, as you wish. Sometimes you look at the wrong person, not because you are jealous, but because you are kind. You never know how strong you really are until being strong is the only choice you have. Never bend your head. Always hold it high. Look the world straight in the face. Life is alive, there is not much, only helpless. Life is a wonderful journey. Make it your journey and not someone else\'s."
         option={{
+          // reRenderDependentProperties: ['foldButtonText'],
           type: 'ellipsis',
           ellipsisOption: {
             isJsComputed: true,
@@ -31,14 +32,12 @@ export default function Con() {
             extraOccupiedW: 0,
           },
           shadowOption: {
-            shadowInitBoxShowH: a,
           },
           foldButtonText: (<div style={{marginLeft: 10}}>More</div>),
           unfoldButtonText: (<div style={{marginLeft: 10}}>Less</div>),
         }}
       />
       <button onClick={() => {
-        setA(70);
       }}>click</button>
     </>
   )
