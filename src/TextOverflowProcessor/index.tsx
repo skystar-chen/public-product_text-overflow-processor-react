@@ -379,9 +379,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
       }
     }
 
-    // if (isMustButton) setIsShowBtn(true);
-    // if (isMustNoButton) setIsShowBtn(false);
-    setIsShowBtn(!!isMustButton && !isMustNoButton);
+    if (isMustButton) setIsShowBtn(true);
+    if (isMustNoButton) setIsShowBtn(false);
     if (isJsComputed && viewingArea?.current) {
       setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
     }
@@ -389,7 +388,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }
 
   // 初始化判断是否显示操作按钮
-  useEffect(() => { init(); }, [refreshDependentProperties]);
+  useEffect(() => { init(); }, refreshDependentProperties);
 
   // 触发handleResize时，开启定时器，当不触发时关闭定时器
   useEffect(() => {
