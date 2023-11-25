@@ -7,6 +7,7 @@ const TYPE: ProcessTypeArr = ['shadow', 'ellipsis'];
 
 const DEFAULT_PROPS: TextProcessProps = {
   text: '',
+  reRenderDependentProperties: ['text'],
   type: 'shadow',
   className: '',
   style: {},

@@ -32,6 +32,11 @@ import TextOverflowProcessor from 'text-overflow-processor-react'
 interface TextProcessProps {
   /** >>>>>>公共配置 */
   text: string; // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
+  /**
+   * 自定义组件刷新依赖的自身属性：依赖中的属性发生变化时，会触发组件刷新。建议不要使用all，伤性能
+   * 其实通过key或其它方式也能实现同样的效果，这里只是为了方便而提供，使用到的频率相对较小
+   */
+  reRenderDependentProperties?: reRenderDependentPropertiesEnum[];
   type?: 'shadow' | 'ellipsis'; // 文案处理类型
   className?: string;
   style?: React.CSSProperties;
@@ -89,9 +94,38 @@ interface TextProcessProps {
   shadowClassName?: string; // 阴影遮罩层自定义类名
   shadowStyle?: React.CSSProperties; // 阴影遮罩层自定义样式
 }
+type reRenderDependentPropertiesEnum = 'all'
+| 'text'
+| 'type'
+| 'className'
+| 'style'
+| 'buttonClassName'
+| 'buttonStyle'
+| 'isClickOriginalEvent'
+| 'isDefaultFold'
+| 'unfoldButtonText'
+| 'foldButtonText'
+| 'isShowAllContent'
+| 'isMustButton'
+| 'isMustNoButton'
+| 'lineHeight'
+| 'isRenderShowAllDOM'
+| 'ellipsisLineClamp'
+| 'isJsComputed'
+| 'fontSize'
+| 'fontClassName'
+| 'fontStyle'
+| 'textEndSlot'
+| 'extraOccupiedW'
+| 'buttonBeforeSlot'
+| 'shadowInitBoxShowH'
+| 'isShadowLayer'
+| 'shadowClassName'
+| 'shadowStyle';
 对应默认值：
 TextOverflowProcessor.defaultProps = {
   text: '',
+  reRenderDependentProperties: ['text'],
   type: 'shadow',
   className: '',
   style: {},
@@ -172,6 +206,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志（1.x.x低版本将不记录高版本更新日志）
+
+### ↪1.1.18
+
+`2023-11-25`
+
+☆ 增加reRenderDependentProperties属性。
 
 ### ↪1.1.17
 

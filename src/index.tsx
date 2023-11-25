@@ -1,7 +1,7 @@
 import TextOverflowProcessor from "./TextOverflowProcessor";
 export default TextOverflowProcessor;
 
-// import React from 'react';
+// import React, { useState } from 'react';
 // import ReactDOM from 'react-dom/client';
 // import TextOverflowProcessor from "./TextOverflowProcessor";
 // // import TextOverflowProcessor from 'text-overflow-processor-react';
@@ -9,6 +9,18 @@ export default TextOverflowProcessor;
 // const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 // root.render(
 //   <React.StrictMode>
+//     <Con />
+//   </React.StrictMode>
+// );
+
+// function Con() {
+//   const [isShowAll, setIsShowAll] = useState<boolean>(false);
+//   const t = setTimeout(() => {
+//     setIsShowAll(true);
+//     clearTimeout(t);
+//   }, 2000);
+
+//   return (
 //     <TextOverflowProcessor
 //       type="ellipsis"
 //       text="In all the parting, I like it best see you tomorrow.Of all the blessings I prefer, as you wish. Sometimes you look at the wrong person, not because you are jealous, but because you are kind. You never know how strong you really are until being strong is the only choice you have. Never bend your head. Always hold it high. Look the world straight in the face. Life is alive, there is not much, only helpless. Life is a wonderful journey. Make it your journey and not someone else\'s."
@@ -19,9 +31,12 @@ export default TextOverflowProcessor;
 //       }}
 //       extraOccupiedW={0}
 //       foldButtonText={<div style={{marginLeft: 10}}>More</div>}
+//       isShowAllContent={isShowAll}
+//       reRenderDependentProperties={['isShowAllContent']}
 //     />
-//   </React.StrictMode>
-// );
+//   );
+// }
+
 
 /**
  * 测试调试：

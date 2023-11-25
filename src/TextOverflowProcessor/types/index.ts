@@ -1,9 +1,42 @@
 type ProcessType = 'shadow' | 'ellipsis';
 type ProcessTypeArr = ['shadow', 'ellipsis'];
+type reRenderDependentPropertiesEnum = 'all'
+| 'text'
+| 'type'
+| 'className'
+| 'style'
+| 'buttonClassName'
+| 'buttonStyle'
+| 'isClickOriginalEvent'
+| 'isDefaultFold'
+| 'unfoldButtonText'
+| 'foldButtonText'
+| 'isShowAllContent'
+| 'isMustButton'
+| 'isMustNoButton'
+| 'lineHeight'
+| 'isRenderShowAllDOM'
+| 'ellipsisLineClamp'
+| 'isJsComputed'
+| 'fontSize'
+| 'fontClassName'
+| 'fontStyle'
+| 'textEndSlot'
+| 'extraOccupiedW'
+| 'buttonBeforeSlot'
+| 'shadowInitBoxShowH'
+| 'isShadowLayer'
+| 'shadowClassName'
+| 'shadowStyle';
 
 interface TextProcessProps {
   /** >>>>>>公共配置 */
   text: string; // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
+  /**
+   * 自定义组件刷新依赖的自身属性：依赖中的属性发生变化时，会触发组件刷新。建议不要使用all，伤性能
+   * 其实通过key或其它方式也能实现同样的效果，这里只是为了方便而提供，使用到的频率相对较小
+   */
+  reRenderDependentProperties?: reRenderDependentPropertiesEnum[];
   type?: ProcessType; // 文案处理类型
   className?: string;
   style?: React.CSSProperties;
