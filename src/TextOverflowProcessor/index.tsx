@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
 import { renderToString } from 'react-dom/server';
+import useRefreshDependentProperties from './hooks/useRefreshDependentProperties';
 import { getFixedWidthText, getClassNames } from './utils';
 import {
   TYPE,
@@ -67,9 +68,9 @@ function TextOverflowProcessor(props: TextProcessProps) {
   // 文案整体容器DOM
   const textArea = useRef<HTMLSpanElement>(null);
   const shadowShowH = useRef<number>(76);
-
   // 使用js来计算展示的文案时使用
   const [width, setWidth] = useState(0);
+
   const cssText = useMemo(() => {
     let cssText = '';
     if (
@@ -90,6 +91,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
 
     return cssText;
   }, [fontStyle]);
+
+  // 使用js来计算展示的文案
   const computedList = useMemo(() => {
     let finalText = '', isEllipsis = false;
     // 为了获取该组件的宽度，组件第一次render时按所有text文字显示
@@ -179,107 +182,6 @@ function TextOverflowProcessor(props: TextProcessProps) {
     isJsComputed,
     extraOccupiedW,
   ]);
-
-  // 组件刷新依赖的属性添加
-  const refreshDependentProperties = useMemo(() => {
-    if (!Array.isArray(reRenderDependentProperties)) return [text];
-    if (Array.isArray(reRenderDependentProperties) && !reRenderDependentProperties?.length) return [];
-    let dependence: any[] = [];
-    switch (true) {
-      case reRenderDependentProperties?.includes('all'):
-        dependence = [
-          text,
-          type,
-          className,
-          style,
-          buttonClassName,
-          buttonStyle,
-          isClickOriginalEvent,
-          isDefaultFold,
-          unfoldButtonText,
-          foldButtonText,
-          isShowAllContent,
-          isMustButton,
-          isMustNoButton,
-          lineHeight,
-          isRenderShowAllDOM,
-          ellipsisLineClamp,
-          isJsComputed,
-          fontSize,
-          fontClassName,
-          fontStyle,
-          textEndSlot,
-          extraOccupiedW,
-          buttonBeforeSlot,
-          shadowInitBoxShowH,
-          isShadowLayer,
-          shadowClassName,
-          shadowStyle,
-        ];
-        break;
-      
-      case reRenderDependentProperties?.includes('text'):
-        dependence.push(text);
-      case reRenderDependentProperties?.includes('type'):
-        dependence.push(type);
-      case reRenderDependentProperties?.includes('className'):
-        dependence.push(className);
-      case reRenderDependentProperties?.includes('style'):
-        dependence.push(style);
-      case reRenderDependentProperties?.includes('buttonClassName'):
-        dependence.push(buttonClassName);
-      case reRenderDependentProperties?.includes('buttonStyle'):
-        dependence.push(buttonStyle);
-      case reRenderDependentProperties?.includes('isClickOriginalEvent'):
-        dependence.push(isClickOriginalEvent);
-      case reRenderDependentProperties?.includes('isDefaultFold'):
-        dependence.push(isDefaultFold);
-      case reRenderDependentProperties?.includes('unfoldButtonText'):
-        dependence.push(unfoldButtonText);
-      case reRenderDependentProperties?.includes('foldButtonText'):
-        dependence.push(foldButtonText);
-      case reRenderDependentProperties?.includes('isShowAllContent'):
-        dependence.push(isShowAllContent);
-      case reRenderDependentProperties?.includes('isMustButton'):
-        dependence.push(isMustButton);
-      case reRenderDependentProperties?.includes('isMustNoButton'):
-        dependence.push(isMustNoButton);
-      case reRenderDependentProperties?.includes('lineHeight'):
-        dependence.push(lineHeight);
-      case reRenderDependentProperties?.includes('isRenderShowAllDOM'):
-        dependence.push(isRenderShowAllDOM);
-      case reRenderDependentProperties?.includes('ellipsisLineClamp'):
-        dependence.push(ellipsisLineClamp);
-      case reRenderDependentProperties?.includes('isJsComputed'):
-        dependence.push(isJsComputed);
-      case reRenderDependentProperties?.includes('fontSize'):
-        dependence.push(fontSize);
-      case reRenderDependentProperties?.includes('fontClassName'):
-        dependence.push(fontClassName);
-      case reRenderDependentProperties?.includes('fontStyle'):
-        dependence.push(fontStyle);
-      case reRenderDependentProperties?.includes('textEndSlot'):
-        dependence.push(textEndSlot);
-      case reRenderDependentProperties?.includes('extraOccupiedW'):
-        dependence.push(extraOccupiedW);
-      case reRenderDependentProperties?.includes('buttonBeforeSlot'):
-        dependence.push(buttonBeforeSlot);
-      case reRenderDependentProperties?.includes('shadowInitBoxShowH'):
-        dependence.push(shadowInitBoxShowH);
-      case reRenderDependentProperties?.includes('isShadowLayer'):
-        dependence.push(isShadowLayer);
-      case reRenderDependentProperties?.includes('shadowClassName'):
-        dependence.push(shadowClassName);
-      case reRenderDependentProperties?.includes('shadowStyle'):
-        dependence.push(shadowStyle);
-        break;
-    
-      default:
-        break;
-    }
-
-    return dependence;
-  }, [reRenderDependentProperties]);
 
   const buttonCon = useMemo(() => {
     return isFold ? foldButtonText : unfoldButtonText;
@@ -388,7 +290,39 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }
 
   // 初始化判断是否显示操作按钮
-  useEffect(() => { init(); }, refreshDependentProperties);
+  useEffect(
+    () => { init(); },
+    useRefreshDependentProperties({
+      text,
+      reRenderDependentProperties,
+      type,
+      className,
+      style,
+      buttonClassName,
+      buttonStyle,
+      isClickOriginalEvent,
+      isDefaultFold,
+      unfoldButtonText,
+      foldButtonText,
+      isShowAllContent,
+      isMustButton,
+      isMustNoButton,
+      lineHeight,
+      isRenderShowAllDOM,
+      ellipsisLineClamp,
+      isJsComputed,
+      fontSize,
+      fontClassName,
+      fontStyle,
+      textEndSlot,
+      extraOccupiedW,
+      buttonBeforeSlot,
+      shadowInitBoxShowH,
+      isShadowLayer,
+      shadowClassName,
+      shadowStyle,
+    }),
+  );
 
   // 触发handleResize时，开启定时器，当不触发时关闭定时器
   useEffect(() => {
