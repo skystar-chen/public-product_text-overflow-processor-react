@@ -61,6 +61,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   /** >>>>>>shadow配置 */
   const {
     shadowInitBoxShowH = 76,
+    shadowButtonPlacement = 'outer',
     isShadowLayer = true,
     shadowClassName = '',
     shadowStyle = {},
@@ -74,10 +75,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
   const [isShowBtn, setIsShowBtn] = useState<boolean>(false);
   // 是否触发handleResize
   const [isViewResize, setIsViewResize] = useState<boolean>(false);
-  // 上一次触发handleResize时的时间戳
-  const [lastViewResizeTime, setLastViewResizeTime] = useState<number>(0);
   // 触发handleResize时启用的定时器
-  const intervalTimer = useRef<any>(null);
+  const timer = useRef<any>(null);
   // 文案可视区域DOM
   const viewingArea = useRef<HTMLParagraphElement>(null);
   // 文案整体容器DOM
@@ -243,6 +242,31 @@ function TextOverflowProcessor(props: TextProcessProps) {
     ));
   }, [isMustNoButton, isFold, textEndSlot, lineHeight]);
 
+  const renderShadowLayer = useMemo(() => {
+    const baseStyle = {
+      top: shadowButtonPlacement === 'inner' ? 0 : (shadowInitBoxShowH as number) - 20,
+    };
+
+    return isVisibleShadowLayer && (
+      <span
+        className={`shadow ${shadowClassName}`}
+        style={
+          Object?.assign(
+            baseStyle,
+            shadowStyle,
+          )
+          || baseStyle
+        }
+      ></span>
+    );
+  }, [
+    isVisibleShadowLayer,
+    shadowButtonPlacement,
+    shadowInitBoxShowH,
+    shadowClassName,
+    shadowStyle,
+  ]);
+
   const getIsOverflow = useCallback(() => {
     const childrens: any = textArea?.current?.childNodes;
     let childSumH: number = 0; // 所有子元素标签加起来的高度
@@ -268,15 +292,21 @@ function TextOverflowProcessor(props: TextProcessProps) {
   const handleResize = useCallback(() => {
     if (isShowAllContent) return;
 
+    // 防抖处理
     setIsViewResize(true);
-    setLastViewResizeTime(Date.now());
-    if (isJsComputed && viewingArea?.current) {
-      setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
-    } else {
-      const flag = getIsOverflow();
-      !isMustButton && !isMustNoButton && setIsShowBtn(flag);
-      setIsFold(flag);
-    }
+    timer.current && clearTimeout(timer.current);
+    timer.current = setTimeout(() => {
+      if (isJsComputed && viewingArea?.current) {
+        setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
+      } else {
+        const flag = getIsOverflow();
+        !isMustButton && !isMustNoButton && setIsShowBtn(flag);
+        setIsFold(flag);
+      }
+      setIsViewResize(false);
+      clearTimeout(timer.current);
+      timer.current = null;
+    }, 200);
   }, [
     isJsComputed,
     isMustButton,
@@ -350,24 +380,12 @@ function TextOverflowProcessor(props: TextProcessProps) {
       extraOccupiedW,
       buttonBeforeSlot,
       shadowInitBoxShowH,
+      shadowButtonPlacement,
       isShadowLayer,
       shadowClassName,
       shadowStyle,
     }),
   );
-
-  // 触发handleResize时，开启定时器，当不触发时关闭定时器
-  useEffect(() => {
-    if (isViewResize && !intervalTimer.current) {
-      intervalTimer.current = setInterval(() => {
-        if ((Date.now() - lastViewResizeTime) > 100) {
-          setIsViewResize(false);
-          clearInterval(intervalTimer.current);
-          intervalTimer.current = null;
-        }
-      }, 100);
-    }
-  }, [isViewResize]);
 
   useEffect(() => { getIsFold?.(isFold, isInitEntry); }, [isFold, isInitEntry]);
 
@@ -412,27 +430,23 @@ function TextOverflowProcessor(props: TextProcessProps) {
               style={{height: (isFold && !isViewResize && !isInitEntry) ? shadowInitBoxShowH : 'auto'}}
               dangerouslySetInnerHTML={{ __html: text }}
             ></span>
-            {isVisibleShadowLayer && (
-              <span
-                className={`shadow ${shadowClassName}`}
-                style={
-                  Object?.assign(
-                    {bottom: lineHeight},
-                    shadowStyle,
-                  )
-                  || {bottom: lineHeight}
-                }
-              ></span>
+            {/* 按钮和阴影 */}
+            {!isViewResize && (
+              <>
+                {shadowButtonPlacement === 'outer' && renderShadowLayer}
+                <span
+                  className={getClassNames({
+                    'click-btn': true,
+                    'click-btn-inner': shadowButtonPlacement === 'inner',
+                    [buttonClassName as string]: !!buttonClassName,
+                  })}
+                  style={realButtonStyle}
+                >
+                  {shadowButtonPlacement === 'inner' && renderShadowLayer}
+                  <label onClick={handleClick}>{buttonCon}</label>
+                </span>
+              </>
             )}
-            <span
-              className={getClassNames({
-                'click-btn': true,
-                [buttonClassName as string]: !!buttonClassName,
-              })}
-              style={realButtonStyle}
-            >
-              <label onClick={handleClick}>{buttonCon}</label>
-            </span>
           </>
         )}
         {type === 'ellipsis'
@@ -453,8 +467,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
                 style={realButtonStyle}
               >
                 {(textEndSlot && isFold) && textEndSlot}
-                {buttonBeforeSlot || (isJsComputed ? null : <>&nbsp;&nbsp;&nbsp;&nbsp;</>)}
-                <label onClick={handleClick}>{buttonCon}</label>
+                {buttonBeforeSlot}
+                {!isViewResize && (<label onClick={handleClick}>{buttonCon}</label>)}
               </span>
               {/* 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来 */}
               {textFoldNoButtonEndSlot}

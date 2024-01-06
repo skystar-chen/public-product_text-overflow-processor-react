@@ -19,6 +19,7 @@ const DEFAULT_ELLIPSIS_OPTION: EllipsisOptionType = {
 };
 const DEFAULT_SHADOW_OPTION: ShadowOptionType = {
   shadowInitBoxShowH: 76,
+  shadowButtonPlacement: 'outer',
   isShadowLayer: true,
   shadowClassName: '',
   shadowStyle: {},

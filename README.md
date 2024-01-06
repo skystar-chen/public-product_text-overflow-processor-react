@@ -83,6 +83,7 @@ interface TextProcessProps {
     /** >>>>>>shadow配置 */
     shadowOption?: {
       shadowInitBoxShowH?: number, // 折叠时显示的文案高度，超出这个高度才出现操作按钮
+      shadowButtonPlacement?: 'outer' | 'inner'; // 按钮位置在文案外部还是内部
       isShadowLayer?: boolean, // 是否需要阴影遮罩层
       shadowClassName?: string, // 阴影遮罩层自定义类名
       shadowStyle?: React.CSSProperties, // 阴影遮罩层自定义样式
@@ -125,6 +126,7 @@ type reRenderDependentPropertiesEnum = 'all'
 | 'extraOccupiedW'
 | 'buttonBeforeSlot'
 | 'shadowInitBoxShowH'
+| 'shadowButtonPlacement'
 | 'isShadowLayer'
 | 'shadowClassName'
 | 'shadowStyle';
@@ -152,6 +154,7 @@ TextOverflowProcessor.defaultProps = {
     /** >>>>>>shadow配置 */
     shadowOption: {
       shadowInitBoxShowH: 76,
+      shadowButtonPlacement: 'outer',
       isShadowLayer: true,
       shadowClassName: '',
       shadowStyle: {},
@@ -219,6 +222,16 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ## 四、更新日志
 
+### ↪2.0.12
+
+`2024-01-06`
+
+☆ 增加shadowButtonPlacement属性，`shadow`时定义按钮位置在文案外部还是内部；
+
+☆ 优化屏幕缩放时，显示效果；
+
+☆ `ellipsis`时，去除按钮前的&nbsp;空格占位。
+
 ### ↪2.0.11
 
 `2023-11-25`
@@ -235,7 +248,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 `2023-08-01`
 
-☆ 修复shadow时，初始化折叠状态在按钮不显示时展示错误；
+☆ 修复`shadow`时，初始化折叠状态在按钮不显示时展示错误；
 
 ☆ package.json文件repository地址修改。
 
@@ -243,7 +256,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 `2023-07-31`
 
-☆ 修复shadow时，初始化折叠状态错误；
+☆ 修复`shadow`时，初始化折叠状态错误；
 
 ☆ getIsFold方法增加返回的状态是否是初始化状态标识；
 
