@@ -27,6 +27,7 @@ function useRefreshDependentProperties(props) {
     extraOccupiedW,
     buttonBeforeSlot,
     shadowInitBoxShowH,
+    shadowButtonPlacement,
     isShadowLayer,
     shadowClassName,
     shadowStyle,
@@ -64,6 +65,7 @@ function useRefreshDependentProperties(props) {
           extraOccupiedW,
           buttonBeforeSlot,
           shadowInitBoxShowH,
+          shadowButtonPlacement,
           isShadowLayer,
           shadowClassName,
           shadowStyle,
@@ -118,6 +120,8 @@ function useRefreshDependentProperties(props) {
         dependence.push(buttonBeforeSlot);
       case reRenderDependentProperties?.includes('shadowInitBoxShowH'):
         dependence.push(shadowInitBoxShowH);
+      case reRenderDependentProperties?.includes('shadowButtonPlacement'):
+        dependence.push(shadowButtonPlacement);
       case reRenderDependentProperties?.includes('isShadowLayer'):
         dependence.push(isShadowLayer);
       case reRenderDependentProperties?.includes('shadowClassName'):

@@ -25,6 +25,28 @@
       }
     }
 
+    .click-btn-inner {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background-color: #fff;
+
+      .shadow {
+        display: inline-block;
+        width: 20px;
+        height: 100%;
+        position: absolute;
+        left: -20px;
+        top: 0;
+        background-image: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0.8),
+          rgba(255, 255, 255, 1),
+        );
+      }
+    }
+
     .text {
       display: block;
       word-break: break-all;
@@ -44,7 +66,6 @@
       width: 100%;
       height: 20px;
       position: absolute;
-      // bottom: 24px;
       background-image: linear-gradient(
         0deg,
         rgba(255, 255, 255, 1),

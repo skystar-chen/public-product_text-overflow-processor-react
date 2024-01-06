@@ -35,6 +35,7 @@ const DEFAULT_PROPS: TextProcessProps = {
   buttonBeforeSlot: null,
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH: 76,
+  shadowButtonPlacement: 'outer',
   isShadowLayer: true,
   shadowClassName: '',
   shadowStyle: {},

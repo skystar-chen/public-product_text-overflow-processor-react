@@ -91,6 +91,7 @@ interface TextProcessProps {
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
   isShadowLayer?: boolean; // 是否需要阴影遮罩层
+  shadowButtonPlacement?: 'outer' | 'inner'; // 按钮位置在文案外部还是内部
   shadowClassName?: string; // 阴影遮罩层自定义类名
   shadowStyle?: React.CSSProperties; // 阴影遮罩层自定义样式
 }
@@ -119,6 +120,7 @@ type reRenderDependentPropertiesEnum = 'all'
 | 'extraOccupiedW'
 | 'buttonBeforeSlot'
 | 'shadowInitBoxShowH'
+| 'shadowButtonPlacement'
 | 'isShadowLayer'
 | 'shadowClassName'
 | 'shadowStyle';
@@ -153,6 +155,7 @@ TextOverflowProcessor.defaultProps = {
   buttonBeforeSlot: null,
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH: 76,
+  shadowButtonPlacement: 'outer',
   isShadowLayer: true,
   shadowClassName: '',
   shadowStyle: {},
@@ -206,6 +209,16 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志（1.x.x低版本将不记录高版本更新日志）
+
+### ↪1.1.19
+
+`2024-01-06`
+
+☆ 增加shadowButtonPlacement属性，`shadow`时定义按钮位置在文案外部还是内部；
+
+☆ 优化屏幕缩放时，显示效果；
+
+☆ `ellipsis`时，去除按钮前的&nbsp;空格占位。
 
 ### ↪1.1.18
 
