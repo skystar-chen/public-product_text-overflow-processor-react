@@ -344,6 +344,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
       extraOccupiedW,
       buttonBeforeSlot,
       shadowInitBoxShowH,
+      shadowButtonPlacement,
       isShadowLayer,
       shadowClassName,
       shadowStyle,
