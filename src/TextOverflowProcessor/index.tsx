@@ -437,7 +437,12 @@ function TextOverflowProcessor(props: TextProcessProps) {
           'text-show-all': !isFold,
         })}
         style={{
-          display: isJsComputed ? 'inline-block' : ((type === 'ellipsis' && isViewResize) ? '-webkit-box' : ''),
+          display: isJsComputed
+            ? 'inline-block'
+            // 屏幕在缩放时必须变回折叠态，不然确定不了文案是否有益处
+            : ((type === 'ellipsis' && isViewResize)
+              ? '-webkit-box'
+              : ''),
           WebkitLineClamp: ellipsisLineClamp,
           lineHeight: lineHeight + 'px',
           textAlign: isJustifyTextLayout ? 'justify' : 'inherit',
