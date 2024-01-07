@@ -238,7 +238,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ☆ 优化复杂依赖属性的依赖项使用；
 
-☆ `ellipsis`时，去除按钮前的&nbsp;空格占位。
+☆ `ellipsis`时，去除按钮前的`&nbsp;`空格占位。
 
 ### ↪2.0.11
 
