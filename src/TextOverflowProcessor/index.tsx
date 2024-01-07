@@ -322,7 +322,6 @@ function TextOverflowProcessor(props: TextProcessProps) {
     if (isMustNoButton) setIsShowBtn(false);
     if (isJsComputed && viewingArea?.current) {
       setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
-      // setIsReJsComputed(Date.now());
     }
     setIsInitEntry(false);
   }
@@ -383,7 +382,6 @@ function TextOverflowProcessor(props: TextProcessProps) {
     timer.current = setTimeout(() => {
       if (isJsComputed && viewingArea?.current) {
         setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
-        // setIsReJsComputed(Date.now());
       } else {
         const flag = getIsOverflow();
         // 有操作按钮时，展开态并且最终文案还是展示不下，不用处理
@@ -411,7 +409,12 @@ function TextOverflowProcessor(props: TextProcessProps) {
           'text-show-all': !isFold,
         })}
         style={{
-          display: isJsComputed ? 'inline-block' : (type === 'ellipsis' && isViewResize) ? '-webkit-box' : '',
+          display: isJsComputed
+            ? 'inline-block'
+            // 屏幕在缩放时必须变回折叠态，不然确定不了文案是否有益处
+            : (type === 'ellipsis' && isViewResize)
+              ? '-webkit-box'
+              : '',
           WebkitLineClamp: ellipsisLineClamp,
           lineHeight: lineHeight + 'px',
           textAlign: ((type === 'ellipsis') && isShowBtn && isFold && !isJsComputed) ? 'justify' : 'inherit',
