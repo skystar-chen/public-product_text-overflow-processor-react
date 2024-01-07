@@ -91,7 +91,7 @@ interface TextProcessProps {
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
   isShadowLayer?: boolean; // 是否需要阴影遮罩层
-  shadowButtonPlacement?: 'outer' | 'inner'; // 按钮位置在文案外部还是内部
+  shadowFoldButtonPlacement?: 'outer' | 'inner'; // 折叠态时按钮位置在文案外部还是内部
   shadowClassName?: string; // 阴影遮罩层自定义类名
   shadowStyle?: React.CSSProperties; // 阴影遮罩层自定义样式
 }
@@ -120,7 +120,7 @@ type reRenderDependentPropertiesEnum = 'all'
 | 'extraOccupiedW'
 | 'buttonBeforeSlot'
 | 'shadowInitBoxShowH'
-| 'shadowButtonPlacement'
+| 'shadowFoldButtonPlacement'
 | 'isShadowLayer'
 | 'shadowClassName'
 | 'shadowStyle';
@@ -155,7 +155,7 @@ TextOverflowProcessor.defaultProps = {
   buttonBeforeSlot: null,
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH: 76,
-  shadowButtonPlacement: 'outer',
+  shadowFoldButtonPlacement: 'outer',
   isShadowLayer: true,
   shadowClassName: '',
   shadowStyle: {},
@@ -208,15 +208,23 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
+4、当reRenderDependentProperties属性中添加了unfoldButtonText/foldButtonText/textEndSlot/buttonBeforeSlot作为组件监听依赖项时，传递的属性值为string字符串类型时将正常使用，当为Element复杂类型时将不作为监听依赖项，此时结构发生变化可以给组件加key实现刷新效果。
+
 ## 四、更新日志（1.x.x低版本将不记录高版本更新日志）
 
 ### ↪1.1.19
 
-`2024-01-06`
+`2024-01-07`
 
-☆ 增加shadowButtonPlacement属性，`shadow`时定义按钮位置在文案外部还是内部；
+☆ 增加shadowFoldButtonPlacement属性，`shadow`时，控制折叠态时按钮位置在文案外部还是内部；
+
+☆ 修复reRenderDependentProperties属性带来的死循环问题；
+
+☆ 优化展开态屏幕缩放变成折叠态问题；
 
 ☆ 优化屏幕缩放时，显示效果；
+
+☆ 优化复杂依赖属性的依赖项使用；
 
 ☆ `ellipsis`时，去除按钮前的&nbsp;空格占位。
 
