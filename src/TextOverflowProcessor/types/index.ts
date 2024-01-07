@@ -25,7 +25,7 @@ type reRenderDependentPropertiesEnum = 'all'
 | 'extraOccupiedW'
 | 'buttonBeforeSlot'
 | 'shadowInitBoxShowH'
-| 'shadowButtonPlacement'
+| 'shadowFoldButtonPlacement'
 | 'isShadowLayer'
 | 'shadowClassName'
 | 'shadowStyle';
@@ -62,7 +62,7 @@ type EllipsisOptionType = {
 };
 type ShadowOptionType = {
   shadowInitBoxShowH?: number, // 折叠时显示的文案高度，超出这个高度才出现操作按钮
-  shadowButtonPlacement?: 'outer' | 'inner'; // 按钮位置在文案外部还是内部
+  shadowFoldButtonPlacement?: 'outer' | 'inner'; // 折叠态时按钮位置在文案外部还是内部
   isShadowLayer?: boolean, // 是否需要阴影遮罩层
   shadowClassName?: string, // 阴影遮罩层自定义类名
   shadowStyle?: React.CSSProperties, // 阴影遮罩层自定义样式

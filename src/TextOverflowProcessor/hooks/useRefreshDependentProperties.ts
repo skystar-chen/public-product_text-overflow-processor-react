@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { filterComplexDependentProperties } from '../utils';
 
 function useRefreshDependentProperties(props) {
   const {
@@ -27,7 +28,7 @@ function useRefreshDependentProperties(props) {
     extraOccupiedW,
     buttonBeforeSlot,
     shadowInitBoxShowH,
-    shadowButtonPlacement,
+    shadowFoldButtonPlacement,
     isShadowLayer,
     shadowClassName,
     shadowStyle,
@@ -44,13 +45,13 @@ function useRefreshDependentProperties(props) {
           text,
           type,
           className,
-          style,
+          JSON?.stringify(style),
           buttonClassName,
-          buttonStyle,
+          JSON?.stringify(buttonStyle),
           isClickOriginalEvent,
           isDefaultFold,
-          unfoldButtonText,
-          foldButtonText,
+          filterComplexDependentProperties(unfoldButtonText),
+          filterComplexDependentProperties(foldButtonText),
           isShowAllContent,
           isMustButton,
           isMustNoButton,
@@ -60,15 +61,15 @@ function useRefreshDependentProperties(props) {
           isJsComputed,
           fontSize,
           fontClassName,
-          fontStyle,
-          textEndSlot,
+          JSON?.stringify(fontStyle),
+          filterComplexDependentProperties(textEndSlot),
           extraOccupiedW,
-          buttonBeforeSlot,
+          filterComplexDependentProperties(buttonBeforeSlot),
           shadowInitBoxShowH,
-          shadowButtonPlacement,
+          shadowFoldButtonPlacement,
           isShadowLayer,
           shadowClassName,
-          shadowStyle,
+          JSON?.stringify(shadowStyle),
         ];
         break;
 
@@ -76,13 +77,13 @@ function useRefreshDependentProperties(props) {
         if (reRenderDependentProperties?.includes('text')) dependence.push(text);
         if (reRenderDependentProperties?.includes('type')) dependence.push(type);
         if (reRenderDependentProperties?.includes('className')) dependence.push(className);
-        if (reRenderDependentProperties?.includes('style')) dependence.push(style);
+        if (reRenderDependentProperties?.includes('style')) dependence.push(JSON?.stringify(style));
         if (reRenderDependentProperties?.includes('buttonClassName')) dependence.push(buttonClassName);
-        if (reRenderDependentProperties?.includes('buttonStyle')) dependence.push(buttonStyle);
+        if (reRenderDependentProperties?.includes('buttonStyle')) dependence.push(JSON?.stringify(buttonStyle));
         if (reRenderDependentProperties?.includes('isClickOriginalEvent')) dependence.push(isClickOriginalEvent);
         if (reRenderDependentProperties?.includes('isDefaultFold')) dependence.push(isDefaultFold);
-        if (reRenderDependentProperties?.includes('unfoldButtonText')) dependence.push(unfoldButtonText);
-        if (reRenderDependentProperties?.includes('foldButtonText')) dependence.push(foldButtonText);
+        if (reRenderDependentProperties?.includes('unfoldButtonText')) dependence.push(filterComplexDependentProperties(unfoldButtonText));
+        if (reRenderDependentProperties?.includes('foldButtonText')) dependence.push(filterComplexDependentProperties(foldButtonText));
         if (reRenderDependentProperties?.includes('isShowAllContent')) dependence.push(isShowAllContent);
         if (reRenderDependentProperties?.includes('isMustButton')) dependence.push(isMustButton);
         if (reRenderDependentProperties?.includes('isMustNoButton')) dependence.push(isMustNoButton);
@@ -92,20 +93,20 @@ function useRefreshDependentProperties(props) {
         if (reRenderDependentProperties?.includes('isJsComputed')) dependence.push(isJsComputed);
         if (reRenderDependentProperties?.includes('fontSize')) dependence.push(fontSize);
         if (reRenderDependentProperties?.includes('fontClassName')) dependence.push(fontClassName);
-        if (reRenderDependentProperties?.includes('fontStyle')) dependence.push(fontStyle);
-        if (reRenderDependentProperties?.includes('textEndSlot')) dependence.push(textEndSlot);
+        if (reRenderDependentProperties?.includes('fontStyle')) dependence.push(JSON?.stringify(fontStyle));
+        if (reRenderDependentProperties?.includes('textEndSlot')) dependence.push(filterComplexDependentProperties(textEndSlot));
         if (reRenderDependentProperties?.includes('extraOccupiedW')) dependence.push(extraOccupiedW);
-        if (reRenderDependentProperties?.includes('buttonBeforeSlot')) dependence.push(buttonBeforeSlot);
+        if (reRenderDependentProperties?.includes('buttonBeforeSlot')) dependence.push(filterComplexDependentProperties(buttonBeforeSlot));
         if (reRenderDependentProperties?.includes('shadowInitBoxShowH')) dependence.push(shadowInitBoxShowH);
-        if (reRenderDependentProperties?.includes('shadowButtonPlacement')) dependence.push(shadowButtonPlacement);
+        if (reRenderDependentProperties?.includes('shadowFoldButtonPlacement')) dependence.push(shadowFoldButtonPlacement);
         if (reRenderDependentProperties?.includes('isShadowLayer')) dependence.push(isShadowLayer);
         if (reRenderDependentProperties?.includes('shadowClassName')) dependence.push(shadowClassName);
-        if (reRenderDependentProperties?.includes('shadowStyle')) dependence.push(shadowStyle);
+        if (reRenderDependentProperties?.includes('shadowStyle')) dependence.push(JSON?.stringify(shadowStyle));
         break;
     }
 
     return dependence;
-  }, [reRenderDependentProperties]);
+  }, [JSON?.stringify(reRenderDependentProperties)]);
 
   return refreshDependentProperties;
 }

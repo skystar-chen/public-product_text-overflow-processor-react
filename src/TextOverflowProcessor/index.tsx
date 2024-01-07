@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
 import { renderToString } from 'react-dom/server';
 import useRefreshDependentProperties from './hooks/useRefreshDependentProperties';
-import { getFixedWidthText, getClassNames } from './utils';
+import { getFixedWidthText, getClassNames, filterComplexDependentProperties } from './utils';
 import {
   TYPE,
   DEFAULT_ELLIPSIS_OPTION,
@@ -61,7 +61,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   /** >>>>>>shadow配置 */
   const {
     shadowInitBoxShowH = 76,
-    shadowButtonPlacement = 'outer',
+    shadowFoldButtonPlacement = 'outer',
     isShadowLayer = true,
     shadowClassName = '',
     shadowStyle = {},
@@ -75,6 +75,8 @@ function TextOverflowProcessor(props: TextProcessProps) {
   const [isShowBtn, setIsShowBtn] = useState<boolean>(false);
   // 是否触发handleResize
   const [isViewResize, setIsViewResize] = useState<boolean>(false);
+  // 执行触发handleResize后要做的事情，为了能够在事件中拿到最新的相关状态
+  const [executeResizeEvent, setExecuteResizeEvent] = useState<number>(0);
   // 触发handleResize时启用的定时器
   const timer = useRef<any>(null);
   // 文案可视区域DOM
@@ -83,7 +85,15 @@ function TextOverflowProcessor(props: TextProcessProps) {
   const textArea = useRef<HTMLSpanElement>(null);
   const shadowShowH = useRef<number>(76);
   // 使用js来计算展示的文案时使用
-  const [width, setWidth] = useState(0);
+  const [width, setWidth] = useState<number>(0);
+  const [isReJsComputed, setIsReJsComputed] = useState<number>(0);
+  const lastComputedList = useRef<{
+    finalText: string,
+    isFold: boolean,
+  }>({
+    finalText: '',
+    isFold: true,
+  });
 
   const cssText = useMemo(() => {
     let cssText = '';
@@ -104,7 +114,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     }
 
     return cssText;
-  }, [fontStyle]);
+  }, [JSON?.stringify(fontStyle)]);
 
   // 使用js来计算展示的文案
   const computedList = useMemo(() => {
@@ -172,22 +182,26 @@ function TextOverflowProcessor(props: TextProcessProps) {
         }
       }
     }
+    // 有操作按钮时，展开态并且最终文案还是展示不下，不用处理
+    if (isShowBtn && !isFold && isEllipsis) return lastComputedList.current;
     if (isJsComputed) {
       setIsFold(isEllipsis);
       !isMustButton && !isMustNoButton && setIsShowBtn(isEllipsis);
       if (isMustButton) setIsShowBtn(true);
       if (isMustNoButton) setIsShowBtn(false);
     }
-
-    return {
+    lastComputedList.current = {
       finalText,
       isFold: isEllipsis,
     };
+
+    return lastComputedList.current;
   }, [
     text,
     width,
+    isReJsComputed,
     ellipsisLineClamp,
-    foldButtonText,
+    filterComplexDependentProperties(foldButtonText),
     fontSize,
     cssText,
     fontClassName,
@@ -205,13 +219,13 @@ function TextOverflowProcessor(props: TextProcessProps) {
     return isShadowLayer && isShowBtn && isFold;
   }, [isShadowLayer, isShowBtn, isFold]);
 
-  const isHiddenOccupyButtonBlock = useMemo(() => {
-    return (isMustNoButton && !textEndSlot) || !isShowBtn;
-  }, [isMustNoButton, textEndSlot, isShowBtn]);
-
   const buttonCon = useMemo(() => {
     return isFold ? foldButtonText : unfoldButtonText;
-  }, [isFold, unfoldButtonText, foldButtonText]);
+  }, [
+    isFold,
+    filterComplexDependentProperties(unfoldButtonText),
+    filterComplexDependentProperties(foldButtonText),
+  ]);
 
   const realButtonStyle = useMemo(() => {
     const defalutStyle = {
@@ -225,7 +239,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
     }
 
     return Object?.assign(defalutStyle, buttonStyle);
-  }, [isShowBtn, lineHeight, buttonStyle]);
+  }, [isShowBtn, lineHeight, JSON?.stringify(buttonStyle)]);
 
   // 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来
   const textFoldNoButtonEndSlot = useMemo(() => {
@@ -240,11 +254,16 @@ function TextOverflowProcessor(props: TextProcessProps) {
         {textEndSlot}
       </span>
     ));
-  }, [isMustNoButton, isFold, textEndSlot, lineHeight]);
+  }, [
+    isMustNoButton,
+    isFold,
+    filterComplexDependentProperties(textEndSlot),
+    lineHeight,
+  ]);
 
   const renderShadowLayer = useMemo(() => {
     const baseStyle = {
-      top: shadowButtonPlacement === 'inner' ? 0 : (shadowInitBoxShowH as number) - 20,
+      top: (shadowFoldButtonPlacement === 'inner' && isFold) ? 0 : (shadowInitBoxShowH as number) - 20,
     };
 
     return isVisibleShadowLayer && (
@@ -261,10 +280,10 @@ function TextOverflowProcessor(props: TextProcessProps) {
     );
   }, [
     isVisibleShadowLayer,
-    shadowButtonPlacement,
+    shadowFoldButtonPlacement,
     shadowInitBoxShowH,
     shadowClassName,
-    shadowStyle,
+    JSON?.stringify(shadowStyle),
   ]);
 
   const getIsOverflow = useCallback(() => {
@@ -290,35 +309,18 @@ function TextOverflowProcessor(props: TextProcessProps) {
   }, []);
 
   const handleResize = useCallback(() => {
-    if (isShowAllContent) return;
-
-    // 防抖处理
-    setIsViewResize(true);
-    timer.current && clearTimeout(timer.current);
-    timer.current = setTimeout(() => {
-      if (isJsComputed && viewingArea?.current) {
-        setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
-      } else {
-        const flag = getIsOverflow();
-        !isMustButton && !isMustNoButton && setIsShowBtn(flag);
-        setIsFold(flag);
-      }
-      setIsViewResize(false);
-      clearTimeout(timer.current);
-      timer.current = null;
-    }, 200);
-  }, [
-    isJsComputed,
-    isMustButton,
-    isMustNoButton,
-    isShowAllContent,
-  ]);
+    setExecuteResizeEvent(Date.now());
+  }, []);
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    // 有操作按钮时，展开态并且按钮存在时没有触发文案计算，这时点击折叠需要触发重新计算
+    if (isShowBtn && !isFold && isJsComputed && viewingArea?.current) {
+      setIsReJsComputed(Date.now());
+    }
     onClick && onClick?.(e);
     onClick && isClickOriginalEvent && setIsFold(!isFold);
     onClick || setIsFold(!isFold);
-  }, [isFold, isClickOriginalEvent]);
+  }, [isFold, isClickOriginalEvent, isShowBtn, isJsComputed]);
 
   // 初始化
   const init = () => {
@@ -380,7 +382,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
       extraOccupiedW,
       buttonBeforeSlot,
       shadowInitBoxShowH,
-      shadowButtonPlacement,
+      shadowFoldButtonPlacement,
       isShadowLayer,
       shadowClassName,
       shadowStyle,
@@ -397,6 +399,29 @@ function TextOverflowProcessor(props: TextProcessProps) {
       window.removeEventListener('resize', handleResize);
     }
   }, []);
+
+  // 相当于handleResize事件
+  useEffect(() => {
+    if (!executeResizeEvent || isShowAllContent) return;
+    // 防抖处理
+    setIsViewResize(true);
+    timer.current && clearTimeout(timer.current);
+    timer.current = setTimeout(() => {
+      if (isJsComputed && viewingArea?.current) {
+        setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
+      } else {
+        const flag = getIsOverflow();
+        // 有操作按钮时，展开态并且最终文案还是展示不下，不用处理
+        if (isShowBtn && !isFold && flag) {} else {
+          !isMustButton && !isMustNoButton && setIsShowBtn(flag);
+          setIsFold(flag);
+        }
+      }
+      setIsViewResize(false);
+      clearTimeout(timer.current);
+      timer.current = null;
+    }, 200);
+  }, [executeResizeEvent]);
   // #endregion
 
   return (
@@ -433,16 +458,16 @@ function TextOverflowProcessor(props: TextProcessProps) {
             {/* 按钮和阴影 */}
             {!isViewResize && (
               <>
-                {shadowButtonPlacement === 'outer' && renderShadowLayer}
+                {(shadowFoldButtonPlacement === 'outer' || !isFold) && renderShadowLayer}
                 <span
                   className={getClassNames({
                     'click-btn': true,
-                    'click-btn-inner': shadowButtonPlacement === 'inner',
+                    'click-btn-inner': shadowFoldButtonPlacement === 'inner' && isFold,
                     [buttonClassName as string]: !!buttonClassName,
                   })}
                   style={realButtonStyle}
                 >
-                  {shadowButtonPlacement === 'inner' && renderShadowLayer}
+                  {shadowFoldButtonPlacement === 'inner' && isFold && renderShadowLayer}
                   <label onClick={handleClick}>{buttonCon}</label>
                 </span>
               </>
@@ -453,7 +478,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
           ? (
             <>
               {/* 把按钮撑到下面的DOM */}
-              {isHiddenOccupyButtonBlock || (
+              {((isMustNoButton && !textEndSlot) || !isShowBtn) || (
                 <i
                   className="click-btn-before"
                   style={{height: `calc(100% - ${lineHeight}px)`}}

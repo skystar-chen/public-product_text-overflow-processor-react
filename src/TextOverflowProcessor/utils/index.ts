@@ -122,7 +122,12 @@ const getClassNames = (obj: {[keyName: string]: boolean}): string => {
   }
 }
 
+const filterComplexDependentProperties = (dependent: any): string => {
+  return (typeof dependent === 'string' ? dependent : '');
+}
+
 export {
   getFixedWidthText,
   getClassNames,
+  filterComplexDependentProperties,
 }

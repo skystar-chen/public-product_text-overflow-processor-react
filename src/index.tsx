@@ -31,11 +31,13 @@ function Con() {
             },
             extraOccupiedW: 0,
           },
-          shadowOption: {
-          },
+          // shadowOption: {
+          //   shadowInitBoxShowH: 48,
+          //   shadowFoldButtonPlacement: 'inner',
+          // },
           foldButtonText: (<div style={{marginLeft: 10}}>More</div>),
           unfoldButtonText: (<div style={{marginLeft: 10}}>Less</div>),
-          isShowAllContent: a,
+          // isShowAllContent: a,
         }}
       />
       <button onClick={() => {
