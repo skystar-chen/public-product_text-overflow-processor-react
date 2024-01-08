@@ -42,9 +42,11 @@ interface TextProcessProps {
   option?: {
     /**
      * 自定义组件刷新依赖的自身属性：依赖中的属性发生变化时，会触发组件刷新。建议不要使用all，伤性能
-     * 其实通过key或其它方式也能实现同样的效果，这里只是为了方便而提供，使用到的频率极小
-     * 注：由于2.x.x版本大部分配置在option属性中，属于引用状态类型，故配置变化一般都能够触发组件刷新，
-     *     因此本属性在2.x.x版本几乎用不上...
+     * 其实通过key或其它方式也能实现同样的效果，这里只是为了方便而提供
+     * 注意：
+     * 属性中unfoldButtonText/foldButtonText/textEndSlot/buttonBeforeSlot作为组件监听依赖项时，
+     * 传递的属性值为string字符串类型时将正常使用，当为Element复杂类型时将不作为监听依赖项，
+     * 此时结构发生变化可以给组件加key告知变化实现刷新效果
      */
     reRenderDependentProperties?: reRenderDependentPropertiesEnum[],
     type?: 'ellipsis' | 'shadow', // 文案处理类型
@@ -77,7 +79,7 @@ interface TextProcessProps {
       textEndSlot?: any,
       // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
       extraOccupiedW?: number,
-      // 按钮前面的占位内容，isJsComputed为false时默认会有4个空格（使用频率低）
+      // 按钮前面的占位内容
       buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null,
     },
     /** >>>>>>shadow配置 */
@@ -220,9 +222,13 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
-4、当reRenderDependentProperties属性中添加了unfoldButtonText/foldButtonText/textEndSlot/buttonBeforeSlot作为组件监听依赖项时，传递的属性值为string字符串类型时将正常使用，当为Element复杂类型时将不作为监听依赖项，此时结构发生变化可以给组件加key实现刷新效果。
-
 ## 四、更新日志
+
+### ↪2.0.12-optimize
+
+`2024-01-08`
+
+☆ readme文档使用说明修正更新。
 
 ### ↪2.0.12
 
