@@ -216,7 +216,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ### ↪1.1.19-optimize
 
-`2024-01-07`
+`2024-01-08`
 
 ☆ readme文档使用说明修正更新。
 
