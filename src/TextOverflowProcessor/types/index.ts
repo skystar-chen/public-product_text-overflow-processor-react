@@ -122,4 +122,5 @@ export {
   ProcessType,
   ProcessTypeArr,
   TextOverflowProcessorPropsType,
+  ReRenderDependentPropertiesEnum,
 }
