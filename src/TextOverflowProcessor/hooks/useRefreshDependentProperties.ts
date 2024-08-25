@@ -1,8 +1,13 @@
 import { useMemo } from 'react';
 import { filterComplexDependentProperties } from '../utils';
-import { ReRenderDependentPropertiesEnum } from '../types';
+import {
+  EllipsisOptionType,
+  ShadowOptionType,
+  OptionType,
+  TextOverflowProcessorPropsType,
+} from '../types';
 
-function useRefreshDependentProperties(props: Record<Exclude<ReRenderDependentPropertiesEnum, 'all'> | 'reRenderDependentProperties', any>) {
+function useRefreshDependentProperties(props: TextOverflowProcessorPropsType & OptionType & EllipsisOptionType & ShadowOptionType) {
   const {
     text,
     reRenderDependentProperties,
