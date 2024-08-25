@@ -1,10 +1,13 @@
-import TextOverflowProcessor from "./TextOverflowProcessor";
-export default TextOverflowProcessor;
+/**
+ * node版本: 14.17.4
+ */
+export { default } from './TextOverflowProcessor';
+export * from './TextOverflowProcessor/types';
 
 /* import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import TextOverflowProcessor from "./TextOverflowProcessor";
-// import TextOverflowProcessor from 'text-overflow-processor-react';
+// import TextOverflowProcessor from './TextOverflowProcessor';
+import TextOverflowProcessor, { type ProcessType, type ProcessTypeArr, type TextOverflowProcessorPropsType } from 'text-overflow-processor-react';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
@@ -39,11 +42,10 @@ function Con() {
   );
 } */
 
-
 /**
  * 测试调试：
  * 项目中打包组件后执行npm link（此时会把本组件link到全局）
- * 然后随便选个项目执行npm link 包名（此时会把全局中刚才link的包link到当前项目中，此时可以调试）
+ * 然后随便选个项目（这个项目可以是当前项目）执行npm link 包名（此时会把全局中刚才link的包link到当前项目中，此时可以调试）
  * 调试完毕后，回到组件项目中执行npm unlink（去除link软连接）
  */
 /**

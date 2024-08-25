@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { filterComplexDependentProperties } from '../utils';
+import { TextOverflowProcessorPropsType } from '../types';
 
-function useRefreshDependentProperties(props) {
+function useRefreshDependentProperties(props: TextOverflowProcessorPropsType) {
   const {
     text,
     reRenderDependentProperties,

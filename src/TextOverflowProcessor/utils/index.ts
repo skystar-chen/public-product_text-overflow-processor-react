@@ -9,8 +9,7 @@
  * @fontClassName 文案类名
  * @containerEl 文案容器dom
  */
-const getFixedWidthText:
-(
+type GetFixedWidthTextFn = (
   text: string,
   lineWidth: number,
   width: number,
@@ -20,9 +19,8 @@ const getFixedWidthText:
   fontStyleCSSText?: string,
   fontClassName?: string,
   containerEl?: any,
-) => string
-=
-(
+) => string;
+const getFixedWidthText: GetFixedWidthTextFn = (
   text,
   lineWidth,
   width,

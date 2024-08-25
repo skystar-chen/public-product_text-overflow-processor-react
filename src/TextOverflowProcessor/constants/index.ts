@@ -1,11 +1,11 @@
 import {
   ProcessTypeArr,
-  TextProcessProps,
+  TextOverflowProcessorPropsType,
 } from '../types';
 
-const TYPE: ProcessTypeArr = ['shadow', 'ellipsis'];
+const PROCESS_TYPE_LIST: ProcessTypeArr = ['shadow', 'ellipsis'];
 
-const DEFAULT_PROPS: TextProcessProps = {
+const DEFAULT_PROPS: TextOverflowProcessorPropsType = {
   text: '',
   reRenderDependentProperties: ['text'],
   type: 'shadow',
@@ -97,7 +97,7 @@ const JS_COMPUTED_NUMBER_TO_PX_PROPERTIES = [
 ];
 
 export {
-  TYPE,
+  PROCESS_TYPE_LIST,
   DEFAULT_PROPS,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,

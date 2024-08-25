@@ -29,7 +29,7 @@ import TextOverflowProcessor from 'text-overflow-processor-react'
 
 ```typescript
 参数含义：
-interface TextProcessProps {
+interface TextOverflowProcessorPropsType {
   /** >>>>>>公共配置 */
   text: string; // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
   /**
@@ -40,7 +40,7 @@ interface TextProcessProps {
    * 传递的属性值为string字符串类型时将正常使用，当为Element复杂类型时将不作为监听依赖项，
    * 此时结构发生变化可以给组件加key告知变化实现刷新效果
    */
-  reRenderDependentProperties?: reRenderDependentPropertiesEnum[];
+  reRenderDependentProperties?: ReRenderDependentPropertiesEnum[];
   type?: 'shadow' | 'ellipsis'; // 文案处理类型
   className?: string;
   style?: React.CSSProperties;
@@ -53,8 +53,8 @@ interface TextProcessProps {
     isInitState: boolean, // 返回的是否是初始化状态，有时初始化状态可能会影响组件的使用，可以用这个区分
   ) => void) | null;
   isDefaultFold?: boolean; // 是否默认折叠
-  unfoldButtonText?: string  | JSX.Element | JSX.Element[]; // 展开时按钮文案
-  foldButtonText?: string  | JSX.Element | JSX.Element[]; // 折叠时按钮文案
+  unfoldButtonText?: string | JSX.Element | JSX.Element[]; // 展开时按钮文案
+  foldButtonText?: string | JSX.Element | JSX.Element[]; // 折叠时按钮文案
   isShowAllContent?: boolean; // 当选择展示所有内容时将不提供操作按钮
   isMustButton?: boolean; // 是否常驻显示按钮
   isMustNoButton?: boolean; // 是否不要显示按钮
@@ -99,7 +99,7 @@ interface TextProcessProps {
   shadowClassName?: string; // 阴影遮罩层自定义类名
   shadowStyle?: React.CSSProperties; // 阴影遮罩层自定义样式
 }
-type reRenderDependentPropertiesEnum = 'all'
+type ReRenderDependentPropertiesEnum = 'all'
 | 'text'
 | 'type'
 | 'className'
@@ -213,6 +213,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志（1.x.x低版本将不记录高版本更新日志）
+
+### ↪1.1.20
+
+`2024-08-25`
+
+☆ TS代码优化。
 
 ### ↪1.1.19-optimize
 

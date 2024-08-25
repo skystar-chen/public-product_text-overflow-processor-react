@@ -1,20 +1,21 @@
-import { useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
+import { type FC, useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
 import { renderToString } from 'react-dom/server';
 import useRefreshDependentProperties from './hooks/useRefreshDependentProperties';
 import { getFixedWidthText, getClassNames, filterComplexDependentProperties } from './utils';
 import {
-  TYPE,
+  PROCESS_TYPE_LIST,
   DEFAULT_PROPS,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
 } from './constants';
-import {
-  ProcessType,
-  TextProcessProps,
-} from './types';
+import { TextOverflowProcessorPropsType } from './types';
 import './index.scss';
 
-function TextOverflowProcessor(props: TextProcessProps) {
+/**
+ * 文本溢出处理
+ * author: chenxingxing
+ */
+const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
   const {
     text,
@@ -63,7 +64,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   // 执行触发handleResize后要做的事情，为了能够在事件中拿到最新的相关状态
   const [executeResizeEvent, setExecuteResizeEvent] = useState<number>(0);
   // 触发handleResize时启用的定时器
-  const timer = useRef<any>(null);
+  const timer = useRef<NodeJS.Timeout | null>(null);
   // 文案可视区域DOM
   const viewingArea = useRef<HTMLParagraphElement>(null);
   // 文案整体容器DOM
@@ -297,7 +298,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
 
   // 初始化
   const init = () => {
-    if (!TYPE.includes(type as ProcessType)) {
+    if (!type || !PROCESS_TYPE_LIST.includes(type)) {
       console.error('文案处理类型type不在可选范围！');
       return;
     }
@@ -391,7 +392,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
         }
       }
       setIsViewResize(false);
-      clearTimeout(timer.current);
+      clearTimeout(timer.current as NodeJS.Timeout);
       timer.current = null;
     }, 200);
   }, [executeResizeEvent]);
@@ -489,6 +490,7 @@ function TextOverflowProcessor(props: TextProcessProps) {
   )
 }
 
+TextOverflowProcessor.displayName = 'TextOverflowProcessor';
 TextOverflowProcessor.defaultProps = DEFAULT_PROPS;
 
 export default memo(TextOverflowProcessor);
