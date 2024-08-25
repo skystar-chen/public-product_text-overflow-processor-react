@@ -132,4 +132,5 @@ export {
   ShadowOptionType,
   OptionType,
   TextOverflowProcessorPropsType,
+  ReRenderDependentPropertiesEnum,
 }

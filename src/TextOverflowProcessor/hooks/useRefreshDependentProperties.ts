@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { filterComplexDependentProperties } from '../utils';
+import { ReRenderDependentPropertiesEnum } from '../types';
 
-function useRefreshDependentProperties(props) {
+function useRefreshDependentProperties(props: Record<Exclude<ReRenderDependentPropertiesEnum, 'all'> | 'reRenderDependentProperties', any>) {
   const {
     text,
     reRenderDependentProperties,
