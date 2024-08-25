@@ -3,10 +3,10 @@ import {
   EllipsisOptionType,
   ShadowOptionType,
   OptionType,
-  TextProcessProps,
+  TextOverflowProcessorPropsType,
 } from '../types';
 
-const TYPE: ProcessTypeArr = ['ellipsis', 'shadow'];
+const PROCESS_TYPE_LIST: ProcessTypeArr = ['ellipsis', 'shadow'];
 const DEFAULT_ELLIPSIS_OPTION: EllipsisOptionType = {
   ellipsisLineClamp: 2,
   isJsComputed: false,
@@ -43,7 +43,7 @@ const DEFAULT_OPTION: OptionType = {
   lineHeight: 24,
   isRenderShowAllDOM: false,
 };
-const DEFAULT_PROPS: TextProcessProps = {
+const DEFAULT_PROPS: TextOverflowProcessorPropsType = {
   text: '',
   className: '',
   style: {},
@@ -108,7 +108,7 @@ const JS_COMPUTED_NUMBER_TO_PX_PROPERTIES = [
 ];
 
 export {
-  TYPE,
+  PROCESS_TYPE_LIST,
   DEFAULT_ELLIPSIS_OPTION,
   DEFAULT_SHADOW_OPTION,
   DEFAULT_OPTION,
