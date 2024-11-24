@@ -88,7 +88,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   // 使用js来计算展示的文案时使用
   const [width, setWidth] = useState<number>(0);
   const [isReJsComputed, setIsReJsComputed] = useState<number>(0);
-  const lastComputedList = useRef<{
+  const prevComputedList = useRef<{
     finalText: string,
     isFold: boolean,
   }>({
@@ -184,19 +184,19 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       }
     }
     // 有操作按钮时，展开态并且最终文案还是展示不下，不用处理
-    if (isShowBtn && !isFold && isEllipsis) return lastComputedList.current;
+    if (isShowBtn && !isFold && isEllipsis) return prevComputedList.current;
     if (isJsComputed) {
       setIsFold(isEllipsis);
       !isMustButton && !isMustNoButton && setIsShowBtn(isEllipsis);
       if (isMustButton) setIsShowBtn(true);
       if (isMustNoButton) setIsShowBtn(false);
     }
-    lastComputedList.current = {
+    prevComputedList.current = {
       finalText,
       isFold: isEllipsis,
     };
 
-    return lastComputedList.current;
+    return prevComputedList.current;
   }, [
     text,
     width,
@@ -309,16 +309,14 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     return res;
   }, []);
 
-  const handleResize = useCallback(() => {
-    setExecuteResizeEvent(Date.now());
-  }, []);
+  const handleResize = useCallback(() => { setExecuteResizeEvent(Date.now()); }, []);
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     // 有操作按钮时，展开态并且按钮存在时没有触发文案计算，这时点击折叠需要触发重新计算
     if (isShowBtn && !isFold && isJsComputed && viewingArea?.current) {
       setIsReJsComputed(Date.now());
     }
-    onClick && onClick?.(e);
+    onClick && onClick?.(e, isFold);
     onClick && isClickOriginalEvent && setIsFold(!isFold);
     onClick || setIsFold(!isFold);
   }, [isFold, isClickOriginalEvent, isShowBtn, isJsComputed]);
@@ -518,7 +516,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   )
 }
 
-TextOverflowProcessor.displayName = 'TextOverflowProcessor';
+if (process.env.NODE_ENV !== 'production') { TextOverflowProcessor.displayName = 'TextOverflowProcessor'; }
 TextOverflowProcessor.defaultProps = DEFAULT_PROPS;
 
 export default memo(TextOverflowProcessor);

@@ -120,8 +120,8 @@ const getClassNames = (obj: {[keyName: string]: boolean}): string => {
   }
 }
 
-const filterComplexDependentProperties = (dependent: any): string => {
-  return (typeof dependent === 'string' ? dependent : '');
+const filterComplexDependentProperties = (value: any): string => {
+  return (typeof value === 'string' ? value : '');
 }
 
 export {

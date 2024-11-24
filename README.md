@@ -34,8 +34,12 @@ interface TextOverflowProcessorPropsType {
   text: string, // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
   className?: string,
   style?: React.CSSProperties,
-  onClick?: ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void) | null,
-  getIsFold?: (( // 获取文案的折叠状态
+  onClick?: ((
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    /** 文案是否是折叠的（文案是否溢出） */
+    isFold: boolean,
+  ) => void) | null,
+  getIsFold?: (( // 获取文案的折叠状态，折叠状态发生改变时会触发，相当于onChange
     isFold: boolean, // 文案是否是折叠的（文案是否溢出）
     isInitState: boolean, // 返回的是否是初始化状态，有时初始化状态可能会影响组件的使用，可以用这个区分
   ) => void) | null,
@@ -96,7 +100,7 @@ interface TextOverflowProcessorPropsType {
     isDefaultFold?: boolean, // 是否默认折叠
     unfoldButtonText?: string | JSX.Element | JSX.Element[], // 展开时按钮文案
     foldButtonText?: string | JSX.Element | JSX.Element[], // 折叠时按钮文案
-    isShowAllContent?: boolean, // 当选择展示所有内容时将不提供操作按钮
+    isShowAllContent?: boolean, // 是否展示所有内容，为true时将不提供操作按钮
     isMustButton?: boolean, // 是否常驻显示按钮
     isMustNoButton?: boolean, // 是否不要显示按钮
     lineHeight?: number,
@@ -223,6 +227,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪2.0.14
+
+`2024-11-24`
+
+☆ onClick事件返回参数增加isFold当前文案折叠状态。
 
 ### ↪2.0.13
 

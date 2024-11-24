@@ -99,7 +99,7 @@ type OptionType = {
   unfoldButtonText?: string | JSX.Element | JSX.Element[],
   /** 折叠时按钮文案 */
   foldButtonText?: string | JSX.Element | JSX.Element[],
-  /** 当选择展示所有内容时将不提供操作按钮 */
+  /** 是否展示所有内容，为true时将不提供操作按钮 */
   isShowAllContent?: boolean,
   /** 是否常驻显示按钮 */
   isMustButton?: boolean,
@@ -114,8 +114,12 @@ interface TextOverflowProcessorPropsType {
   text: string,
   className?: string,
   style?: React.CSSProperties,
-  onClick?: ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void) | null,
-  /** 获取文案的折叠状态 */
+  onClick?: ((
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    /** 文案是否是折叠的（文案是否溢出） */
+    isFold: boolean,
+  ) => void) | null,
+  /** 获取文案的折叠状态，折叠状态发生改变时会触发，相当于onChange */
   getIsFold?: ((
     /** 文案是否是折叠的（文案是否溢出） */
     isFold: boolean,
