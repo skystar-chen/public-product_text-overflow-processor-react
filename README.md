@@ -47,7 +47,7 @@ interface TextOverflowProcessorPropsType {
   buttonClassName?: string; // 按钮外出容器span的类名
   buttonStyle?: React.CSSProperties; // 按钮外出容器span的样式
   onClick?: (( // 按钮点击事件
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    e: React.MouseEvent<HTMLElement, MouseEvent>, // 事件对象
     isFold: boolean, // 文案是否是折叠的（文案是否溢出）
   ) => void) | null;
   isClickOriginalEvent?: boolean; // 当传了onClick时，点击事件是否触发原始事件
