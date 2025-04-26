@@ -32,12 +32,11 @@ import TextOverflowProcessor from 'text-overflow-processor-react'
 interface TextOverflowProcessorPropsType {
   /** >>>>>>公共配置 */
   text: string, // 文本内容，shadow时支持传DOM模板字符串（注：尽量传string文案）
-  className?: string,
-  style?: React.CSSProperties,
-  onClick?: ((
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-    /** 文案是否是折叠的（文案是否溢出） */
-    isFold: boolean,
+  className?: string, // 组件类名
+  style?: React.CSSProperties, // 组件样式
+  onClick?: (( // 按钮点击事件
+    e: React.MouseEvent<HTMLElement, MouseEvent>, // 事件对象
+    isFold: boolean, // 文案是否是折叠的（文案是否溢出）
   ) => void) | null,
   getIsFold?: (( // 获取文案的折叠状态，折叠状态发生改变时会触发，相当于onChange
     isFold: boolean, // 文案是否是折叠的（文案是否溢出）
@@ -47,10 +46,8 @@ interface TextOverflowProcessorPropsType {
     /**
      * 自定义组件刷新依赖的自身属性：依赖中的属性发生变化时，会触发组件刷新。建议不要使用all，伤性能
      * 其实通过key或其它方式也能实现同样的效果，这里只是为了方便而提供
-     * 注意：
-     * 属性中unfoldButtonText/foldButtonText/textEndSlot/buttonBeforeSlot作为组件监听依赖项时，
-     * 传递的属性值为string字符串类型时将正常使用，当为Element复杂类型时将不作为监听依赖项，
-     * 此时结构发生变化可以给组件加key告知变化实现刷新效果
+     * 注：由于2.x.x版本大部分配置在option属性中，属于引用状态类型，故配置变化一般都能够触发组件刷新，
+     *     因此本属性在2.x.x版本几乎用不上...
      */
     reRenderDependentProperties?: ReRenderDependentPropertiesEnum[],
     type?: 'ellipsis' | 'shadow', // 文案处理类型
@@ -94,16 +91,16 @@ interface TextOverflowProcessorPropsType {
       shadowClassName?: string, // 阴影遮罩层自定义类名
       shadowStyle?: React.CSSProperties, // 阴影遮罩层自定义样式
     },
-    buttonClassName?: string,
-    buttonStyle?: React.CSSProperties,
+    buttonClassName?: string, // 按钮外出容器span的类名
+    buttonStyle?: React.CSSProperties, // 按钮外出容器span的样式
     isClickOriginalEvent?: boolean, // 当传了onClick时，点击事件是否触发原始事件
     isDefaultFold?: boolean, // 是否默认折叠
-    unfoldButtonText?: string | JSX.Element | JSX.Element[], // 展开时按钮文案
-    foldButtonText?: string | JSX.Element | JSX.Element[], // 折叠时按钮文案
+    unfoldButtonText?: string | JSX.Element | JSX.Element[] | null, // 展开时按钮文案
+    foldButtonText?: string | JSX.Element | JSX.Element[] | null, // 折叠时按钮文案
     isShowAllContent?: boolean, // 是否展示所有内容，为true时将不提供操作按钮
     isMustButton?: boolean, // 是否常驻显示按钮
     isMustNoButton?: boolean, // 是否不要显示按钮
-    lineHeight?: number,
+    lineHeight?: number, // 文案行高
     isRenderShowAllDOM?: boolean, // 是否渲染被隐藏的全部文案展示DOM
   },
 }
@@ -227,6 +224,16 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪2.0.15
+
+`2025-04-26`
+
+☆ CSS浏览器兼容前缀添加；
+
+☆ 组件属性注解优化，使用时注解提示更合理；
+
+☆ 代码优化。
 
 ### ↪2.0.14
 
