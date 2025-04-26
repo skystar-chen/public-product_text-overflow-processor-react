@@ -1,6 +1,6 @@
 {
   "name": "text-overflow-processor-react",
-  "version": "2.0.15",
+  "version": "2.0.16",
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "description": "text overflow process for react",
@@ -14,9 +14,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/skystar-chen/public-product_text-overflow-processor-react/tree/main"
+    "url": "https://github.com/skystar-chen/public-product_text-overflow-processor-react/tree/version-2x"
   },
-  "homepage": "https://github.com/skystar-chen/public-product_text-overflow-processor-react/tree/main",
+  "homepage": "https://github.com/skystar-chen/public-product_text-overflow-processor-react/tree/version-2x",
   "bugs": {
     "url": "https://github.com/skystar-chen/public-product_text-overflow-processor-react/issues",
     "email": "3034474728@qq.com"

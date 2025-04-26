@@ -223,7 +223,13 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
-## 四、更新日志
+## 四、更新日志（2.x.x低版本将不记录高版本更新日志）
+
+### ↪2.0.16
+
+`2025-04-26`
+
+☆ github分支代码地址变更。
 
 ### ↪2.0.15
 
