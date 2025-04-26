@@ -18,7 +18,7 @@ type GetFixedWidthTextFn = (
   isNeedEllipsis?: boolean,
   fontStyleCSSText?: string,
   fontClassName?: string,
-  containerEl?: any,
+  containerEl?: HTMLElement | null,
 ) => string;
 const getFixedWidthText: GetFixedWidthTextFn = (
   text,
@@ -39,17 +39,17 @@ const getFixedWidthText: GetFixedWidthTextFn = (
       endStrLineFeedWidth = 0, // 如果oldText尾部是换行符，记录换行符占的宽度
       lineFeeAccessed = false; // 记录换行符导致计算零界点是否有触碰到
   if (!text || width < fontSize || typeof text !== 'string') { return text; }
-  const strArr = text?.split('');
+  const strArr = text.split('');
   const span = document.createElement('span');
   const fixedCSSText = `position:absolute;visibility:hidden;padding:0;white-space:nowrap;overflow-x:auto;font-size:${fontSize}px;font-weight:${fontWeight};`;
   span.style.cssText = fixedCSSText + fontStyleCSSText;
   span.setAttribute('class', fontClassName);
-  containerEl ? containerEl?.appendChild(span) : document.body.appendChild(span);
+  containerEl ? containerEl.appendChild(span) : document.body.appendChild(span);
   
-  for (let i = 0, l = strArr?.length; i < l; i++) {
-    const t = strArr?.[i],
+  for (let i = 0, l = strArr.length; i < l; i++) {
+    const t = strArr[i],
           itemIsLineFeed = t === '\n',
-          lastItemIsLineFeed = strArr?.[i - 1] === '\n';
+          lastItemIsLineFeed = strArr[i - 1] === '\n';
     let currentLineFeedWidth = 0;
     oldText = newText;
     newText += t;
@@ -75,16 +75,16 @@ const getFixedWidthText: GetFixedWidthTextFn = (
         let finalStr = '...';
         // 尾部换行符占的宽度大于等于...省略号占的宽度时把换行符改成...省略号
         if (endStrLineFeedWidth >= ellipsisWidth) {
-          finalStr = oldText?.slice(0, -1) + '...';
+          finalStr = oldText.slice(0, -1) + '...';
         } else {
-          const strArr = oldText?.split('');
+          const strArr = oldText.split('');
           // 计算尾部多少个字符等价...省略号占的宽度，并替换成...省略号
-          for (let j = 0, l = strArr?.length; j < l; j ++) {
+          for (let j = 0, l = strArr.length; j < l; j ++) {
             const k = -(j + 1);
-            const lastStr = oldText?.slice(k);
+            const lastStr = oldText.slice(k);
             span.innerHTML = lastStr;
             if ((span.offsetWidth + endStrLineFeedWidth) >= ellipsisWidth) {
-              finalStr = oldText?.slice(0, k) + '...';
+              finalStr = oldText.slice(0, k) + '...';
               break;
             }
           }
@@ -101,28 +101,20 @@ const getFixedWidthText: GetFixedWidthTextFn = (
     returnText = newText;
   }
   
-  containerEl ? containerEl?.removeChild(span) : document.body.removeChild(span);
+  containerEl ? containerEl.removeChild(span) : document.body.removeChild(span);
   return returnText;
 };
 
 const getClassNames = (obj: {[keyName: string]: boolean}): string => {
-  try {
-    const classNamesArr: string[] = [];
-    const objArr = Object?.entries(obj);
-    for (let i = 0, l = objArr?.length; i < l; i++) {
-      const t = objArr?.[i];
-      !!t[1] && classNamesArr.push(t[0]);
-    }
-    return classNamesArr.join(' ');
-  } catch (error) {
-    console.error(error);
-    return '';
+  if (Object.prototype.toString.call(obj) !== '[object Object]') return '';
+  let classNames: string = '';
+  for (const key in obj) {
+    !!obj[key] && (classNames += `${key} `);
   }
+  return classNames.trim();
 }
 
-const filterComplexDependentProperties = (value: any): string => {
-  return typeof value === 'string' ? value : '';
-}
+const filterComplexDependentProperties = (value: any): string => (typeof value === 'string' ? value : '');
 
 export {
   getFixedWidthText,

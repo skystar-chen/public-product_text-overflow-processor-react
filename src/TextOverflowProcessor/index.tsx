@@ -12,8 +12,8 @@ import { TextOverflowProcessorPropsType } from './types';
 import './index.scss';
 
 /**
- * 文本溢出处理
- * author: chenxingxing
+ * 文本溢出处理组件
+ * @author chenxingxing
  */
 const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
@@ -90,10 +90,10 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     ) {
       const reg = new RegExp('[A-Z]', 'g');
       for (const styleKey in fontStyle) {
-        const realStyleKey = styleKey?.replaceAll(reg, (str: string) => ('-' + str?.toLowerCase()));
-        const styleValue = (fontStyle as any)?.[styleKey];
-        if (JS_COMPUTED_VALID_CSS_PROPERTIES?.includes(realStyleKey)) {
-          const flag = JS_COMPUTED_NUMBER_TO_PX_PROPERTIES?.includes(realStyleKey) && (typeof styleValue === 'number');
+        const realStyleKey = styleKey.replaceAll(reg, (str: string) => ('-' + str.toLowerCase()));
+        const styleValue = fontStyle[styleKey];
+        if (JS_COMPUTED_VALID_CSS_PROPERTIES.includes(realStyleKey)) {
+          const flag = JS_COMPUTED_NUMBER_TO_PX_PROPERTIES.includes(realStyleKey) && (typeof styleValue === 'number');
           cssText += `${realStyleKey}:${styleValue}${flag ? 'px' : ''};`;
         }
       }
@@ -111,9 +111,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       const span = document.createElement('span');
       span.style.cssText = 'position:absolute;visibility:hidden;';
       span.innerHTML = `${!!foldButtonText ? renderToString(<>{foldButtonText}</>) : ''}`;
-      viewingArea?.current ? viewingArea?.current?.appendChild(span) : document.body.appendChild(span);
+      viewingArea.current ? viewingArea.current.appendChild(span) : document.body.appendChild(span);
       const buttonWidth = span.offsetWidth || 0; // 按钮占的宽度
-      viewingArea?.current ? viewingArea?.current?.removeChild(span) : document.body.removeChild(span);
+      viewingArea.current ? viewingArea.current.removeChild(span) : document.body.removeChild(span);
       const str = getFixedWidthText(
         text,
         width,
@@ -123,10 +123,10 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
         true,
         cssText,
         fontClassName,
-        viewingArea?.current,
+        viewingArea.current,
       );
       // 如果返回有省略号，说明文字超出了范围
-      isEllipsis = str?.endsWith('...');
+      isEllipsis = str.endsWith('...');
       const noButtonSumWidth = sumWidth - buttonWidth;
       // 下面计算折叠与否及是否展示按钮情况下得到的最终文案内容
       if (isEllipsis) {
@@ -141,7 +141,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
             true,
             cssText,
             fontClassName,
-            viewingArea?.current,
+            viewingArea.current,
           );
           finalText = str;
         } else {
@@ -159,9 +159,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
             true,
             cssText,
             fontClassName,
-            viewingArea?.current,
+            viewingArea.current,
           );
-          isEllipsis = str?.endsWith('...');
+          isEllipsis = str.endsWith('...');
           finalText = isEllipsis ? str : text;
         } else {
           finalText = text;
@@ -216,7 +216,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       return defalutStyle;
     }
 
-    return Object?.assign(defalutStyle, buttonStyle);
+    return {...defalutStyle, ...(buttonStyle || {})};
   }, [isShowBtn, lineHeight, JSON?.stringify(buttonStyle)]);
 
   // 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来
@@ -247,7 +247,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     return (isShadowLayer && isShowBtn && isFold) && (
       <span
         className={`shadow ${shadowClassName}`}
-        style={Object?.assign(baseStyle, shadowStyle) || baseStyle}
+        style={{...baseStyle, ...(shadowStyle || {})}}
       ></span>
     );
   }, [
@@ -261,16 +261,18 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   ]);
 
   const getIsOverflow = useCallback(() => {
-    const childrens: any = textArea?.current?.childNodes;
+    const childrens: NodeListOf<ChildNode> | undefined = textArea.current?.childNodes;
     let childSumH: number = 0; // 所有子元素标签加起来的高度
-    for (let i = 0, l = childrens?.length; i < l; i++) {
-      const t = childrens?.[i];
-      childSumH += t?.offsetHeight;
+    if (childrens) {
+      for (let i = 0, l = childrens.length; i < l; i++) {
+        const t = childrens[i];
+        childSumH += ((t as HTMLElement)?.offsetHeight || 0);
+      }
     }
     // @ts-ignore
-    const shadowFlag = type === 'shadow' && textArea?.current?.offsetHeight > shadowShowH.current;
+    const shadowFlag = type === 'shadow' && textArea.current?.offsetHeight > shadowShowH.current;
     // @ts-ignore
-    const generalFlag = textArea?.current?.offsetHeight > viewingArea?.current?.clientHeight;
+    const generalFlag = textArea.current?.offsetHeight > viewingArea.current?.clientHeight;
     
     let res;
     if (!!childSumH) {
@@ -286,10 +288,10 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     // 有操作按钮时，展开态并且按钮存在时没有触发文案计算，这时点击折叠需要触发重新计算
-    if (isShowBtn && !isFold && isJsComputed && viewingArea?.current) {
+    if (isShowBtn && !isFold && isJsComputed && viewingArea.current) {
       setIsReJsComputed(Date.now());
     }
-    onClick && onClick?.(e, isFold);
+    onClick && onClick(e, isFold);
     onClick && isClickOriginalEvent && setIsFold(!isFold);
     onClick || setIsFold(!isFold);
   }, [isFold, isClickOriginalEvent, isShowBtn, isJsComputed]);
@@ -319,8 +321,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
     if (isMustButton) setIsShowBtn(true);
     if (isMustNoButton) setIsShowBtn(false);
-    if (isJsComputed && viewingArea?.current) {
-      setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
+    if (isJsComputed && viewingArea.current) {
+      setWidth(viewingArea.current.getBoundingClientRect().width || 0);
     }
     setIsInitEntry(false);
   }
@@ -379,8 +381,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     setIsViewResize(true);
     timer.current && clearTimeout(timer.current);
     timer.current = setTimeout(() => {
-      if (isJsComputed && viewingArea?.current) {
-        setWidth(viewingArea?.current?.getBoundingClientRect()?.width || 0);
+      if (isJsComputed && viewingArea.current) {
+        setWidth(viewingArea.current.getBoundingClientRect().width || 0);
       } else {
         const flag = getIsOverflow();
         // 有操作按钮时，展开态并且最终文案还是展示不下，不用处理
@@ -477,7 +479,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
                 ref={textArea}
                 className="text"
               >
-                <span dangerouslySetInnerHTML={{ __html: (isJsComputed && isFold) ? computedList?.finalText || '' : text }}></span>
+                <span dangerouslySetInnerHTML={{ __html: (isJsComputed && isFold) ? computedList.finalText || '' : text }}></span>
                 {(textEndSlot && !isFold) && textEndSlot}
               </span>
             </>
