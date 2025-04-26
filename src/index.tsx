@@ -7,7 +7,7 @@ export * from './TextOverflowProcessor/types';
 /* import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 // import TextOverflowProcessor from './TextOverflowProcessor';
-import TextOverflowProcessor, { type ProcessType, type ProcessTypeArr, type TextOverflowProcessorPropsType } from 'text-overflow-processor-react';
+import TextOverflowProcessor from 'text-overflow-processor-react';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
