@@ -22,7 +22,7 @@ yarn add text-overflow-processor-react
 ## 二、使用
 
 ```react
-import TextOverflowProcessor from 'text-overflow-processor-react'
+import TextOverflowProcessor from 'text-overflow-processor-react';
 ```
 
 ## 三、参数注解及默认值
@@ -46,8 +46,8 @@ interface TextOverflowProcessorPropsType {
     /**
      * 自定义组件刷新依赖的自身属性：依赖中的属性发生变化时，会触发组件刷新。建议不要使用all，伤性能
      * 其实通过key或其它方式也能实现同样的效果，这里只是为了方便而提供
-     * 注：由于2.x.x版本大部分配置在option属性中，属于引用状态类型，故配置变化一般都能够触发组件刷新，
-     *     因此本属性在2.x.x版本几乎用不上...
+     * 注意：由于2.x.x版本大部分配置在option属性中，属于引用状态类型，故配置变化一般都能够触发组件刷新，
+     *       因此本属性在2.x.x版本几乎用不上...
      */
     reRenderDependentProperties?: ReRenderDependentPropertiesEnum[],
     type?: 'ellipsis' | 'shadow', // 文案处理类型
@@ -55,44 +55,44 @@ interface TextOverflowProcessorPropsType {
     ellipsisOption?: {
       ellipsisLineClamp?: number, // 控制显示的行数
       /**
-       * 是否使用JS逻辑计算文字开始折叠时显示的文案，可以传字号大小
-       * 注意：
-       * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box,属性的使用（或出现异常）
+       * 是否使用JS逻辑计算文字在折叠态时显示的文案，可以传字号大小
+       * 注意（启用此功能时）：
+       * 1、此功能是为了兼容部分浏览器不支持display: -webkit-box,属性的使用（或出现异常）
        * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
-       * 3、这时只支持传string类型内容
+       * 3、此时只支持传string类型内容
        * 4、此时textEndSlot、buttonBeforeSlot所额外占用的宽度，都需要通过extraOccupiedW告知组件
        */
       isJsComputed?: boolean,
       fontSize?: number, // 字号大小，不传时，字号大小默认12，计算出来的结果会有误差
-      fontClassName?: string; // 字体容器类名，仅用于JS计算
+      fontClassName?: string, // 字体容器类名，仅用于JS计算
       /**
        * 字体容器相关样式（当字体样式比较丰富时，代替掉fontSize属性），仅用于JS计算
        * 注意：
        * 1、字号大小将覆盖fontSize属性
        * 2、仅JS_COMPUTED_VALID_CSS_PROPERTIES（下方将标出）中的CSS属性有效
        */
-      fontStyle?: React.CSSProperties;
+      fontStyle?: React.CSSProperties,
       /**
        * 紧跟文字内容尾部的额外内容，可以是icon等任意内容，例如超链接icon，点击跳转到外部网站
        * 文案溢出时显示在...后面，不溢出时在文字尾部
        * 注意：启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
        */
-      textEndSlot?: any,
+      textEndSlot?: string | JSX.Element | JSX.Element[] | null,
       // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
       extraOccupiedW?: number,
-      // 按钮前面的占位内容
+      // 按钮前面的占位内容（使用频率低）
       buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null,
     },
     /** >>>>>>shadow配置 */
     shadowOption?: {
-      shadowInitBoxShowH?: number, // 折叠时显示的文案高度，超出这个高度才出现操作按钮
-      shadowFoldButtonPlacement?: 'outer' | 'inner'; // 折叠态时按钮位置在文案外部还是内部
+      shadowInitBoxShowH?: number, // 折叠态时显示的文案高度，超出这个高度才出现操作按钮
+      shadowFoldButtonPlacement?: 'outer' | 'inner', // 折叠态时按钮位置在文案外部还是内部
       isShadowLayer?: boolean, // 是否需要阴影遮罩层
       shadowClassName?: string, // 阴影遮罩层自定义类名
       shadowStyle?: React.CSSProperties, // 阴影遮罩层自定义样式
     },
-    buttonClassName?: string, // 按钮外出容器span的类名
-    buttonStyle?: React.CSSProperties, // 按钮外出容器span的样式
+    buttonClassName?: string, // 按钮外层容器span的类名
+    buttonStyle?: React.CSSProperties, // 按钮外层容器span的样式
     isClickOriginalEvent?: boolean, // 当传了onClick时，点击事件是否触发原始事件
     isDefaultFold?: boolean, // 是否默认折叠
     unfoldButtonText?: string | JSX.Element | JSX.Element[] | null, // 展开时按钮文案
@@ -223,7 +223,13 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
-## 四、更新日志（2.x.x低版本将不记录高版本更新日志）
+## 四、更新日志
+
+### ↪2.0.17
+
+`2025-05-01`
+
+☆ readme文档描述及代码优化。
 
 ### ↪2.0.16-optimize
 
@@ -361,78 +367,8 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 `2023-04-29`
 
-注：2.x.x版本不兼容1.x.x版本（配置项），且type属性默认值变更，升级需谨慎！！！至此，1.x.x版本和2.x.x版本将分开维护。
+注：2.x.x版本不兼容1.x.x版本（配置项），且type属性默认值变更，升级需谨慎！！！不同版本之间将分开维护。
 
 ☆ 属性配置项规则变化；
 
 ☆ type属性默认值修改为`ellipsis`。
-
-### ↪1.1.8
-
-`2023-04-24`
-
-☆ 组件样式white-space: pre-wrap修改为white-space: break-spaces，`ellipsis`时文案全是空格时兼容换行；
-
-☆ 增加isShadowLayer属性。
-
-### ↪1.1.7
-
-`2023-03-11`
-
-☆ 组件样式增加white-space: pre-wrap，以免被组件外部样式white-space: nowrap影响，导致getIsFold获取的结果不正确。
-
-### ↪1.1.6
-
-`2023-03-04`
-
-☆ 增加isClickOriginalEvent属性。
-
-### ↪1.1.5-remedying
-
-`2023-02-20`
-
-☆ 修复1.1.5修改带来的bug：视口变小，不折叠的文案应该变成折叠无效。
-
-### ↪1.1.5
-
-`2023-02-15`
-
-☆ 修复isShowAllContent为true时，视口大小改变导致文案被折叠或出现按钮。
-
-### ↪1.1.4-remedying
-
-`2023-02-01`
-
-☆ 修复下载下来的包自动下载了相关额外无用依赖；
-
-☆ 增加修改shadow阴影样式属性shadowClassName和shadowStyle。
-
-### ↪1.1.4
-
-`2023-01-31`
-
-☆ 修复在ellipsis下，屏幕缩放时，原本文案是折叠的，屏幕放大再缩小时文案不折叠；
-
-☆ 修改仅当ellipsis时，且没有开启isJsComputed、文案是折叠的、显示操作按钮时，文案对齐方式才是`justify`，其他情况使用默认对齐方式；
-
-☆ 组件属性描述位置优化。
-
-### ↪1.1.3
-
-`2022-11-28`
-
-☆ 修复isJsComputed开启时，“按钮文案尽量传DOM结构”的错误描述。
-
-### ↪1.1.2
-
-`2022-11-26`
-
-☆ 增加textEndSlot和extraOccupiedW属性，extraOccupiedW解决isJsComputed计算不精确问题；
-
-☆ 修复isShowAllContent属性传`true`时，isMustButton传`true`按钮没有显示。
-
-### ↪1.1.0
-
-`2022-11-19`
-
-☆ 增加isJsComputed和fontSize属性，以适配不支持display: -webkit-box的浏览器去`...`折叠展示文案。

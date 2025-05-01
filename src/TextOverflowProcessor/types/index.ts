@@ -38,17 +38,17 @@ type EllipsisOptionType = {
    */
   ellipsisLineClamp?: number,
   /**
-   * 是否使用JS逻辑计算文字开始折叠时显示的文案，可以传字号大小
+   * 是否使用JS逻辑计算文字在折叠态时显示的文案，可以传字号大小
    * 
    * 默认值：false
    * 
-   * 注意：
+   * 注意（启用此功能时）：
    * 
-   * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box,属性的使用（或出现异常）
+   * 1、此功能是为了兼容部分浏览器不支持display: -webkit-box,属性的使用（或出现异常）
    * 
    * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
    * 
-   * 3、这时只支持传string类型内容
+   * 3、此时只支持传string类型内容
    * 
    * 4、此时textEndSlot、buttonBeforeSlot所额外占用的宽度，都需要通过extraOccupiedW告知组件
    */
@@ -64,7 +64,7 @@ type EllipsisOptionType = {
    * 
    * 默认值：空
    */
-  fontClassName?: string;
+  fontClassName?: string,
   /**
    * 字体容器相关样式（当字体样式比较丰富时，代替掉fontSize属性），仅用于JS计算
    * 
@@ -76,7 +76,7 @@ type EllipsisOptionType = {
    * 
    * 2、仅JS_COMPUTED_VALID_CSS_PROPERTIES中的CSS属性有效
    */
-  fontStyle?: React.CSSProperties;
+  fontStyle?: React.CSSProperties,
   /**
    * 紧跟文字内容尾部的额外内容，可以是icon等任意内容，例如超链接icon，点击跳转到外部网站
    * 
@@ -86,7 +86,7 @@ type EllipsisOptionType = {
    * 
    * 注意：启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
    */
-  textEndSlot?: any,
+  textEndSlot?: DOMElementType,
   /**
    * 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
    * 
@@ -94,7 +94,7 @@ type EllipsisOptionType = {
    */
   extraOccupiedW?: number,
   /**
-   * 按钮前面的占位内容，isJsComputed为false时默认会有4个空格（使用频率低）
+   * 按钮前面的占位内容（使用频率低）
    * 
    * 默认值：null
    */
@@ -102,7 +102,7 @@ type EllipsisOptionType = {
 };
 type ShadowOptionType = {
   /**
-   * 折叠时显示的文案高度，超出这个高度才出现操作按钮
+   * 折叠态时显示的文案高度，超出这个高度才出现操作按钮
    * 
    * 默认值：76
    */
@@ -112,7 +112,7 @@ type ShadowOptionType = {
    * 
    * 默认值：outer
    */
-  shadowFoldButtonPlacement?: 'outer' | 'inner';
+  shadowFoldButtonPlacement?: 'outer' | 'inner',
   /**
    * 是否需要阴影遮罩层
    * 
@@ -140,9 +140,9 @@ type OptionType = {
    * 
    * 默认值：['text']
    * 
-   * 注：由于2.x.x版本大部分配置在option属性中，属于引用状态类型，故配置变化一般都能够触发组件刷新，
+   * 注意：由于2.x.x版本大部分配置在option属性中，属于引用状态类型，故配置变化一般都能够触发组件刷新，
    * 
-   *     因此本属性在2.x.x版本几乎用不上...
+   *       因此本属性在2.x.x版本几乎用不上...
    */
   reRenderDependentProperties?: ReRenderDependentPropertiesEnum[],
   /**
@@ -156,13 +156,13 @@ type OptionType = {
   /** >>>>>>shadow配置 */
   shadowOption?: ShadowOptionType,
   /**
-   * 按钮外出容器span的类名
+   * 按钮外层容器span的类名
    * 
    * 默认值：空
    */
   buttonClassName?: string,
   /**
-   * 按钮外出容器span的样式
+   * 按钮外层容器span的样式
    * 
    * 默认值：{}
    */

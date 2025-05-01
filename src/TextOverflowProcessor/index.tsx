@@ -7,7 +7,6 @@ import {
   DEFAULT_ELLIPSIS_OPTION,
   DEFAULT_SHADOW_OPTION,
   DEFAULT_OPTION,
-  DEFAULT_PROPS,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
 } from './constants';
@@ -21,12 +20,12 @@ import './index.scss';
 const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
   const {
-    text,
-    className,
-    style,
-    onClick,
-    getIsFold,
-    option,
+    text = '',
+    className = '',
+    style = {},
+    onClick = null,
+    getIsFold = null,
+    option = DEFAULT_OPTION,
   } = props;
 
   // #region
@@ -513,6 +512,5 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 }
 
 if (process.env.NODE_ENV !== 'production') { TextOverflowProcessor.displayName = 'TextOverflowProcessor'; }
-TextOverflowProcessor.defaultProps = DEFAULT_PROPS;
 
 export default memo(TextOverflowProcessor);
