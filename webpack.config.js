@@ -2,7 +2,7 @@
 const path = require('path');
 // const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 //创建一个插件的实例
@@ -44,8 +44,8 @@ module.exports = {
       { 
         test: /\.css|.s[ac]ss$/, 
         use: [
-          'style-loader',
-          // MiniCssExtractPlugin.loader, // 代替style-loader，css样式文件分离
+          // 'style-loader',
+          MiniCssExtractPlugin.loader, // 代替style-loader，css样式文件分离
           'css-loader',
           'postcss-loader',
           'sass-loader',
@@ -81,9 +81,9 @@ module.exports = {
   plugins: [
     // htmlPlugin,
     new CleanWebpackPlugin(['lib']),
-    /* new MiniCssExtractPlugin({
+    new MiniCssExtractPlugin({
       // filename: '[name].[contenthash].css',
       // chunkFilename: '[id].[contenthash].css',
-    }), */
+    }),
   ],
 }

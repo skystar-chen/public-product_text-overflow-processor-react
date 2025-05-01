@@ -4,11 +4,13 @@
 export { default } from './TextOverflowProcessor';
 export * from './TextOverflowProcessor/types';
 
-/* import React, { useState } from 'react';
+/* import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
-import TextOverflowProcessor from './TextOverflowProcessor';
-// import TextOverflowProcessor, { type ProcessType, type ProcessTypeArr, type TextOverflowProcessorPropsType } from 'text-overflow-processor-react';
+// import TextOverflowProcessor from './TextOverflowProcessor';
+import TextOverflowProcessor from 'text-overflow-processor-react';
+// import type { ProcessType, ProcessTypeArr, TextOverflowProcessorPropsType } from 'text-overflow-processor-react';
+import 'text-overflow-processor-react/style';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
@@ -17,13 +19,13 @@ root.render(
   </React.StrictMode>
 );
 
-function Con() {
-  const [a, setA] = useState<any>(false);
+const text = "In all the parting, I like it best see you tomorrow.Of all the blessings I prefer, as you wish. Sometimes you look at the wrong person, not because you are jealous, but because you are kind. You never know how strong you really are until being strong is the only choice you have. Never bend your head. Always hold it high. Look the world straight in the face. Life is alive, there is not much, only helpless. Life is a wonderful journey. Make it your journey and not someone else\'s.";
 
+function Con() {
   return (
     <>
       <TextOverflowProcessor
-        text="In all the parting, I like it best see you tomorrow.Of all the blessings I prefer, as you wish. Sometimes you look at the wrong person, not because you are jealous, but because you are kind. You never know how strong you really are until being strong is the only choice you have. Never bend your head. Always hold it high. Look the world straight in the face. Life is alive, there is not much, only helpless. Life is a wonderful journey. Make it your journey and not someone else\'s."
+        text={text}
         option={{
           reRenderDependencies: ['isShowAllContent'],
           type: 'ellipsis',
@@ -36,18 +38,20 @@ function Con() {
             },
             extraOccupiedW: 0,
           },
-          // shadowOption: {
-          //   shadowFoldShowH: 48,
-          //   shadowFoldButtonPlacement: 'inner',
-          // },
           foldButtonText: (<div style={{marginLeft: 10}}>More</div>),
           unfoldButtonText: (<div style={{marginLeft: 10}}>Less</div>),
-          // isShowAllContent: a,
         }}
       />
-      <button onClick={() => {
-        setA(true);
-      }}>click</button>
+      <TextOverflowProcessor
+        text={text}
+        option={{
+          type: 'shadow',
+          shadowOption: {
+            shadowFoldShowH: 48,
+            // shadowFoldButtonPlacement: 'inner',
+          },
+        }}
+      />
     </>
   )
 } */
