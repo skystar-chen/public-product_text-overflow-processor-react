@@ -22,7 +22,7 @@ yarn add text-overflow-processor-react
 ## 二、使用
 
 ```react
-import TextOverflowProcessor from 'text-overflow-processor-react'
+import TextOverflowProcessor from 'text-overflow-processor-react';
 ```
 
 ## 三、参数注解及默认值
@@ -44,8 +44,8 @@ interface TextOverflowProcessorPropsType {
   type?: 'shadow' | 'ellipsis'; // 文案处理类型
   className?: string; // 组件类名
   style?: React.CSSProperties; // 组件样式
-  buttonClassName?: string; // 按钮外出容器span的类名
-  buttonStyle?: React.CSSProperties; // 按钮外出容器span的样式
+  buttonClassName?: string; // 按钮外层容器span的类名
+  buttonStyle?: React.CSSProperties; // 按钮外层容器span的样式
   onClick?: (( // 按钮点击事件
     e: React.MouseEvent<HTMLElement, MouseEvent>, // 事件对象
     isFold: boolean, // 文案是否是折叠的（文案是否溢出）
@@ -67,11 +67,11 @@ interface TextOverflowProcessorPropsType {
   /** >>>>>>仅ellipsis配置 */
   ellipsisLineClamp?: number; // 控制显示的行数
   /**
-   * 是否使用JS逻辑计算文字开始折叠时显示的文案，可以传字号大小
-   * 注意：
-   * 1、启用此功能是为了兼容部分浏览器不支持display: -webkit-box;属性的使用（或出现异常）
+   * 是否使用JS逻辑计算文字在折叠态时显示的文案，可以传字号大小
+   * 注意（启用此功能时）：
+   * 1、此功能是为了兼容部分浏览器不支持display: -webkit-box属性的使用（或出现异常）
    * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
-   * 3、这时只支持传string类型内容
+   * 3、此时只支持传string类型内容
    * 4、此时textEndSlot、buttonBeforeSlot所额外占用的宽度，都需要通过extraOccupiedW告知组件
    */
   isJsComputed?: boolean;
@@ -89,14 +89,14 @@ interface TextOverflowProcessorPropsType {
    * 文案溢出时显示在...后面，不溢出时在文字尾部
    * 注意：启用isJsComputed时，textEndSlot所占的宽需要通过extraOccupiedW告知才能精确计算
    */
-  textEndSlot?: any;
+  textEndSlot?: string | JSX.Element | JSX.Element[] | null;
   // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
   extraOccupiedW?: number;
-  // 按钮前面的占位内容
+  // 按钮前面的占位内容（使用频率低）
   buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null;
 
   /** >>>>>>仅shadow配置 */
-  shadowInitBoxShowH?: number; // 折叠时显示的文案高度，超出这个高度才出现操作按钮
+  shadowInitBoxShowH?: number; // 折叠态时显示的文案高度，超出这个高度才出现操作按钮
   isShadowLayer?: boolean; // 是否需要阴影遮罩层
   shadowFoldButtonPlacement?: 'outer' | 'inner'; // 折叠态时按钮位置在文案外部还是内部
   shadowClassName?: string; // 阴影遮罩层自定义类名
@@ -215,7 +215,13 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
-## 四、更新日志（1.x.x低版本将不记录高版本更新日志）
+## 四、更新日志
+
+### ↪1.1.23
+
+`2025-05-01`
+
+☆ readme文档描述及类型注释优化。
 
 ### ↪1.1.22
 
