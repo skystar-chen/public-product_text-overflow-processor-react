@@ -1,6 +1,6 @@
 {
   "name": "text-overflow-processor-react",
-  "version": "2.0.15",
+  "version": "3.0.0",
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "description": "text overflow process for react",

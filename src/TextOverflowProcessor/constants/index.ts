@@ -10,22 +10,22 @@ const PROCESS_TYPE_LIST: ProcessTypeArr = ['ellipsis', 'shadow'];
 const DEFAULT_ELLIPSIS_OPTION: EllipsisOptionType = {
   ellipsisLineClamp: 2,
   isJsComputed: false,
+  renderToString: null,
   fontSize: 12,
   fontClassName: '',
   fontStyle: {},
   textEndSlot: null,
   extraOccupiedW: 0,
-  buttonBeforeSlot: null,
 };
 const DEFAULT_SHADOW_OPTION: ShadowOptionType = {
-  shadowInitBoxShowH: 76,
+  shadowFoldShowH: 76,
   shadowFoldButtonPlacement: 'outer',
   isShadowLayer: true,
   shadowClassName: '',
   shadowStyle: {},
 };
 const DEFAULT_OPTION: OptionType = {
-  reRenderDependentProperties: ['text'],
+  reRenderDependencies: ['text'],
   type: 'ellipsis',
   /** >>>>>>ellipsis配置 */
   ellipsisOption: DEFAULT_ELLIPSIS_OPTION,
@@ -48,7 +48,7 @@ const DEFAULT_PROPS: TextOverflowProcessorPropsType = {
   className: '',
   style: {},
   onClick: null,
-  getIsFold: null,
+  onFoldChange: null,
   option: DEFAULT_OPTION,
 };
 

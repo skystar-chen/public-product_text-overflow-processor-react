@@ -114,10 +114,10 @@ const getClassNames = (obj: {[keyName: string]: boolean}): string => {
   return classNames.trim();
 }
 
-const filterComplexDependentProperties = (value: any): string => (typeof value === 'string' ? value : '');
+const filterComplexDependencies = (value: any): string => (typeof value === 'string' ? value : '');
 
 export {
   getFixedWidthText,
   getClassNames,
-  filterComplexDependentProperties,
+  filterComplexDependencies,
 }

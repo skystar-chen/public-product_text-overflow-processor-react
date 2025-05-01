@@ -1,13 +1,11 @@
 import { type FC, useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
-import { renderToString } from 'react-dom/server';
-import useRefreshDependentProperties from './hooks/useRefreshDependentProperties';
-import { getFixedWidthText, getClassNames, filterComplexDependentProperties } from './utils';
+import useDependencies from './hooks/useDependencies';
+import { getFixedWidthText, getClassNames, filterComplexDependencies } from './utils';
 import {
   PROCESS_TYPE_LIST,
   DEFAULT_ELLIPSIS_OPTION,
   DEFAULT_SHADOW_OPTION,
   DEFAULT_OPTION,
-  DEFAULT_PROPS,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
 } from './constants';
@@ -21,18 +19,18 @@ import './index.scss';
 const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
   const {
-    text,
-    className,
-    style,
-    onClick,
-    getIsFold,
-    option,
+    text = '',
+    className = '',
+    style = {},
+    onClick = null,
+    onFoldChange = null,
+    option = DEFAULT_OPTION,
   } = props;
 
   // #region
   /** >>>>>>公共配置 */
   const {
-    reRenderDependentProperties = ['text'],
+    reRenderDependencies = ['text'],
     type = 'ellipsis',
     ellipsisOption = DEFAULT_ELLIPSIS_OPTION,
     shadowOption = DEFAULT_SHADOW_OPTION,
@@ -52,16 +50,16 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   const {
     ellipsisLineClamp = 2,
     isJsComputed = false,
+    renderToString = null,
     fontSize = 12,
     fontClassName = '',
     fontStyle = {},
     textEndSlot = null,
     extraOccupiedW = 0,
-    buttonBeforeSlot = null,
   } = ellipsisOption || DEFAULT_ELLIPSIS_OPTION;
   /** >>>>>>shadow配置 */
   const {
-    shadowInitBoxShowH = 76,
+    shadowFoldShowH = 76,
     shadowFoldButtonPlacement = 'outer',
     isShadowLayer = true,
     shadowClassName = '',
@@ -125,7 +123,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       const sumWidth = width * (ellipsisLineClamp as number);
       const span = document.createElement('span');
       span.style.cssText = 'position:absolute;visibility:hidden;';
-      span.innerHTML = `${!!foldButtonText ? renderToString(<>{foldButtonText}</>) : ''}`;
+      span.innerHTML = `${!!foldButtonText ? renderToString?.(<>{foldButtonText}</>) || '' : ''}`;
       viewingArea.current ? viewingArea.current.appendChild(span) : document.body.appendChild(span);
       const buttonWidth = span.offsetWidth || 0; // 按钮占的宽度
       viewingArea.current ? viewingArea.current.removeChild(span) : document.body.removeChild(span);
@@ -202,7 +200,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     width,
     isReJsComputed,
     ellipsisLineClamp,
-    filterComplexDependentProperties(foldButtonText),
+    filterComplexDependencies(foldButtonText),
     fontSize,
     cssText,
     fontClassName,
@@ -224,8 +222,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     return isFold ? foldButtonText : unfoldButtonText;
   }, [
     isFold,
-    filterComplexDependentProperties(unfoldButtonText),
-    filterComplexDependentProperties(foldButtonText),
+    filterComplexDependencies(unfoldButtonText),
+    filterComplexDependencies(foldButtonText),
   ]);
 
   const realButtonStyle = useMemo(() => {
@@ -258,13 +256,13 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   }, [
     isMustNoButton,
     isFold,
-    filterComplexDependentProperties(textEndSlot),
+    filterComplexDependencies(textEndSlot),
     lineHeight,
   ]);
 
   const renderShadowLayer = useMemo(() => {
     const baseStyle = {
-      top: (shadowFoldButtonPlacement === 'inner' && isFold) ? 0 : (shadowInitBoxShowH as number) - 20,
+      top: (shadowFoldButtonPlacement === 'inner' && isFold) ? 0 : (shadowFoldShowH as number) - 20,
     };
 
     return isVisibleShadowLayer && (
@@ -276,7 +274,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   }, [
     isVisibleShadowLayer,
     shadowFoldButtonPlacement,
-    shadowInitBoxShowH,
+    shadowFoldShowH,
     shadowClassName,
     JSON?.stringify(shadowStyle),
   ]);
@@ -328,7 +326,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       setIsFold(false);
       return;
     }
-    shadowShowH.current = shadowInitBoxShowH as number;
+    shadowShowH.current = shadowFoldShowH as number;
 
     if (!isJsComputed) {
       if (getIsOverflow()) {
@@ -351,9 +349,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   // 初始化判断是否显示操作按钮
   useEffect(
     () => { init(); },
-    useRefreshDependentProperties({
+    useDependencies({
       text,
-      reRenderDependentProperties,
+      reRenderDependencies,
       type,
       className,
       style,
@@ -375,8 +373,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       fontStyle,
       textEndSlot,
       extraOccupiedW,
-      buttonBeforeSlot,
-      shadowInitBoxShowH,
+      shadowFoldShowH,
       shadowFoldButtonPlacement,
       isShadowLayer,
       shadowClassName,
@@ -384,7 +381,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     }),
   );
 
-  useEffect(() => { getIsFold?.(isFold, isInitEntry); }, [isFold, isInitEntry]);
+  useEffect(() => { onFoldChange?.(isFold, isInitEntry); }, [isFold, isInitEntry]);
 
   useEffect(() => {
     // 页面缩放时判断是否显示操作按钮
@@ -452,7 +449,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
                 'text-show-btn-box': isShowBtn,
                 'text-show-all-box': !isFold,
               })}
-              style={{height: (isFold && !isViewResize && !isInitEntry) ? shadowInitBoxShowH : 'auto'}}
+              style={{height: (isFold && !isViewResize && !isInitEntry) ? shadowFoldShowH : 'auto'}}
               dangerouslySetInnerHTML={{ __html: text }}
             ></span>
             {/* 按钮和阴影 */}
@@ -492,7 +489,6 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
                 style={realButtonStyle}
               >
                 {(textEndSlot && isFold) && textEndSlot}
-                {buttonBeforeSlot}
                 {!isViewResize && (<label onClick={handleClick}>{buttonCon}</label>)}
               </span>
               {/* 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来 */}
@@ -513,6 +509,5 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 }
 
 if (process.env.NODE_ENV !== 'production') { TextOverflowProcessor.displayName = 'TextOverflowProcessor'; }
-TextOverflowProcessor.defaultProps = DEFAULT_PROPS;
 
 export default memo(TextOverflowProcessor);
