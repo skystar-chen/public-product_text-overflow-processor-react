@@ -57,7 +57,7 @@ interface TextOverflowProcessorPropsType {
       /**
        * 是否使用JS逻辑计算文字在折叠态时显示的文案，可以传字号大小
        * 注意（启用此功能时）：
-       * 1、此功能是为了兼容部分浏览器不支持display: -webkit-box,属性的使用（或出现异常）
+       * 1、此功能是为了兼容部分浏览器不支持display: -webkit-box属性的使用（或出现异常）
        * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
        * 3、此时只支持传string类型内容
        * 4、此时textEndSlot、buttonBeforeSlot所额外占用的宽度，都需要通过extraOccupiedW告知组件

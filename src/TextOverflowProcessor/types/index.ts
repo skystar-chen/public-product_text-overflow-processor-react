@@ -44,7 +44,7 @@ type EllipsisOptionType = {
    * 
    * 注意（启用此功能时）：
    * 
-   * 1、此功能是为了兼容部分浏览器不支持display: -webkit-box,属性的使用（或出现异常）
+   * 1、此功能是为了兼容部分浏览器不支持display: -webkit-box属性的使用（或出现异常）
    * 
    * 2、计算出来的文案可能不够完美，可以通过extraOccupiedW调整计算的误差
    * 
