@@ -1,5 +1,5 @@
 /**
- * node版本: 14.17.4
+ * node版本: 20.11.1
  */
 export { default } from './TextOverflowProcessor';
 export * from './TextOverflowProcessor/types';
@@ -7,10 +7,10 @@ export * from './TextOverflowProcessor/types';
 /* import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
-// import TextOverflowProcessor from './TextOverflowProcessor';
-import TextOverflowProcessor from 'text-overflow-processor-react';
+import TextOverflowProcessor from './TextOverflowProcessor';
+// import TextOverflowProcessor from 'text-overflow-processor-react';
 // import type { ProcessType, ProcessTypeArr, TextOverflowProcessorPropsType } from 'text-overflow-processor-react';
-import 'text-overflow-processor-react/style';
+// import 'text-overflow-processor-react/style';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
