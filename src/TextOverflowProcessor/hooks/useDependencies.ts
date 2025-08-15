@@ -12,6 +12,8 @@ function useDependencies(
     & OptionType
     & Omit<EllipsisOptionType, 'renderToString'>
     & ShadowOptionType
+  ,
+  inView: boolean,
 ) {
   const {
     text,
@@ -42,6 +44,7 @@ function useDependencies(
     isShadowLayer,
     shadowClassName,
     shadowStyle,
+    isListenVisible,
   } = props;
 
   // 组件刷新依赖的属性添加
@@ -79,6 +82,7 @@ function useDependencies(
           isShadowLayer,
           shadowClassName,
           JSON?.stringify(shadowStyle),
+          isListenVisible,
         ];
         break;
 
@@ -110,13 +114,14 @@ function useDependencies(
         if (reRenderDependencies.includes('isShadowLayer')) newDependencies.push(isShadowLayer);
         if (reRenderDependencies.includes('shadowClassName')) newDependencies.push(shadowClassName);
         if (reRenderDependencies.includes('shadowStyle')) newDependencies.push(JSON?.stringify(shadowStyle));
+        if (reRenderDependencies.includes('isListenVisible')) newDependencies.push(isListenVisible);
         break;
     }
 
     return newDependencies;
   }, [JSON?.stringify(reRenderDependencies)]);
 
-  return dependencies || [];
+  return [...dependencies, inView];
 }
 
 export default useDependencies;

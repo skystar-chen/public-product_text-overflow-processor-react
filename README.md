@@ -16,6 +16,12 @@ npm i text-overflow-processor-react -S
 或
 
 ```shell
+pnpm i text-overflow-processor-react
+```
+
+或
+
+```shell
 yarn add text-overflow-processor-react
 ```
 
@@ -45,6 +51,7 @@ interface TextOverflowProcessorPropsType {
     isInitState: boolean, // 返回的是否是初始化状态，有时初始化状态可能会影响组件的使用，可以用这个区分
   ) => void) | null,
   option?: {
+    lineHeight?: number, // 文案行高，默认24，期望传递，否则isFold计算的结果会有误差
     /**
      * 自定义组件刷新依赖的自身属性：依赖中的属性发生变化时，会触发组件刷新。建议不要使用all，伤性能
      * 其实通过key或其它方式也能实现同样的效果，这里只是为了方便而提供
@@ -53,6 +60,7 @@ interface TextOverflowProcessorPropsType {
      */
     reRenderDependencies?: ReRenderDependenciesEnum[],
     type?: 'ellipsis' | 'shadow', // 文案处理类型
+    isListenVisible?: boolean, // 是否监听组件自身的显示状态变化，解决在弹窗、tooltip等场景下使用无效的问题
     /** >>>>>>ellipsis配置 */
     ellipsisOption?: {
       ellipsisLineClamp?: number, // 控制显示的行数
@@ -111,7 +119,6 @@ interface TextOverflowProcessorPropsType {
     isShowAllContent?: boolean, // 是否展示所有内容，为true时将不提供操作按钮
     isMustButton?: boolean, // 是否常驻显示按钮
     isMustNoButton?: boolean, // 是否不要显示按钮
-    lineHeight?: number, // 文案行高
     isRenderShowAllDOM?: boolean, // 是否渲染被隐藏的全部文案展示DOM
   },
 }
@@ -151,8 +158,10 @@ TextOverflowProcessor.defaultProps = {
   onClick: null,
   onFoldChange: null,
   option: {
+    lineHeight: 24,
     reRenderDependencies: ['text'],
     type: 'ellipsis',
+    isListenVisible: false,
     /** >>>>>>ellipsis配置 */
     ellipsisOption: {
       ellipsisLineClamp: 2,
@@ -180,7 +189,6 @@ TextOverflowProcessor.defaultProps = {
     isShowAllContent: false,
     isMustButton: false,
     isMustNoButton: false,
-    lineHeight: 24,
     isRenderShowAllDOM: false,
   },
 }

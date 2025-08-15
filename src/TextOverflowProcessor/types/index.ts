@@ -28,7 +28,8 @@ type ReRenderDependenciesEnum = 'all'
 | 'shadowFoldButtonPlacement'
 | 'isShadowLayer'
 | 'shadowClassName'
-| 'shadowStyle';
+| 'shadowStyle'
+| 'isListenVisible';
 type EllipsisOptionType = {
   /**
    * 控制显示的行数
@@ -219,7 +220,7 @@ type OptionType = {
    */
   isMustNoButton?: boolean,
   /**
-   * 文案行高
+   * 文案行高，默认24，期望传递，否则isFold计算的结果会有误差
    * 
    * 默认值：24
    */
@@ -230,6 +231,14 @@ type OptionType = {
    * 默认值：false
    */
   isRenderShowAllDOM?: boolean,
+  /**
+   * 是否监听组件自身的显示状态变化
+   * 
+   * 解决在弹窗、tooltip等场景下使用无效的问题
+   * 
+   * 默认值：false
+   */
+  isListenVisible?: boolean,
 };
 interface TextOverflowProcessorPropsType {
   /**

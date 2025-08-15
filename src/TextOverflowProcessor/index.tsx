@@ -1,4 +1,5 @@
 import { type FC, useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
+import { useInView } from 'react-intersection-observer';
 import useDependencies from './hooks/useDependencies';
 import { getFixedWidthText, getClassNames, filterComplexDependencies } from './utils';
 import {
@@ -45,6 +46,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     isMustNoButton = false,
     lineHeight = 24,
     isRenderShowAllDOM = false,
+    isListenVisible = false,
   } = option || DEFAULT_OPTION;
   /** >>>>>>ellipsis配置 */
   const {
@@ -92,6 +94,11 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   }>({
     finalText: '',
     isFold: true,
+  });
+  // 监听组件自身的显示/隐藏状态变化
+  const { ref, inView } = useInView({
+    threshold: 0.1,
+    skip: !isListenVisible,
   });
 
   const cssText = useMemo(() => {
@@ -208,6 +215,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     isMustNoButton,
     isJsComputed,
     extraOccupiedW,
+    isListenVisible,
   ]);
 
   const isJustifyTextLayout = useMemo(() => {
@@ -272,6 +280,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       ></span>
     );
   }, [
+    isFold,
     isVisibleShadowLayer,
     shadowFoldButtonPlacement,
     shadowFoldShowH,
@@ -378,7 +387,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       isShadowLayer,
       shadowClassName,
       shadowStyle,
-    }),
+      isListenVisible,
+    }, inView),
   );
 
   useEffect(() => { onFoldChange?.(isFold, isInitEntry); }, [isFold, isInitEntry]);
@@ -417,7 +427,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   // #endregion
 
   return (
-    <section className={`text-overflow-processor-content ${className}`} style={style}>
+    <section className={`text-overflow-processor-content ${className}`} style={style} ref={ref}>
       {isRenderShowAllDOM && <p className="all-text text-overflow-processor-off" style={{display: 'none'}} dangerouslySetInnerHTML={{ __html: text }}></p>}
       <p
         ref={viewingArea}
