@@ -1,5 +1,5 @@
 /**
- * node版本: 14.17.4
+ * node版本: 20.11.1
  */
 export { default } from './TextOverflowProcessor';
 export * from './TextOverflowProcessor/types';
