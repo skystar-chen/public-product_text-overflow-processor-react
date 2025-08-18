@@ -29,7 +29,8 @@ type ReRenderDependentPropertiesEnum = 'all'
 | 'shadowFoldButtonPlacement'
 | 'isShadowLayer'
 | 'shadowClassName'
-| 'shadowStyle';
+| 'shadowStyle'
+| 'isListenVisible';
 
 interface TextOverflowProcessorPropsType {
   /** >>>>>>公共配置 */
@@ -157,7 +158,7 @@ interface TextOverflowProcessorPropsType {
    */
   isMustNoButton?: boolean;
   /**
-   * 文案行高
+   * 文案行高，默认24，期望传递，否则isFold计算的结果会有误差
    * 
    * 默认值：24
    */
@@ -168,6 +169,14 @@ interface TextOverflowProcessorPropsType {
    * 默认值：false
    */
   isRenderShowAllDOM?: boolean;
+  /**
+   * 是否监听组件自身的显示状态变化
+   * 
+   * 解决在弹窗、tooltip等场景下视口大小变化使用无效的问题
+   * 
+   * 默认值：false
+   */
+  isListenVisible?: boolean,
   
   /** >>>>>>仅ellipsis配置 */
   /**

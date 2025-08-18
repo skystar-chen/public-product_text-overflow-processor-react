@@ -39,6 +39,7 @@ const DEFAULT_PROPS: TextOverflowProcessorPropsType = {
   isShadowLayer: true,
   shadowClassName: '',
   shadowStyle: {},
+  isListenVisible: false,
 };
 
 const JS_COMPUTED_VALID_CSS_PROPERTIES = [
