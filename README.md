@@ -139,7 +139,8 @@ type ReRenderDependentPropertiesEnum = 'all'
 | 'shadowFoldButtonPlacement'
 | 'isShadowLayer'
 | 'shadowClassName'
-| 'shadowStyle';
+| 'shadowStyle'
+| 'isListenVisible';
 对应默认值：
 TextOverflowProcessor.defaultProps = {
   text: '',
@@ -241,7 +242,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ☆ `ellipsis`时，class类名`text`移动到了文案dom上，与`shadow`时保持一致，利于修改文案样式，此前如果使用了“.text span”形式修改文案样式需要去除“span”做兼容；
 
-☆ node版本、包管理工具（pnpm）及相关包升级优化；
+☆ node版本、包管理工具（pnpm）及相关包升级优化。
 
 ### ↪2.0.17
 
