@@ -16,7 +16,7 @@ npm i text-overflow-processor-react -S
 或
 
 ```shell
-pnpm i text-overflow-processor-react
+pnpm add text-overflow-processor-react
 ```
 
 或
@@ -60,7 +60,7 @@ interface TextOverflowProcessorPropsType {
      */
     reRenderDependencies?: ReRenderDependenciesEnum[],
     type?: 'ellipsis' | 'shadow', // 文案处理类型
-    isListenVisible?: boolean, // 是否监听组件自身的显示状态变化，解决在弹窗、tooltip等场景下使用无效的问题
+    isListenVisible?: boolean, // 是否监听组件自身的显示状态变化，解决在弹窗、tooltip等场景下视口大小变化使用无效的问题
     /** >>>>>>ellipsis配置 */
     ellipsisOption?: {
       ellipsisLineClamp?: number, // 控制显示的行数
@@ -241,6 +241,16 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪3.0.1
+
+`2025-08-18`
+
+☆ 增加option.isListenVisible属性，解决在弹窗、tooltip等场景下视口大小变化使用无效的问题；
+
+☆ `ellipsis`时，class类名`text`移动到了文案dom上，与`shadow`时保持一致，利于修改文案样式，此前如果使用了“.text span”形式修改文案样式需要去除“span”做兼容；
+
+☆ node版本及相关包升级优化；
 
 ### ↪3.0.0
 

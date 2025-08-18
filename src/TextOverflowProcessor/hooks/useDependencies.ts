@@ -12,8 +12,6 @@ function useDependencies(
     & OptionType
     & Omit<EllipsisOptionType, 'renderToString'>
     & ShadowOptionType
-  ,
-  inView: boolean,
 ) {
   const {
     text,
@@ -121,7 +119,7 @@ function useDependencies(
     return newDependencies;
   }, [JSON?.stringify(reRenderDependencies)]);
 
-  return [...dependencies, inView];
+  return dependencies;
 }
 
 export default useDependencies;
