@@ -1,5 +1,6 @@
 import { type FC, useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
 import { renderToString } from 'react-dom/server';
+import { useInView } from 'react-intersection-observer';
 import useRefreshDependentProperties from './hooks/useRefreshDependentProperties';
 import { getFixedWidthText, getClassNames, filterComplexDependentProperties } from './utils';
 import {
@@ -46,6 +47,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     isMustNoButton = false,
     lineHeight = 24,
     isRenderShowAllDOM = false,
+    isListenVisible = false,
   } = option || DEFAULT_OPTION;
   /** >>>>>>ellipsis配置 */
   const {
@@ -93,6 +95,11 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   }>({
     finalText: '',
     isFold: true,
+  });
+  // 监听组件自身的显示/隐藏状态变化
+  const { ref, inView } = useInView({
+    threshold: 0.1,
+    skip: !isListenVisible,
   });
 
   const cssText = useMemo(() => {
@@ -273,6 +280,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       ></span>
     );
   }, [
+    isFold,
     isVisibleShadowLayer,
     shadowFoldButtonPlacement,
     shadowInitBoxShowH,
@@ -380,6 +388,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       isShadowLayer,
       shadowClassName,
       shadowStyle,
+      isListenVisible,
     }),
   );
 
@@ -396,7 +405,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
   // 相当于handleResize事件
   useEffect(() => {
-    if (!executeResizeEvent || isShowAllContent) return;
+    if (!executeResizeEvent || isShowAllContent || !viewingArea.current?.clientHeight) return;
     // 防抖处理
     setIsViewResize(true);
     timer.current && clearTimeout(timer.current);
@@ -415,11 +424,11 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       clearTimeout(timer.current as NodeJS.Timeout);
       timer.current = null;
     }, 200);
-  }, [executeResizeEvent]);
+  }, [executeResizeEvent, inView]);
   // #endregion
 
   return (
-    <section className={`text-overflow-processor-content ${className}`} style={style}>
+    <section className={`text-overflow-processor-content ${className}`} style={style} ref={ref}>
       {isRenderShowAllDOM && <p className="all-text text-overflow-processor-off" style={{display: 'none'}} dangerouslySetInnerHTML={{ __html: text }}></p>}
       <p
         ref={viewingArea}
@@ -467,7 +476,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
                   style={realButtonStyle}
                 >
                   {shadowFoldButtonPlacement === 'inner' && isFold && renderShadowLayer}
-                  <label onClick={handleClick}>{buttonCon}</label>
+                  <label className="click-btn-label" onClick={handleClick}>{buttonCon}</label>
                 </span>
               </>
             )}
@@ -496,11 +505,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
               </span>
               {/* 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来 */}
               {textFoldNoButtonEndSlot}
-              <span
-                ref={textArea}
-                className="text"
-              >
-                <span dangerouslySetInnerHTML={{ __html: (isJsComputed && isFold) ? computedList.finalText || '' : text }}></span>
+              <span ref={textArea} className="text-box">
+                <span className="text" dangerouslySetInnerHTML={{ __html: (isJsComputed && isFold) ? computedList.finalText || '' : text }}></span>
                 {(textEndSlot && !isFold) && textEndSlot}
               </span>
             </>

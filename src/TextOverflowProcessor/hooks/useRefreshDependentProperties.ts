@@ -38,6 +38,7 @@ function useRefreshDependentProperties(props: TextOverflowProcessorPropsType & O
     isShadowLayer,
     shadowClassName,
     shadowStyle,
+    isListenVisible,
   } = props;
 
   // 组件刷新依赖的属性添加
@@ -76,6 +77,7 @@ function useRefreshDependentProperties(props: TextOverflowProcessorPropsType & O
           isShadowLayer,
           shadowClassName,
           JSON?.stringify(shadowStyle),
+          isListenVisible,
         ];
         break;
 
@@ -108,13 +110,14 @@ function useRefreshDependentProperties(props: TextOverflowProcessorPropsType & O
         if (reRenderDependentProperties.includes('isShadowLayer')) dependence.push(isShadowLayer);
         if (reRenderDependentProperties.includes('shadowClassName')) dependence.push(shadowClassName);
         if (reRenderDependentProperties.includes('shadowStyle')) dependence.push(JSON?.stringify(shadowStyle));
+        if (reRenderDependentProperties.includes('isListenVisible')) dependence.push(isListenVisible);
         break;
     }
 
     return dependence;
   }, [JSON?.stringify(reRenderDependentProperties)]);
 
-  return refreshDependentProperties || [];
+  return refreshDependentProperties;
 }
 
 export default useRefreshDependentProperties;

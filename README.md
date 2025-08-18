@@ -16,6 +16,12 @@ npm i text-overflow-processor-react -S
 或
 
 ```shell
+pnpm add text-overflow-processor-react
+```
+
+或
+
+```shell
 yarn add text-overflow-processor-react
 ```
 
@@ -43,6 +49,7 @@ interface TextOverflowProcessorPropsType {
     isInitState: boolean, // 返回的是否是初始化状态，有时初始化状态可能会影响组件的使用，可以用这个区分
   ) => void) | null,
   option?: {
+    lineHeight?: number, // 文案行高，默认24，期望传递，否则isFold计算的结果会有误差
     /**
      * 自定义组件刷新依赖的自身属性：依赖中的属性发生变化时，会触发组件刷新。建议不要使用all，伤性能
      * 其实通过key或其它方式也能实现同样的效果，这里只是为了方便而提供
@@ -51,6 +58,7 @@ interface TextOverflowProcessorPropsType {
      */
     reRenderDependentProperties?: ReRenderDependentPropertiesEnum[],
     type?: 'ellipsis' | 'shadow', // 文案处理类型
+    isListenVisible?: boolean, // 是否监听组件自身的显示状态变化，解决在弹窗、tooltip等场景下视口大小变化使用无效的问题
     /** >>>>>>ellipsis配置 */
     ellipsisOption?: {
       ellipsisLineClamp?: number, // 控制显示的行数
@@ -100,7 +108,6 @@ interface TextOverflowProcessorPropsType {
     isShowAllContent?: boolean, // 是否展示所有内容，为true时将不提供操作按钮
     isMustButton?: boolean, // 是否常驻显示按钮
     isMustNoButton?: boolean, // 是否不要显示按钮
-    lineHeight?: number, // 文案行高
     isRenderShowAllDOM?: boolean, // 是否渲染被隐藏的全部文案展示DOM
   },
 }
@@ -141,8 +148,10 @@ TextOverflowProcessor.defaultProps = {
   onClick: null,
   getIsFold: null,
   option: {
+    lineHeight: 24,
     reRenderDependentProperties: ['text'],
     type: 'ellipsis',
+    isListenVisible: false,
     /** >>>>>>ellipsis配置 */
     ellipsisOption: {
       ellipsisLineClamp: 2,
@@ -171,7 +180,6 @@ TextOverflowProcessor.defaultProps = {
     isShowAllContent: false,
     isMustButton: false,
     isMustNoButton: false,
-    lineHeight: 24,
     isRenderShowAllDOM: false,
   },
 }
@@ -224,6 +232,16 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪2.0.18
+
+`2025-08-18`
+
+☆ 增加option.isListenVisible属性，解决在弹窗、tooltip等场景下视口大小变化使用无效的问题；
+
+☆ `ellipsis`时，class类名`text`移动到了文案dom上，与`shadow`时保持一致，利于修改文案样式，此前如果使用了“.text span”形式修改文案样式需要去除“span”做兼容；
+
+☆ node版本、包管理工具（pnpm）及相关包升级优化；
 
 ### ↪2.0.17
 

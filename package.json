@@ -1,6 +1,6 @@
 {
   "name": "text-overflow-processor-react",
-  "version": "2.0.17",
+  "version": "2.0.18",
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "description": "text overflow process for react",
@@ -30,6 +30,7 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-intersection-observer": "^9.16.0",
     "react-scripts": "5.0.1"
   },
   "devDependencies": {
