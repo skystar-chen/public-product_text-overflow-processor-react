@@ -72,6 +72,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   const [isInitEntry, setIsInitEntry] = useState<boolean>(true);
   // 文案是否折叠
   const [isFold, setIsFold] = useState<boolean>(true);
+  const isFoldRef = useRef<boolean>(true);
   // 判断是否出现操作按钮
   const [isShowBtn, setIsShowBtn] = useState<boolean>(false);
   // 是否触发handleResize
@@ -87,6 +88,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   const shadowShowH = useRef<number>(76);
   // 使用js来计算展示的文案时使用
   const [width, setWidth] = useState<number>(0);
+  // 上一次容器的宽度
+  const prevWidth = useRef<number>(0);
   const [isReJsComputed, setIsReJsComputed] = useState<number>(0);
   const prevComputedList = useRef<{
     finalText: string,
@@ -234,17 +237,17 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   ]);
 
   const realButtonStyle = useMemo(() => {
-    const defalutStyle = {
+    const defaultStyle = {
       display: isShowBtn ? 'inline-block' : 'none',
       lineHeight: lineHeight + 'px',
     };
 
     if (Object.prototype.toString.call(buttonStyle) !== '[object Object]') {
       console.error('buttonStyle格式不正确！');
-      return defalutStyle;
+      return defaultStyle;
     }
 
-    return {...defalutStyle, ...(buttonStyle || {})};
+    return {...defaultStyle, ...(buttonStyle || {})};
   }, [isShowBtn, lineHeight, JSON?.stringify(buttonStyle)]);
 
   // 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来
@@ -288,6 +291,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
   ]);
 
   const getIsOverflow = useCallback(() => {
+    if (viewingArea.current) {
+      prevWidth.current = viewingArea.current.getBoundingClientRect().width || 0;
+    }
     const childrens: NodeListOf<ChildNode> | undefined = textArea.current?.childNodes;
     let childSumH: number = 0; // 所有子元素标签加起来的高度
     if (childrens) {
@@ -311,7 +317,15 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     return res;
   }, []);
 
-  const handleResize = useCallback(() => { setExecuteResizeEvent(Date.now()); }, []);
+  const handleResize = useCallback(() => {
+    if (viewingArea.current) {
+      const w = viewingArea.current.getBoundingClientRect().width || 0;
+      // 容器宽度没有变化，或者容器宽度变大但之前文案是不折叠的，此时不处理
+      if (w === prevWidth.current || (w > prevWidth.current && !isFoldRef.current)) return;
+      prevWidth.current = w;
+    }
+    setExecuteResizeEvent(Date.now());
+  }, []);
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     // 有操作按钮时，展开态并且按钮存在时没有触发文案计算，这时点击折叠需要触发重新计算
@@ -349,7 +363,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     if (isMustButton) setIsShowBtn(true);
     if (isMustNoButton) setIsShowBtn(false);
     if (isJsComputed && viewingArea.current) {
-      setWidth(viewingArea.current.getBoundingClientRect().width || 0);
+      const w = viewingArea.current.getBoundingClientRect().width || 0;
+      setWidth(w);
+      prevWidth.current = w;
     }
     setIsInitEntry(false);
   }
@@ -390,7 +406,10 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     }),
   );
 
-  useEffect(() => { onFoldChange?.(isFold, isInitEntry); }, [isFold, isInitEntry]);
+  useEffect(() => {
+    onFoldChange?.(isFold, isInitEntry);
+    isFoldRef.current = isFold;
+  }, [isFold, isInitEntry]);
 
   useEffect(() => {
     // 页面缩放时判断是否显示操作按钮
@@ -409,7 +428,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     timer.current && clearTimeout(timer.current);
     timer.current = setTimeout(() => {
       if (isJsComputed && viewingArea.current) {
-        setWidth(viewingArea.current.getBoundingClientRect().width || 0);
+        const w = viewingArea.current.getBoundingClientRect().width || 0;
+        setWidth(w);
+        prevWidth.current = w;
       } else {
         const flag = getIsOverflow();
         // 有操作按钮时，展开态并且最终文案还是展示不下，不用处理
