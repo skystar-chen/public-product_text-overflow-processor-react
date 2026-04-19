@@ -70,7 +70,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx'],
     alias:{
-      '@': path.resolve(__dirname, '../src'), // @符号表示src这一层路径
+      '@': path.resolve(__dirname, 'src'), // @符号表示src这一层路径
     }, 
   },
 
