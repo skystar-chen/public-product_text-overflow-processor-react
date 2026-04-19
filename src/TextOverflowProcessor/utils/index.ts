@@ -116,8 +116,30 @@ const getClassNames = (obj: {[keyName: string]: boolean}): string => {
 
 const filterComplexDependencies = (value: any): string => (typeof value === 'string' ? value : '');
 
+const sanitizeHtml = (html: string): string => {
+  if (typeof html !== 'string') return '';
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const removeTags = ['script', 'iframe', 'object', 'embed', 'form', 'base', 'meta', 'link', 'noscript', 'template'];
+  removeTags.forEach(tag => {
+    doc.querySelectorAll(tag).forEach(el => el.remove());
+  });
+  doc.querySelectorAll('*').forEach(el => {
+    const attrs = Array.from(el.attributes);
+    attrs.forEach(attr => {
+      if (attr.name.startsWith('on')) {
+        el.removeAttribute(attr.name);
+      }
+      if (/^(href|src|action|xlink:href)$/i.test(attr.name) && /^\s*javascript\s*:/i.test(attr.value)) {
+        el.removeAttribute(attr.name);
+      }
+    });
+  });
+  return doc.body.innerHTML;
+};
+
 export {
   getFixedWidthText,
   getClassNames,
   filterComplexDependencies,
+  sanitizeHtml,
 }
