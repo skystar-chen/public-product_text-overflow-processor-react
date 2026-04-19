@@ -2,7 +2,7 @@ import { type FC, useRef, useState, useEffect, memo, useCallback, useMemo } from
 import { renderToString } from 'react-dom/server';
 import { useInView } from 'react-intersection-observer';
 import useRefreshDependentProperties from './hooks/useRefreshDependentProperties';
-import { getFixedWidthText, getClassNames, filterComplexDependentProperties } from './utils';
+import { getFixedWidthText, getClassNames, filterComplexDependentProperties, sanitizeHtml } from './utils';
 import {
   PROCESS_TYPE_LIST,
   DEFAULT_ELLIPSIS_OPTION,
@@ -419,7 +419,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
     return () => {
       window.removeEventListener('resize', handleResize);
-    }
+    };
   }, []);
 
   // 相当于handleResize事件
@@ -445,12 +445,19 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       clearTimeout(timer.current as NodeJS.Timeout);
       timer.current = null;
     }, 200);
+    
+    return () => {
+      if (timer.current) {
+        clearTimeout(timer.current as NodeJS.Timeout);
+        timer.current = null;
+      }
+    };
   }, [executeResizeEvent, inView]);
   // #endregion
 
   return (
     <section className={`text-overflow-processor-content ${className}`} style={style} ref={ref}>
-      {isRenderShowAllDOM && <p className="all-text text-overflow-processor-off" style={{display: 'none'}} dangerouslySetInnerHTML={{ __html: text }}></p>}
+      {isRenderShowAllDOM && <p className="all-text text-overflow-processor-off" style={{display: 'none'}} dangerouslySetInnerHTML={{ __html: sanitizeHtml(text) }}></p>}
       <p
         ref={viewingArea}
         className={getClassNames({
@@ -482,7 +489,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
                 'text-show-all-box': !isFold,
               })}
               style={{height: (isFold && !isViewResize && !isInitEntry) ? shadowInitBoxShowH : 'auto'}}
-              dangerouslySetInnerHTML={{ __html: text }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(text) }}
             ></span>
             {/* 按钮和阴影 */}
             {!isViewResize && (
@@ -527,7 +534,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
               {/* 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来 */}
               {textFoldNoButtonEndSlot}
               <span ref={textArea} className="text-box">
-                <span className="text" dangerouslySetInnerHTML={{ __html: (isJsComputed && isFold) ? computedList.finalText || '' : text }}></span>
+                <span className="text" dangerouslySetInnerHTML={{ __html: sanitizeHtml((isJsComputed && isFold) ? computedList.finalText || '' : text) }}></span>
                 {(textEndSlot && !isFold) && textEndSlot}
               </span>
             </>
