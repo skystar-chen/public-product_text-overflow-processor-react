@@ -2,6 +2,7 @@
 const path = require('path');
 // const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const sass = require('sass');
 // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
@@ -48,7 +49,12 @@ module.exports = {
           // MiniCssExtractPlugin.loader, // 代替style-loader，css样式文件分离
           'css-loader',
           'postcss-loader',
-          'sass-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: sass,
+            },
+          },
         ],
       },
       {
