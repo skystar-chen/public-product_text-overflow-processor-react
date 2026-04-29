@@ -43,6 +43,8 @@ function useDependencies(
     shadowClassName,
     shadowStyle,
     isListenVisible,
+    isProcessFullWidth,
+    extraFullWidthChars,
   } = props;
 
   // 组件刷新依赖的属性添加
@@ -81,6 +83,8 @@ function useDependencies(
           shadowClassName,
           JSON?.stringify(shadowStyle),
           isListenVisible,
+          isProcessFullWidth,
+          extraFullWidthChars,
         ];
         break;
 
@@ -113,6 +117,8 @@ function useDependencies(
         if (reRenderDependencies.includes('shadowClassName')) newDependencies.push(shadowClassName);
         if (reRenderDependencies.includes('shadowStyle')) newDependencies.push(JSON?.stringify(shadowStyle));
         if (reRenderDependencies.includes('isListenVisible')) newDependencies.push(isListenVisible);
+        if (reRenderDependencies.includes('isProcessFullWidth')) newDependencies.push(isProcessFullWidth);
+        if (reRenderDependencies.includes('extraFullWidthChars')) newDependencies.push(extraFullWidthChars);
         break;
     }
 

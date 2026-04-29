@@ -29,7 +29,9 @@ type ReRenderDependenciesEnum = 'all'
 | 'isShadowLayer'
 | 'shadowClassName'
 | 'shadowStyle'
-| 'isListenVisible';
+| 'isListenVisible'
+| 'isProcessFullWidth'
+| 'extraFullWidthChars';
 type EllipsisOptionType = {
   /**
    * 控制显示的行数
@@ -239,6 +241,22 @@ type OptionType = {
    * 默认值：false
    */
   isListenVisible?: boolean,
+  /**
+   * 是否处理全角字符
+   * 
+   * 解决全角字符影响省略效果的问题
+   * 
+   * 默认值：true
+   */
+  isProcessFullWidth?: boolean,
+  /**
+   * 额外需要处理的全角字符
+   * 
+   * 默认只处理了这些字符: ，。！？；：“”‘’【】《》（）…—·￥、
+   * 
+   * 默认值：空
+   */
+  extraFullWidthChars?: string,
 };
 interface TextOverflowProcessorPropsType {
   /**

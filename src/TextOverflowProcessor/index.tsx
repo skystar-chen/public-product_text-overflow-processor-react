@@ -1,7 +1,7 @@
 import { type FC, useRef, useState, useEffect, memo, useCallback, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import useDependencies from './hooks/useDependencies';
-import { getFixedWidthText, getClassNames, filterComplexDependencies, sanitizeHtml } from './utils';
+import { getFixedWidthText, getClassNames, filterComplexDependencies, sanitizeHtml, wrapFullWidthSymbols } from './utils';
 import {
   PROCESS_TYPE_LIST,
   DEFAULT_ELLIPSIS_OPTION,
@@ -20,7 +20,7 @@ import './index.scss';
 const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
   const {
-    text = '',
+    text: propsText = '',
     className = '',
     style = {},
     onClick = null,
@@ -47,6 +47,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     lineHeight = 24,
     isRenderShowAllDOM = false,
     isListenVisible = false,
+    isProcessFullWidth = true,
+    extraFullWidthChars = '',
   } = option || DEFAULT_OPTION;
   /** >>>>>>ellipsis配置 */
   const {
@@ -103,6 +105,12 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     threshold: 0.1,
     skip: !isListenVisible,
   });
+
+  // 对文案进行处理，处理全角字符
+  const text = useMemo(
+    () => isProcessFullWidth ? wrapFullWidthSymbols(propsText, extraFullWidthChars) : propsText,
+    [propsText, isProcessFullWidth, extraFullWidthChars],
+  );
 
   const cssText = useMemo(() => {
     let cssText = '';
@@ -403,6 +411,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       shadowClassName,
       shadowStyle,
       isListenVisible,
+      isProcessFullWidth,
+      extraFullWidthChars,
     }),
   );
 

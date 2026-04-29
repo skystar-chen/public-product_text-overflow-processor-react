@@ -137,9 +137,28 @@ const sanitizeHtml = (html: string): string => {
   return doc.body.innerHTML;
 };
 
+/**
+ * 将文案中的全角符号用 span 包裹，使其不影响 CSS text-overflow 的省略效果
+ * @param text 原始文案
+ * @param extraChars 可选，额外需要包裹的字符
+ * @returns 处理后的 HTML 字符串
+ */
+function wrapFullWidthSymbols(text: string, extraChars: string = ''): string {
+  // 匹配所有常见的全角符号
+  // 这里覆盖了：中文标点、全角括号、书名号、引号等
+  const baseChars = '，。！？；：“”‘’【】《》（）…—·￥、';
+  const fullWidthRegex = new RegExp(`[${baseChars}${extraChars}]`, 'g');
+
+  return text.replace(fullWidthRegex, (match) => {
+    // 使用 span 包裹，使其成为一个独立的不可断行的块
+    return `<span style="display:inline-block;width:1em;text-align:center;white-space:nowrap;">${match}</span>`;
+  });
+}
+
 export {
   getFixedWidthText,
   getClassNames,
   filterComplexDependencies,
   sanitizeHtml,
+  wrapFullWidthSymbols,
 }

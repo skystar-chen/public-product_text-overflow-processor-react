@@ -43,6 +43,8 @@ const DEFAULT_OPTION: OptionType = {
   lineHeight: 24,
   isRenderShowAllDOM: false,
   isListenVisible: false,
+  isProcessFullWidth: true,
+  extraFullWidthChars: '',
 };
 const DEFAULT_PROPS: TextOverflowProcessorPropsType = {
   text: '',

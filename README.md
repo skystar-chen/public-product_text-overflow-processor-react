@@ -61,6 +61,8 @@ interface TextOverflowProcessorPropsType {
     reRenderDependencies?: ReRenderDependenciesEnum[],
     type?: 'ellipsis' | 'shadow', // 文案处理类型
     isListenVisible?: boolean, // 是否监听组件自身的显示状态变化，解决在弹窗、tooltip等场景下视口大小变化使用无效的问题
+    isProcessFullWidth?: boolean, // 是否处理全角字符，解决全角字符影响省略效果的问题
+    extraFullWidthChars?: string, // 额外需要处理的全角字符
     /** >>>>>>ellipsis配置 */
     ellipsisOption?: {
       ellipsisLineClamp?: number, // 控制显示的行数
@@ -150,7 +152,9 @@ type ReRenderDependenciesEnum = 'all'
 | 'isShadowLayer'
 | 'shadowClassName'
 | 'shadowStyle'
-| 'isListenVisible';
+| 'isListenVisible'
+| 'isProcessFullWidth'
+| 'extraFullWidthChars';
 对应默认值：
 TextOverflowProcessor.defaultProps = {
   text: '',
@@ -163,6 +167,8 @@ TextOverflowProcessor.defaultProps = {
     reRenderDependencies: ['text'],
     type: 'ellipsis',
     isListenVisible: false,
+    isProcessFullWidth: true,
+    extraFullWidthChars: '',
     /** >>>>>>ellipsis配置 */
     ellipsisOption: {
       ellipsisLineClamp: 2,
@@ -242,6 +248,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪3.0.4
+
+`2026-04-30`
+
+☆ 增加option.isProcessFullWidth及option.extraFullWidthChars属性，解决全角字符影响省略效果的问题。
 
 ### ↪3.0.3
 
