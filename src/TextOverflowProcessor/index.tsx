@@ -2,7 +2,7 @@ import { type FC, useRef, useState, useEffect, memo, useCallback, useMemo } from
 import { renderToString } from 'react-dom/server';
 import { useInView } from 'react-intersection-observer';
 import useRefreshDependentProperties from './hooks/useRefreshDependentProperties';
-import { getFixedWidthText, getClassNames, filterComplexDependentProperties, sanitizeHtml } from './utils';
+import { getFixedWidthText, getClassNames, filterComplexDependentProperties, sanitizeHtml, wrapSymbols } from './utils';
 import {
   PROCESS_TYPE_LIST,
   DEFAULT_ELLIPSIS_OPTION,
@@ -10,6 +10,7 @@ import {
   DEFAULT_OPTION,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
+  PROCESS_CHARS,
 } from './constants';
 import { TextOverflowProcessorPropsType } from './types';
 import './index.scss';
@@ -21,7 +22,7 @@ import './index.scss';
 const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
   const {
-    text = '',
+    text: propsText = '',
     className = '',
     style = {},
     onClick = null,
@@ -59,6 +60,10 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     textEndSlot = null,
     extraOccupiedW = 0,
     buttonBeforeSlot = null,
+    isProcessFullWidth = true,
+    extraFullWidthChars = '',
+    isProcessHalfWidth = true,
+    extraHalfWidthChars = '',
   } = ellipsisOption || DEFAULT_ELLIPSIS_OPTION;
   /** >>>>>>shadow配置 */
   const {
@@ -104,6 +109,26 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     threshold: 0.1,
     skip: !isListenVisible,
   });
+
+  // 对文案进行处理，处理全角和半角符号、消毒/转义
+  const text = useMemo(
+    () => {
+      const sanitizeText = sanitizeHtml(propsText);
+      if (type !== 'ellipsis' || isJsComputed) return sanitizeText;
+      const processFullWidthChars = isProcessFullWidth ? PROCESS_CHARS['fullWidth'] + extraFullWidthChars || '' : '',
+        processHalfWidthChars = isProcessHalfWidth ? PROCESS_CHARS['halfWidth'] + extraHalfWidthChars || '' : '';
+      return wrapSymbols(sanitizeText, processFullWidthChars, processHalfWidthChars);
+    },
+    [
+      type,
+      propsText,
+      isJsComputed,
+      isProcessFullWidth,
+      extraFullWidthChars,
+      isProcessHalfWidth,
+      extraHalfWidthChars,
+    ],
+  );
 
   const cssText = useMemo(() => {
     let cssText = '';
@@ -405,6 +430,10 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       shadowClassName,
       shadowStyle,
       isListenVisible,
+      isProcessFullWidth,
+      extraFullWidthChars,
+      isProcessHalfWidth,
+      extraHalfWidthChars,
     }),
   );
 
@@ -457,7 +486,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
 
   return (
     <section className={`text-overflow-processor-content ${className}`} style={style} ref={ref}>
-      {isRenderShowAllDOM && <p className="all-text text-overflow-processor-off" style={{display: 'none'}} dangerouslySetInnerHTML={{ __html: sanitizeHtml(text) }}></p>}
+      {isRenderShowAllDOM && <p className="all-text text-overflow-processor-off" style={{display: 'none'}} dangerouslySetInnerHTML={{ __html: text }}></p>}
       <p
         ref={viewingArea}
         className={getClassNames({
@@ -489,7 +518,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
                 'text-show-all-box': !isFold,
               })}
               style={{height: (isFold && !isViewResize && !isInitEntry) ? shadowInitBoxShowH : 'auto'}}
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(text) }}
+              dangerouslySetInnerHTML={{ __html: text }}
             ></span>
             {/* 按钮和阴影 */}
             {!isViewResize && (
@@ -534,7 +563,7 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
               {/* 一定不展示按钮时，折叠状态，textEndSlot有的话要展示出来 */}
               {textFoldNoButtonEndSlot}
               <span ref={textArea} className="text-box">
-                <span className="text" dangerouslySetInnerHTML={{ __html: sanitizeHtml((isJsComputed && isFold) ? computedList.finalText || '' : text) }}></span>
+                <span className="text" dangerouslySetInnerHTML={{ __html: (isJsComputed && isFold) ? computedList.finalText || '' : text }}></span>
                 {(textEndSlot && !isFold) && textEndSlot}
               </span>
             </>

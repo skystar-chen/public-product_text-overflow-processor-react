@@ -90,6 +90,10 @@ interface TextOverflowProcessorPropsType {
       extraOccupiedW?: number,
       // 按钮前面的占位内容（使用频率低）
       buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null,
+      isProcessFullWidth?: boolean, // 是否处理全角字符，解决全角字符影响省略效果的问题
+      extraFullWidthChars?: string, // 额外需要处理的全角字符
+      isProcessHalfWidth?: boolean, // 是否处理半角字符，解决半角字符影响省略效果的问题
+      extraHalfWidthChars?: string, // 额外需要处理的半角字符
     },
     /** >>>>>>shadow配置 */
     shadowOption?: {
@@ -140,7 +144,11 @@ type ReRenderDependentPropertiesEnum = 'all'
 | 'isShadowLayer'
 | 'shadowClassName'
 | 'shadowStyle'
-| 'isListenVisible';
+| 'isListenVisible'
+| 'isProcessFullWidth'
+| 'extraFullWidthChars'
+| 'isProcessHalfWidth'
+| 'extraHalfWidthChars';
 对应默认值：
 TextOverflowProcessor.defaultProps = {
   text: '',
@@ -163,6 +171,10 @@ TextOverflowProcessor.defaultProps = {
       textEndSlot: null,
       extraOccupiedW: 0,
       buttonBeforeSlot: null,
+      isProcessFullWidth: true,
+      extraFullWidthChars: '',
+      isProcessHalfWidth: true,
+      extraHalfWidthChars: '',
     },
     /** >>>>>>shadow配置 */
     shadowOption: {
@@ -233,6 +245,14 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪2.0.21
+
+`2026-04-30`
+
+☆ 增加option.ellipsisOption.isProcessFullWidth、option.ellipsisOption.extraFullWidthChars、option.ellipsisOption.isProcessHalfWidth、option.ellipsisOption.extraHalfWidthChars属性，在`ellipsis`且isJsComputed开启时，解决全角字符、半角字符影响文案溢出省略效果的问题；
+
+☆ 文案断行规则`line-break`改为anywhere，任意位置断行。
 
 ### ↪2.0.20
 
