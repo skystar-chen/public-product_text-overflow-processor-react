@@ -24,6 +24,7 @@ const DEFAULT_PROPS: TextOverflowProcessorPropsType = {
   isMustNoButton: false,
   lineHeight: 24,
   isRenderShowAllDOM: false,
+  isListenVisible: false,
   /** >>>>>>仅ellipsis配置 */
   ellipsisLineClamp: 2,
   isJsComputed: false,
@@ -33,13 +34,16 @@ const DEFAULT_PROPS: TextOverflowProcessorPropsType = {
   textEndSlot: null,
   extraOccupiedW: 0,
   buttonBeforeSlot: null,
+  isProcessFullWidth: true,
+  extraFullWidthChars: '',
+  isProcessHalfWidth: true,
+  extraHalfWidthChars: '',
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH: 76,
   shadowFoldButtonPlacement: 'outer',
   isShadowLayer: true,
   shadowClassName: '',
   shadowStyle: {},
-  isListenVisible: false,
 };
 
 const JS_COMPUTED_VALID_CSS_PROPERTIES = [
@@ -97,9 +101,15 @@ const JS_COMPUTED_NUMBER_TO_PX_PROPERTIES = [
   'inline-size',
 ];
 
+const PROCESS_CHARS = {
+  fullWidth: '，。！？；：“”‘’【】《》（）…—·￥、「」',
+  halfWidth: `,.!?;:""''[]<>()^_\`$\\{}`,
+};
+
 export {
   PROCESS_TYPE_LIST,
   DEFAULT_PROPS,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
+  PROCESS_CHARS,
 };

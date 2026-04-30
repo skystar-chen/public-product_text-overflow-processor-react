@@ -30,7 +30,11 @@ type ReRenderDependentPropertiesEnum = 'all'
 | 'isShadowLayer'
 | 'shadowClassName'
 | 'shadowStyle'
-| 'isListenVisible';
+| 'isListenVisible'
+| 'isProcessFullWidth'
+| 'extraFullWidthChars'
+| 'isProcessHalfWidth'
+| 'extraHalfWidthChars';
 
 interface TextOverflowProcessorPropsType {
   /** >>>>>>公共配置 */
@@ -247,6 +251,38 @@ interface TextOverflowProcessorPropsType {
    * 默认值：null
    */
   buttonBeforeSlot?: DOMElementType;
+  /**
+   * 是否处理全角字符
+   * 
+   * 解决全角字符影响省略效果的问题
+   * 
+   * 默认值：true
+   */
+  isProcessFullWidth?: boolean,
+  /**
+   * 额外需要处理的全角字符
+   * 
+   * 默认只处理了这些字符: ，。！？；：“”‘’【】《》（）…—·￥、「」
+   * 
+   * 默认值：空
+   */
+  extraFullWidthChars?: string,
+  /**
+   * 是否处理半角字符
+   * 
+   * 解决半角字符影响省略效果的问题
+   * 
+   * 默认值：true
+   */
+  isProcessHalfWidth?: boolean,
+  /**
+   * 额外需要处理的半角字符
+   * 
+   * 默认只处理了这些字符: ,.!?;:""''[]<>()^_`$\{}
+   * 
+   * 默认值：空
+   */
+  extraHalfWidthChars?: string,
 
   /** >>>>>>仅shadow配置 */
   /**

@@ -137,9 +137,40 @@ const sanitizeHtml = (html: string): string => {
   return doc.body.innerHTML;
 };
 
+/**
+ * 对正则字符类 [] 中的特殊字符进行转义
+ */
+function escapeForCharacterClass(chars: string): string {
+  return chars
+    .replace(/\\/g, '\\\\') // 反斜杠必须最先处理
+    .replace(/\]/g, '\\]') // 右方括号
+    .replace(/\^/g, '\\^') // 脱字符（如果在开头会取反）
+    .replace(/-/g, '\\-'); // 连字符（在中间表示范围）
+}
+
+/**
+ * 将文案中的全角和半角符号用 span 包裹，使其不影响 CSS text-overflow 的省略效果
+ * @param text 原始文案
+ * @param fullWidthChars 可选，需要处理的全角字符集
+ * @param halfWidthChars 可选，需要处理的半角字符集
+ * @returns 处理后的 HTML 字符串
+ */
+function wrapSymbols(text: string, fullWidthChars: string = '', halfWidthChars: string = ''): string {
+  const allChars = fullWidthChars + halfWidthChars;
+  if (!allChars) return text;
+  const regex = new RegExp(`[${escapeForCharacterClass(allChars)}]`, 'g');
+
+  return text.replace(regex, (match) => {
+    // 全角用 1em，半角用 0.5em
+    const width = fullWidthChars.includes(match) ? '1em' : '0.5em';
+    return `<span style="display:inline-block;width:${width};text-align:center;white-space:nowrap;">${match}</span>`;
+  });
+}
+
 export {
   getFixedWidthText,
   getClassNames,
   filterComplexDependentProperties,
   sanitizeHtml,
+  wrapSymbols,
 }

@@ -34,6 +34,10 @@ function useRefreshDependentProperties(props: TextOverflowProcessorPropsType) {
     shadowClassName,
     shadowStyle,
     isListenVisible,
+    isProcessFullWidth,
+    extraFullWidthChars,
+    isProcessHalfWidth,
+    extraHalfWidthChars,
   } = props;
 
   // 组件刷新依赖的属性添加
@@ -73,6 +77,10 @@ function useRefreshDependentProperties(props: TextOverflowProcessorPropsType) {
           shadowClassName,
           JSON?.stringify(shadowStyle),
           isListenVisible,
+          isProcessFullWidth,
+          extraFullWidthChars,
+          isProcessHalfWidth,
+          extraHalfWidthChars,
         ];
         break;
 
@@ -106,6 +114,10 @@ function useRefreshDependentProperties(props: TextOverflowProcessorPropsType) {
         if (reRenderDependentProperties.includes('shadowClassName')) dependence.push(shadowClassName);
         if (reRenderDependentProperties.includes('shadowStyle')) dependence.push(JSON?.stringify(shadowStyle));
         if (reRenderDependentProperties.includes('isListenVisible')) dependence.push(isListenVisible);
+        if (reRenderDependentProperties.includes('isProcessFullWidth')) dependence.push(isProcessFullWidth);
+        if (reRenderDependentProperties.includes('extraFullWidthChars')) dependence.push(extraFullWidthChars);
+        if (reRenderDependentProperties.includes('isProcessHalfWidth')) dependence.push(isProcessHalfWidth);
+        if (reRenderDependentProperties.includes('extraHalfWidthChars')) dependence.push(extraHalfWidthChars);
         break;
     }
 

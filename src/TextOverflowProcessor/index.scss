@@ -50,6 +50,7 @@
     .text {
       display: block;
       word-break: break-all;
+      line-break: anywhere;
     }
 
     .text-show-btn-box {
@@ -107,6 +108,7 @@
 
     .text {
       word-break: break-all;
+      line-break: anywhere;
     }
   }
 
@@ -120,5 +122,6 @@
 
   .all-text {
     word-break: break-all;
+    line-break: anywhere;
   }
 }
