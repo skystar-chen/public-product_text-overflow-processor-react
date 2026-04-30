@@ -138,20 +138,32 @@ const sanitizeHtml = (html: string): string => {
 };
 
 /**
- * 将文案中的全角符号用 span 包裹，使其不影响 CSS text-overflow 的省略效果
+ * 对正则字符类 [] 中的特殊字符进行转义
+ */
+function escapeForCharacterClass(chars: string): string {
+  return chars
+    .replace(/\\/g, '\\\\') // 反斜杠必须最先处理
+    .replace(/\]/g, '\\]') // 右方括号
+    .replace(/\^/g, '\\^') // 脱字符（如果在开头会取反）
+    .replace(/-/g, '\\-'); // 连字符（在中间表示范围）
+}
+
+/**
+ * 将文案中的全角和半角符号用 span 包裹，使其不影响 CSS text-overflow 的省略效果
  * @param text 原始文案
- * @param extraChars 可选，额外需要包裹的字符
+ * @param fullWidthChars 可选，需要处理的全角字符集
+ * @param halfWidthChars 可选，需要处理的半角字符集
  * @returns 处理后的 HTML 字符串
  */
-function wrapFullWidthSymbols(text: string, extraChars: string = ''): string {
-  // 匹配所有常见的全角符号
-  // 这里覆盖了：中文标点、全角括号、书名号、引号等
-  const baseChars = '，。！？；：“”‘’【】《》（）…—·￥、';
-  const fullWidthRegex = new RegExp(`[${baseChars}${extraChars}]`, 'g');
+function wrapSymbols(text: string, fullWidthChars: string = '', halfWidthChars: string = ''): string {
+  const allChars = fullWidthChars + halfWidthChars;
+  if (!allChars) return text;
+  const regex = new RegExp(`[${escapeForCharacterClass(allChars)}]`, 'g');
 
-  return text.replace(fullWidthRegex, (match) => {
-    // 使用 span 包裹，使其成为一个独立的不可断行的块
-    return `<span style="display:inline-block;width:1em;text-align:center;white-space:nowrap;">${match}</span>`;
+  return text.replace(regex, (match) => {
+    // 全角用 1em，半角用 0.5em
+    const width = fullWidthChars.includes(match) ? '1em' : '0.5em';
+    return `<span style="display:inline-block;width:${width};text-align:center;white-space:nowrap;">${match}</span>`;
   });
 }
 
@@ -160,5 +172,5 @@ export {
   getClassNames,
   filterComplexDependencies,
   sanitizeHtml,
-  wrapFullWidthSymbols,
+  wrapSymbols,
 }

@@ -61,8 +61,6 @@ interface TextOverflowProcessorPropsType {
     reRenderDependencies?: ReRenderDependenciesEnum[],
     type?: 'ellipsis' | 'shadow', // 文案处理类型
     isListenVisible?: boolean, // 是否监听组件自身的显示状态变化，解决在弹窗、tooltip等场景下视口大小变化使用无效的问题
-    isProcessFullWidth?: boolean, // 是否处理全角字符，解决全角字符影响省略效果的问题
-    extraFullWidthChars?: string, // 额外需要处理的全角字符
     /** >>>>>>ellipsis配置 */
     ellipsisOption?: {
       ellipsisLineClamp?: number, // 控制显示的行数
@@ -103,6 +101,10 @@ interface TextOverflowProcessorPropsType {
       textEndSlot?: string | JSX.Element | JSX.Element[] | null,
       // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
       extraOccupiedW?: number,
+      isProcessFullWidth?: boolean, // 是否处理全角字符，解决全角字符影响省略效果的问题
+      extraFullWidthChars?: string, // 额外需要处理的全角字符
+      isProcessHalfWidth?: boolean, // 是否处理半角字符，解决半角字符影响省略效果的问题
+      extraHalfWidthChars?: string, // 额外需要处理的半角字符
     },
     /** >>>>>>shadow配置 */
     shadowOption?: {
@@ -154,7 +156,9 @@ type ReRenderDependenciesEnum = 'all'
 | 'shadowStyle'
 | 'isListenVisible'
 | 'isProcessFullWidth'
-| 'extraFullWidthChars';
+| 'extraFullWidthChars'
+| 'isProcessHalfWidth'
+| 'extraHalfWidthChars';
 对应默认值：
 TextOverflowProcessor.defaultProps = {
   text: '',
@@ -167,8 +171,6 @@ TextOverflowProcessor.defaultProps = {
     reRenderDependencies: ['text'],
     type: 'ellipsis',
     isListenVisible: false,
-    isProcessFullWidth: true,
-    extraFullWidthChars: '',
     /** >>>>>>ellipsis配置 */
     ellipsisOption: {
       ellipsisLineClamp: 2,
@@ -178,6 +180,10 @@ TextOverflowProcessor.defaultProps = {
       fontStyle: {},
       textEndSlot: null,
       extraOccupiedW: 0,
+      isProcessFullWidth: true,
+      extraFullWidthChars: '',
+      isProcessHalfWidth: true,
+      extraHalfWidthChars: '',
     },
     /** >>>>>>shadow配置 */
     shadowOption: {
@@ -253,7 +259,9 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 `2026-04-30`
 
-☆ 增加option.isProcessFullWidth及option.extraFullWidthChars属性，解决全角字符影响省略效果的问题。
+☆ 增加option.ellipsisOption.isProcessFullWidth、option.ellipsisOption.extraFullWidthChars、option.ellipsisOption.isProcessHalfWidth、option.ellipsisOption.extraHalfWidthChars属性，在`ellipsis`且isJsComputed开启时，解决全角字符、半角字符影响省略效果的问题；
+
+☆ 文案断行规则`line-break`改为anywhere，任意位置断行。
 
 ### ↪3.0.3
 

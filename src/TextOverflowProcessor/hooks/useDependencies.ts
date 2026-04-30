@@ -45,6 +45,8 @@ function useDependencies(
     isListenVisible,
     isProcessFullWidth,
     extraFullWidthChars,
+    isProcessHalfWidth,
+    extraHalfWidthChars,
   } = props;
 
   // 组件刷新依赖的属性添加
@@ -85,6 +87,8 @@ function useDependencies(
           isListenVisible,
           isProcessFullWidth,
           extraFullWidthChars,
+          isProcessHalfWidth,
+          extraHalfWidthChars,
         ];
         break;
 
@@ -119,6 +123,8 @@ function useDependencies(
         if (reRenderDependencies.includes('isListenVisible')) newDependencies.push(isListenVisible);
         if (reRenderDependencies.includes('isProcessFullWidth')) newDependencies.push(isProcessFullWidth);
         if (reRenderDependencies.includes('extraFullWidthChars')) newDependencies.push(extraFullWidthChars);
+        if (reRenderDependencies.includes('isProcessHalfWidth')) newDependencies.push(isProcessHalfWidth);
+        if (reRenderDependencies.includes('extraHalfWidthChars')) newDependencies.push(extraHalfWidthChars);
         break;
     }
 

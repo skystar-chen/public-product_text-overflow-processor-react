@@ -16,6 +16,10 @@ const DEFAULT_ELLIPSIS_OPTION: EllipsisOptionType = {
   fontStyle: {},
   textEndSlot: null,
   extraOccupiedW: 0,
+  isProcessFullWidth: true,
+  extraFullWidthChars: '',
+  isProcessHalfWidth: true,
+  extraHalfWidthChars: '',
 };
 const DEFAULT_SHADOW_OPTION: ShadowOptionType = {
   shadowFoldShowH: 76,
@@ -43,8 +47,6 @@ const DEFAULT_OPTION: OptionType = {
   lineHeight: 24,
   isRenderShowAllDOM: false,
   isListenVisible: false,
-  isProcessFullWidth: true,
-  extraFullWidthChars: '',
 };
 const DEFAULT_PROPS: TextOverflowProcessorPropsType = {
   text: '',
@@ -110,6 +112,11 @@ const JS_COMPUTED_NUMBER_TO_PX_PROPERTIES = [
   'inline-size',
 ];
 
+const PROCESS_CHARS = {
+  fullWidth: '，。！？；：“”‘’【】《》（）…—·￥、「」',
+  halfWidth: `,.!?;:""''[]<>()^_\`$\\{}`,
+};
+
 export {
   PROCESS_TYPE_LIST,
   DEFAULT_ELLIPSIS_OPTION,
@@ -118,4 +125,5 @@ export {
   DEFAULT_PROPS,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
+  PROCESS_CHARS,
 };
