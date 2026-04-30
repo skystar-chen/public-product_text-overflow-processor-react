@@ -238,7 +238,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ## 四、更新日志
 
-### ↪1.1.27
+### ↪1.1.28
 
 `2026-04-30`
 
