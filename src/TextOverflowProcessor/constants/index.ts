@@ -5,6 +5,11 @@ import {
 
 const PROCESS_TYPE_LIST: ProcessTypeArr = ['shadow', 'ellipsis'];
 
+const DEFAULT_PROCESS_CHARS: {fullWidth: string; halfWidth: string} = {
+  fullWidth: '，。！？；：“”‘’【】《》（）…—·￥、「」',
+  halfWidth: `,.!?;:""''[]<>()^_\`$\\{}`,
+};
+
 const DEFAULT_PROPS: TextOverflowProcessorPropsType = {
   text: '',
   reRenderDependentProperties: ['text'],
@@ -35,9 +40,9 @@ const DEFAULT_PROPS: TextOverflowProcessorPropsType = {
   extraOccupiedW: 0,
   buttonBeforeSlot: null,
   isProcessFullWidth: true,
-  extraFullWidthChars: '',
+  customFullWidthChars: DEFAULT_PROCESS_CHARS['fullWidth'],
   isProcessHalfWidth: true,
-  extraHalfWidthChars: '',
+  customHalfWidthChars: DEFAULT_PROCESS_CHARS['halfWidth'],
   /** >>>>>>仅shadow配置 */
   shadowInitBoxShowH: 76,
   shadowFoldButtonPlacement: 'outer',
@@ -101,15 +106,10 @@ const JS_COMPUTED_NUMBER_TO_PX_PROPERTIES = [
   'inline-size',
 ];
 
-const PROCESS_CHARS = {
-  fullWidth: '，。！？；：“”‘’【】《》（）…—·￥、「」',
-  halfWidth: `,.!?;:""''[]<>()^_\`$\\{}`,
-};
-
 export {
   PROCESS_TYPE_LIST,
   DEFAULT_PROPS,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
-  PROCESS_CHARS,
+  DEFAULT_PROCESS_CHARS,
 };

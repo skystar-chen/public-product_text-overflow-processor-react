@@ -8,7 +8,6 @@ import {
   DEFAULT_PROPS,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
-  PROCESS_CHARS,
 } from './constants';
 import { TextOverflowProcessorPropsType } from './types';
 import './index.scss';
@@ -49,9 +48,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     extraOccupiedW,
     buttonBeforeSlot,
     isProcessFullWidth,
-    extraFullWidthChars,
+    customFullWidthChars,
     isProcessHalfWidth,
-    extraHalfWidthChars,
+    customHalfWidthChars,
     /** >>>>>>仅shadow配置 */
     shadowInitBoxShowH,
     shadowFoldButtonPlacement,
@@ -101,8 +100,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     () => {
       const sanitizeText = sanitizeHtml(propsText);
       if (type !== 'ellipsis' || isJsComputed) return sanitizeText;
-      const processFullWidthChars = isProcessFullWidth ? PROCESS_CHARS['fullWidth'] + extraFullWidthChars || '' : '',
-        processHalfWidthChars = isProcessHalfWidth ? PROCESS_CHARS['halfWidth'] + extraHalfWidthChars || '' : '';
+      const processFullWidthChars = isProcessFullWidth ? customFullWidthChars : '',
+        processHalfWidthChars = isProcessHalfWidth ? customHalfWidthChars : '';
       return wrapSymbols(sanitizeText, processFullWidthChars, processHalfWidthChars);
     },
     [
@@ -110,9 +109,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       propsText,
       isJsComputed,
       isProcessFullWidth,
-      extraFullWidthChars,
+      customFullWidthChars,
       isProcessHalfWidth,
-      extraHalfWidthChars,
+      customHalfWidthChars,
     ],
   );
 
@@ -411,9 +410,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       shadowStyle,
       isListenVisible,
       isProcessFullWidth,
-      extraFullWidthChars,
+      customFullWidthChars,
       isProcessHalfWidth,
-      extraHalfWidthChars,
+      customHalfWidthChars,
     }),
   );
 

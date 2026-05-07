@@ -32,9 +32,9 @@ type ReRenderDependentPropertiesEnum = 'all'
 | 'shadowStyle'
 | 'isListenVisible'
 | 'isProcessFullWidth'
-| 'extraFullWidthChars'
+| 'customFullWidthChars'
 | 'isProcessHalfWidth'
-| 'extraHalfWidthChars';
+| 'customHalfWidthChars';
 
 interface TextOverflowProcessorPropsType {
   /** >>>>>>公共配置 */
@@ -260,13 +260,11 @@ interface TextOverflowProcessorPropsType {
    */
   isProcessFullWidth?: boolean,
   /**
-   * 额外需要处理的全角字符
+   * 自定义需要处理的全角字符
    * 
-   * 默认只处理了这些字符: ，。！？；：“”‘’【】《》（）…—·￥、「」
-   * 
-   * 默认值：空
+   * 默认值：，。！？；：“”‘’【】《》（）…—·￥、「」
    */
-  extraFullWidthChars?: string,
+  customFullWidthChars?: string,
   /**
    * 是否处理半角字符
    * 
@@ -276,13 +274,11 @@ interface TextOverflowProcessorPropsType {
    */
   isProcessHalfWidth?: boolean,
   /**
-   * 额外需要处理的半角字符
+   * 自定义需要处理的半角字符
    * 
-   * 默认只处理了这些字符: ,.!?;:""''[]<>()^_`$\{}
-   * 
-   * 默认值：空
+   * 默认值：,.!?;:""''[]<>()^_`$\{}
    */
-  extraHalfWidthChars?: string,
+  customHalfWidthChars?: string,
 
   /** >>>>>>仅shadow配置 */
   /**
