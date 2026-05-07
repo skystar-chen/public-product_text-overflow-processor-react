@@ -90,9 +90,9 @@ interface TextOverflowProcessorPropsType {
       extraOccupiedW?: number,
       // 按钮前面的占位内容（使用频率低）
       buttonBeforeSlot?: string | JSX.Element | JSX.Element[] | null,
-      isProcessFullWidth?: boolean, // 是否处理全角字符，解决全角字符影响省略效果的问题
+      isProcessFullWidth?: boolean, // 是否处理全角字符，解决全角字符影响省略效果的问题，isJsComputed未启用时有效
       extraFullWidthChars?: string, // 额外需要处理的全角字符
-      isProcessHalfWidth?: boolean, // 是否处理半角字符，解决半角字符影响省略效果的问题
+      isProcessHalfWidth?: boolean, // 是否处理半角字符，解决半角字符影响省略效果的问题，isJsComputed未启用时有效
       extraHalfWidthChars?: string, // 额外需要处理的半角字符
     },
     /** >>>>>>shadow配置 */
@@ -246,11 +246,17 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 ## 四、更新日志
 
+### ↪2.0.22
+
+`2026-05-07`
+
+☆ README文档描述更新。
+
 ### ↪2.0.21
 
 `2026-04-30`
 
-☆ 增加option.ellipsisOption.isProcessFullWidth、option.ellipsisOption.extraFullWidthChars、option.ellipsisOption.isProcessHalfWidth、option.ellipsisOption.extraHalfWidthChars属性，在`ellipsis`且isJsComputed未开启时，解决全角字符、半角字符影响文案溢出省略效果的问题；
+☆ 增加option.ellipsisOption.isProcessFullWidth、option.ellipsisOption.extraFullWidthChars、option.ellipsisOption.isProcessHalfWidth、option.ellipsisOption.extraHalfWidthChars属性，在`ellipsis`且isJsComputed未启用时，解决全角字符、半角字符影响文案溢出省略效果的问题；
 
 ☆ 文案断行规则`line-break`改为anywhere，任意位置断行。
 
