@@ -10,7 +10,7 @@ import {
   DEFAULT_OPTION,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
-  PROCESS_CHARS,
+  DEFAULT_PROCESS_CHARS,
 } from './constants';
 import { TextOverflowProcessorPropsType } from './types';
 import './index.scss';
@@ -61,9 +61,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     extraOccupiedW = 0,
     buttonBeforeSlot = null,
     isProcessFullWidth = true,
-    extraFullWidthChars = '',
+    customFullWidthChars = DEFAULT_PROCESS_CHARS['fullWidth'],
     isProcessHalfWidth = true,
-    extraHalfWidthChars = '',
+    customHalfWidthChars = DEFAULT_PROCESS_CHARS['halfWidth'],
   } = ellipsisOption || DEFAULT_ELLIPSIS_OPTION;
   /** >>>>>>shadow配置 */
   const {
@@ -115,8 +115,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     () => {
       const sanitizeText = sanitizeHtml(propsText);
       if (type !== 'ellipsis' || isJsComputed) return sanitizeText;
-      const processFullWidthChars = isProcessFullWidth ? PROCESS_CHARS['fullWidth'] + extraFullWidthChars || '' : '',
-        processHalfWidthChars = isProcessHalfWidth ? PROCESS_CHARS['halfWidth'] + extraHalfWidthChars || '' : '';
+      const processFullWidthChars = isProcessFullWidth ? customFullWidthChars : '',
+        processHalfWidthChars = isProcessHalfWidth ? customHalfWidthChars : '';
       return wrapSymbols(sanitizeText, processFullWidthChars, processHalfWidthChars);
     },
     [
@@ -124,9 +124,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       propsText,
       isJsComputed,
       isProcessFullWidth,
-      extraFullWidthChars,
+      customFullWidthChars,
       isProcessHalfWidth,
-      extraHalfWidthChars,
+      customHalfWidthChars,
     ],
   );
 
@@ -431,9 +431,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       shadowStyle,
       isListenVisible,
       isProcessFullWidth,
-      extraFullWidthChars,
+      customFullWidthChars,
       isProcessHalfWidth,
-      extraHalfWidthChars,
+      customHalfWidthChars,
     }),
   );
 

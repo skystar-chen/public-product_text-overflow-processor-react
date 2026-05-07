@@ -40,9 +40,9 @@ function useRefreshDependentProperties(props: TextOverflowProcessorPropsType & O
     shadowStyle,
     isListenVisible,
     isProcessFullWidth,
-    extraFullWidthChars,
+    customFullWidthChars,
     isProcessHalfWidth,
-    extraHalfWidthChars,
+    customHalfWidthChars,
   } = props;
 
   // 组件刷新依赖的属性添加
@@ -83,9 +83,9 @@ function useRefreshDependentProperties(props: TextOverflowProcessorPropsType & O
           JSON?.stringify(shadowStyle),
           isListenVisible,
           isProcessFullWidth,
-          extraFullWidthChars,
+          customFullWidthChars,
           isProcessHalfWidth,
-          extraHalfWidthChars,
+          customHalfWidthChars,
         ];
         break;
 
@@ -120,9 +120,9 @@ function useRefreshDependentProperties(props: TextOverflowProcessorPropsType & O
         if (reRenderDependentProperties.includes('shadowStyle')) dependence.push(JSON?.stringify(shadowStyle));
         if (reRenderDependentProperties.includes('isListenVisible')) dependence.push(isListenVisible);
         if (reRenderDependentProperties.includes('isProcessFullWidth')) dependence.push(isProcessFullWidth);
-        if (reRenderDependentProperties.includes('extraFullWidthChars')) dependence.push(extraFullWidthChars);
+        if (reRenderDependentProperties.includes('customFullWidthChars')) dependence.push(customFullWidthChars);
         if (reRenderDependentProperties.includes('isProcessHalfWidth')) dependence.push(isProcessHalfWidth);
-        if (reRenderDependentProperties.includes('extraHalfWidthChars')) dependence.push(extraHalfWidthChars);
+        if (reRenderDependentProperties.includes('customHalfWidthChars')) dependence.push(customHalfWidthChars);
         break;
     }
 

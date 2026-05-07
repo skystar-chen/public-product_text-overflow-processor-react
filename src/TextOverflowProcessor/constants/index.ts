@@ -7,6 +7,10 @@ import {
 } from '../types';
 
 const PROCESS_TYPE_LIST: ProcessTypeArr = ['ellipsis', 'shadow'];
+const DEFAULT_PROCESS_CHARS: {fullWidth: string; halfWidth: string} = {
+  fullWidth: '，。！？；：“”‘’【】《》（）…—·￥、「」',
+  halfWidth: `,.!?;:""''[]<>()^_\`$\\{}`,
+};
 const DEFAULT_ELLIPSIS_OPTION: EllipsisOptionType = {
   ellipsisLineClamp: 2,
   isJsComputed: false,
@@ -17,9 +21,9 @@ const DEFAULT_ELLIPSIS_OPTION: EllipsisOptionType = {
   extraOccupiedW: 0,
   buttonBeforeSlot: null,
   isProcessFullWidth: true,
-  extraFullWidthChars: '',
+  customFullWidthChars: DEFAULT_PROCESS_CHARS['fullWidth'],
   isProcessHalfWidth: true,
-  extraHalfWidthChars: '',
+  customHalfWidthChars: DEFAULT_PROCESS_CHARS['halfWidth'],
 };
 const DEFAULT_SHADOW_OPTION: ShadowOptionType = {
   shadowInitBoxShowH: 76,
@@ -112,11 +116,6 @@ const JS_COMPUTED_NUMBER_TO_PX_PROPERTIES = [
   'inline-size',
 ];
 
-const PROCESS_CHARS = {
-  fullWidth: '，。！？；：“”‘’【】《》（）…—·￥、「」',
-  halfWidth: `,.!?;:""''[]<>()^_\`$\\{}`,
-};
-
 export {
   PROCESS_TYPE_LIST,
   DEFAULT_ELLIPSIS_OPTION,
@@ -125,5 +124,5 @@ export {
   DEFAULT_PROPS,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
-  PROCESS_CHARS,
+  DEFAULT_PROCESS_CHARS,
 };
