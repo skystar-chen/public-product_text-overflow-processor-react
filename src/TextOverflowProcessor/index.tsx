@@ -9,7 +9,7 @@ import {
   DEFAULT_OPTION,
   JS_COMPUTED_VALID_CSS_PROPERTIES,
   JS_COMPUTED_NUMBER_TO_PX_PROPERTIES,
-  PROCESS_CHARS,
+  DEFAULT_PROCESS_CHARS,
 } from './constants';
 import { TextOverflowProcessorPropsType } from './types';
 import './index.scss';
@@ -60,9 +60,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     textEndSlot = null,
     extraOccupiedW = 0,
     isProcessFullWidth = true,
-    customFullWidthChars = '',
+    customFullWidthChars = DEFAULT_PROCESS_CHARS['fullWidth'],
     isProcessHalfWidth = true,
-    customHalfWidthChars = '',
+    customHalfWidthChars = DEFAULT_PROCESS_CHARS['halfWidth'],
   } = ellipsisOption || DEFAULT_ELLIPSIS_OPTION;
   /** >>>>>>shadow配置 */
   const {
@@ -114,8 +114,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     () => {
       const sanitizeText = sanitizeHtml(propsText);
       if (type !== 'ellipsis' || isJsComputed) return sanitizeText;
-      const processFullWidthChars = isProcessFullWidth ? customFullWidthChars || PROCESS_CHARS['fullWidth'] : '',
-        processHalfWidthChars = isProcessHalfWidth ? customHalfWidthChars || PROCESS_CHARS['halfWidth'] : '';
+      const processFullWidthChars = isProcessFullWidth ? customFullWidthChars : '',
+        processHalfWidthChars = isProcessHalfWidth ? customHalfWidthChars : '';
       return wrapSymbols(sanitizeText, processFullWidthChars, processHalfWidthChars);
     },
     [

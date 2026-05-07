@@ -181,9 +181,9 @@ TextOverflowProcessor.defaultProps = {
       textEndSlot: null,
       extraOccupiedW: 0,
       isProcessFullWidth: true,
-      customFullWidthChars: '',
+      customFullWidthChars: '，。！？；：“”‘’【】《》（）…—·￥、「」',
       isProcessHalfWidth: true,
-      customHalfWidthChars: '',
+      customHalfWidthChars: ',.!?;:""''[]<>()^_`$\{}',
     },
     /** >>>>>>shadow配置 */
     shadowOption: {
