@@ -242,7 +242,7 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 
 `2026-04-30`
 
-☆ 增加isProcessFullWidth、extraFullWidthChars、isProcessHalfWidth、extraHalfWidthChars属性，在`ellipsis`且isJsComputed开启时，解决全角字符、半角字符影响文案溢出省略效果的问题；
+☆ 增加isProcessFullWidth、extraFullWidthChars、isProcessHalfWidth、extraHalfWidthChars属性，在`ellipsis`且isJsComputed未开启时，解决全角字符、半角字符影响文案溢出省略效果的问题；
 
 ☆ 文案断行规则`line-break`改为anywhere，任意位置断行。
 
