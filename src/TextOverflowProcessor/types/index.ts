@@ -31,9 +31,9 @@ type ReRenderDependenciesEnum = 'all'
 | 'shadowStyle'
 | 'isListenVisible'
 | 'isProcessFullWidth'
-| 'extraFullWidthChars'
+| 'customFullWidthChars'
 | 'isProcessHalfWidth'
-| 'extraHalfWidthChars';
+| 'customHalfWidthChars';
 type EllipsisOptionType = {
   /**
    * 控制显示的行数
@@ -122,13 +122,13 @@ type EllipsisOptionType = {
    */
   isProcessFullWidth?: boolean,
   /**
-   * 额外需要处理的全角字符
+   * 自定义需要处理的全角字符
    * 
-   * 默认只处理了这些字符: ，。！？；：“”‘’【】《》（）…—·￥、「」
+   * 默认处理了这些字符: ，。！？；：“”‘’【】《》（）…—·￥、「」
    * 
    * 默认值：空
    */
-  extraFullWidthChars?: string,
+  customFullWidthChars?: string,
   /**
    * 是否处理半角字符
    * 
@@ -138,13 +138,13 @@ type EllipsisOptionType = {
    */
   isProcessHalfWidth?: boolean,
   /**
-   * 额外需要处理的半角字符
+   * 自定义需要处理的半角字符
    * 
-   * 默认只处理了这些字符: ,.!?;:""''[]<>()^_`$\{}
+   * 默认处理了这些字符: ,.!?;:""''[]<>()^_`$\{}
    * 
    * 默认值：空
    */
-  extraHalfWidthChars?: string,
+  customHalfWidthChars?: string,
 };
 type ShadowOptionType = {
   /**

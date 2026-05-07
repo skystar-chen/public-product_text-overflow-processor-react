@@ -102,9 +102,9 @@ interface TextOverflowProcessorPropsType {
       // 占用文本的额外宽度，启用isJsComputed时，此属性可以调整计算误差
       extraOccupiedW?: number,
       isProcessFullWidth?: boolean, // 是否处理全角字符，解决全角字符影响省略效果的问题，isJsComputed未启用时有效
-      extraFullWidthChars?: string, // 额外需要处理的全角字符
+      customFullWidthChars?: string, // 自定义需要处理的全角字符
       isProcessHalfWidth?: boolean, // 是否处理半角字符，解决半角字符影响省略效果的问题，isJsComputed未启用时有效
-      extraHalfWidthChars?: string, // 额外需要处理的半角字符
+      customHalfWidthChars?: string, // 自定义需要处理的半角字符
     },
     /** >>>>>>shadow配置 */
     shadowOption?: {
@@ -156,9 +156,9 @@ type ReRenderDependenciesEnum = 'all'
 | 'shadowStyle'
 | 'isListenVisible'
 | 'isProcessFullWidth'
-| 'extraFullWidthChars'
+| 'customFullWidthChars'
 | 'isProcessHalfWidth'
-| 'extraHalfWidthChars';
+| 'customHalfWidthChars';
 对应默认值：
 TextOverflowProcessor.defaultProps = {
   text: '',
@@ -181,9 +181,9 @@ TextOverflowProcessor.defaultProps = {
       textEndSlot: null,
       extraOccupiedW: 0,
       isProcessFullWidth: true,
-      extraFullWidthChars: '',
+      customFullWidthChars: '',
       isProcessHalfWidth: true,
-      extraHalfWidthChars: '',
+      customHalfWidthChars: '',
     },
     /** >>>>>>shadow配置 */
     shadowOption: {
@@ -254,6 +254,12 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 3、提供去渲染两套dom，通过属性isRenderShowAllDOM控制，class类名分别为text-overflow-processor-on /text-overflow-processor-off，text-overflow-processor-on为文案被正常处理展示效果的dom（默认显示），text-overflow-processor-off为文案未处理全部展示的dom（默认隐藏），如果需要，可以合理应用它们。
 
 ## 四、更新日志
+
+### ↪3.0.6
+
+`2026-05-07`
+
+☆ 属性名称更改及功能扩展，option.ellipsisOption.extraFullWidthChars改为option.ellipsisOption.customFullWidthChars、option.ellipsisOption.extraHalfWidthChars改为option.ellipsisOption.customHalfWidthChars，这样默认处理的全角及半角字符完全支持自定义，增加可扩展性。
 
 ### ↪3.0.5
 

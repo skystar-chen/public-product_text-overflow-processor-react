@@ -60,9 +60,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     textEndSlot = null,
     extraOccupiedW = 0,
     isProcessFullWidth = true,
-    extraFullWidthChars = '',
+    customFullWidthChars = '',
     isProcessHalfWidth = true,
-    extraHalfWidthChars = '',
+    customHalfWidthChars = '',
   } = ellipsisOption || DEFAULT_ELLIPSIS_OPTION;
   /** >>>>>>shadow配置 */
   const {
@@ -114,8 +114,8 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
     () => {
       const sanitizeText = sanitizeHtml(propsText);
       if (type !== 'ellipsis' || isJsComputed) return sanitizeText;
-      const processFullWidthChars = isProcessFullWidth ? PROCESS_CHARS['fullWidth'] + extraFullWidthChars || '' : '',
-        processHalfWidthChars = isProcessHalfWidth ? PROCESS_CHARS['halfWidth'] + extraHalfWidthChars || '' : '';
+      const processFullWidthChars = isProcessFullWidth ? customFullWidthChars || PROCESS_CHARS['fullWidth'] : '',
+        processHalfWidthChars = isProcessHalfWidth ? customHalfWidthChars || PROCESS_CHARS['halfWidth'] : '';
       return wrapSymbols(sanitizeText, processFullWidthChars, processHalfWidthChars);
     },
     [
@@ -123,9 +123,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       propsText,
       isJsComputed,
       isProcessFullWidth,
-      extraFullWidthChars,
+      customFullWidthChars,
       isProcessHalfWidth,
-      extraHalfWidthChars,
+      customHalfWidthChars,
     ],
   );
 
@@ -429,9 +429,9 @@ const TextOverflowProcessor: FC<TextOverflowProcessorPropsType> = (props) => {
       shadowStyle,
       isListenVisible,
       isProcessFullWidth,
-      extraFullWidthChars,
+      customFullWidthChars,
       isProcessHalfWidth,
-      extraHalfWidthChars,
+      customHalfWidthChars,
     }),
   );
 

@@ -17,9 +17,9 @@ const DEFAULT_ELLIPSIS_OPTION: EllipsisOptionType = {
   textEndSlot: null,
   extraOccupiedW: 0,
   isProcessFullWidth: true,
-  extraFullWidthChars: '',
+  customFullWidthChars: '',
   isProcessHalfWidth: true,
-  extraHalfWidthChars: '',
+  customHalfWidthChars: '',
 };
 const DEFAULT_SHADOW_OPTION: ShadowOptionType = {
   shadowFoldShowH: 76,
