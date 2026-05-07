@@ -116,7 +116,7 @@ type EllipsisOptionType = {
   /**
    * 是否处理全角字符
    * 
-   * 解决全角字符影响省略效果的问题
+   * 解决全角字符影响省略效果的问题，isJsComputed未启用时有效
    * 
    * 默认值：true
    */
@@ -132,7 +132,7 @@ type EllipsisOptionType = {
   /**
    * 是否处理半角字符
    * 
-   * 解决半角字符影响省略效果的问题
+   * 解决半角字符影响省略效果的问题，isJsComputed未启用时有效
    * 
    * 默认值：true
    */
