@@ -304,11 +304,11 @@ JS_COMPUTED_VALID_CSS_PROPERTIES = [
 注：3.x.x版本不兼容其它低版本（配置项），升级需谨慎！！！不同版本之间将分开维护。
 
 ☆ 属性配置项变化：
-    1、getIsFold -> onFoldChange；
-    2、option.reRenderDependentProperties -> option.reRenderDependencies；
-    3、增加option.ellipsisOption.renderToString属性；
-    4、删除option.ellipsisOption.buttonBeforeSlot属性；
-    5、option.shadowOption.shadowInitBoxShowH -> option.shadowOption.shadowFoldShowH；
+1、getIsFold -> onFoldChange；
+2、option.reRenderDependentProperties -> option.reRenderDependencies；
+3、增加option.ellipsisOption.renderToString属性；
+4、删除option.ellipsisOption.buttonBeforeSlot属性；
+5、option.shadowOption.shadowInitBoxShowH -> option.shadowOption.shadowFoldShowH；
 
 ☆ CSS样式文件分离；
 
