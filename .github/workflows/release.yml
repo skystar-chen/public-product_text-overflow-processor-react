@@ -1,0 +1,185 @@
+name: 发布 npm 包
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  id-token: write
+
+# contents: write 用于创建 GitHub Release
+# id-token: write 预留给 npm provenance 等能力
+
+concurrency:
+  group: npm-release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  # release 是 job 标识符，供 GitHub Actions 内部引用，保持英文更安全
+  release:
+    runs-on: ubuntu-latest
+    # npm-release 是 GitHub Environment 名称，对应环境级 NPM_TOKEN
+    environment: npm-release
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+        with:
+          # 拉取完整历史，用于校验 tag commit 是否属于目标分支
+          fetch-depth: 0
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          registry-url: https://registry.npmjs.org/
+          cache: pnpm
+
+      - name: 校验 tag 和来源分支
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          # 校验规则：
+          # 1. tag 版本必须和 package.json 版本完全一致
+          # 2. 测试 tag 只允许来自 test/release-automation
+          # 3. 正式 tag 按主版本限制来源分支
+          TAG_VERSION="${TAG_NAME#v}"
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+          TAG_COMMIT="$(git rev-parse "${TAG_NAME}^{commit}")"
+
+          if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+            echo "tag 版本 $TAG_VERSION 和 package.json 版本 $PACKAGE_VERSION 不一致"
+            exit 1
+          fi
+
+          if [[ "$TAG_VERSION" == 0.0.0-test.* ]]; then
+            REQUIRED_BRANCH="test/release-automation"
+            IS_TEST="true"
+          else
+            IS_TEST="false"
+            MAJOR="${TAG_VERSION%%.*}"
+
+            case "$MAJOR" in
+              1)
+                REQUIRED_BRANCH="version-1x"
+                DIST_TAG="v1"
+                ;;
+              2)
+                REQUIRED_BRANCH="version-2x"
+                DIST_TAG="v2"
+                ;;
+              3)
+                REQUIRED_BRANCH="main"
+                DIST_TAG="latest"
+                ;;
+              *)
+                echo "不支持发布主版本：$MAJOR"
+                exit 1
+                ;;
+            esac
+          fi
+
+          if ! git merge-base --is-ancestor "$TAG_COMMIT" "origin/$REQUIRED_BRANCH"; then
+            echo "tag 提交不存在于 origin/$REQUIRED_BRANCH 的提交历史中"
+            exit 1
+          fi
+
+          {
+            echo "is_test=$IS_TEST"
+            echo "dist_tag=${DIST_TAG:-test}"
+          } >> "$GITHUB_OUTPUT"
+        id: validate
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 执行测试
+        env:
+          CI: true
+        run: pnpm test:ci
+
+      - name: 构建产物
+        run: pnpm build
+
+      - name: 校验构建产物
+        run: |
+          set -euo pipefail
+
+          for file in lib/index.js lib/index.css lib/index.d.ts; do
+            if [ ! -f "$file" ]; then
+              echo "缺少构建产物：$file"
+              exit 1
+            fi
+          done
+
+      - name: 生成发布专用 package.json
+        run: node scripts/prepare-publish-package.mjs
+
+      - name: 打包 npm 包
+        run: |
+          set -euo pipefail
+
+          mkdir -p dist
+          TARBALL="$(npm pack --pack-destination dist)"
+          echo "tarball=dist/$TARBALL" >> "$GITHUB_OUTPUT"
+          tar -tzf "dist/$TARBALL"
+        id: pack
+
+      - name: 校验 npm 包内容
+        run: |
+          set -euo pipefail
+
+          TARBALL="${{ steps.pack.outputs.tarball }}"
+          CONTENTS="$(tar -tzf "$TARBALL")"
+
+          for file in package/package.json package/lib/index.js package/lib/index.css package/lib/index.d.ts package/README.md package/LICENSE; do
+            if ! grep -Fxq "$file" <<< "$CONTENTS"; then
+              echo "npm 包中缺少文件：$file"
+              echo "$CONTENTS"
+              exit 1
+            fi
+          done
+
+          if grep -Eq '^package/(src|public|assets)/' <<< "$CONTENTS"; then
+            echo "npm 包中包含不应发布的文件："
+            echo "$CONTENTS"
+            exit 1
+          fi
+
+      - name: 上传 npm 包产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-package-${{ github.ref_name }}
+          path: ${{ steps.pack.outputs.tarball }}
+          if-no-files-found: error
+
+      - name: 发布 npm 包
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          IS_TEST: ${{ steps.validate.outputs.is_test }}
+          DIST_TAG: ${{ steps.validate.outputs.dist_tag }}
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+        run: |
+          set -euo pipefail
+
+          if [ "$IS_TEST" = "true" ]; then
+            # 测试 tag 永远只做 dry-run，不会真实发布
+            npm publish "$TARBALL" --dry-run --tag test --registry=https://registry.npmjs.org/
+          else
+            npm publish "$TARBALL" --tag "$DIST_TAG" --registry=https://registry.npmjs.org/
+          fi
+
+      - name: 创建 GitHub Release
+        if: steps.validate.outputs.is_test == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+        run: gh release create "$GITHUB_REF_NAME" "$TARBALL" --title "$GITHUB_REF_NAME" --generate-notes
