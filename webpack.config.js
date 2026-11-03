@@ -1,9 +1,10 @@
 // react-cat/webpack.config.js
 const path = require('path');
+
 // const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const sass = require('sass');
 // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const sass = require('sass');
 // const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 //创建一个插件的实例
@@ -16,7 +17,7 @@ module.exports = {
   mode: 'production', // development/production
 
   externals: {
-    'react': {
+    react: {
       root: 'React',
       commonjs2: 'react',
       commonjs: 'react',
@@ -27,23 +28,23 @@ module.exports = {
       commonjs2: 'react-dom',
       commonjs: 'react-dom',
       amd: 'react-dom',
-    }
+    },
   },
-  
+
   entry: {
     index: './src/index.tsx',
   },
 
   output: {
     filename: 'index.js',
-    path: path.resolve(__dirname, "lib"),
+    path: path.resolve(__dirname, 'lib'),
     libraryTarget: 'commonjs2',
   },
 
   module: {
     rules: [
-      { 
-        test: /\.css|.s[ac]ss$/, 
+      {
+        test: /\.css|.s[ac]ss$/,
         use: [
           'style-loader',
           // MiniCssExtractPlugin.loader, // 代替style-loader，css样式文件分离
@@ -66,18 +67,18 @@ module.exports = {
               presets: ['@babel/preset-env', '@babel/preset-react'],
             },
           },
-          {loader: 'ts-loader'},
+          { loader: 'ts-loader' },
         ],
         exclude: /node_modules/,
       },
-    ]
+    ],
   },
 
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx'],
-    alias:{
+    alias: {
       '@': path.resolve(__dirname, 'src'), // @符号表示src这一层路径
-    }, 
+    },
   },
 
   optimization: {
@@ -92,4 +93,4 @@ module.exports = {
       // chunkFilename: '[id].[contenthash].css',
     }), */
   ],
-}
+};

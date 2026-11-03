@@ -17,24 +17,14 @@
     "baseUrl": "./",
     "strict": true,
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["src/*"]
     },
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
-    "lib": [
-      "esnext",
-      "dom"
-    ],
+    "typeRoots": ["./node_modules/@types"],
+    "lib": ["esnext", "dom"],
     "allowSyntheticDefaultImports": true,
-    "noEmitOnError": false,
+    "noEmitOnError": false
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.d.ts",
-    "typings.d.ts",
-  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "typings.d.ts"],
   "exclude": [
     "node_modules",
     "lib",
@@ -44,6 +34,6 @@
     "test",
     "docs",
     "tests",
-    "testDemo",
+    "testDemo"
   ]
 }
