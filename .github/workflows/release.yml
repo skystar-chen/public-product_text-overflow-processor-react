@@ -128,9 +128,10 @@ jobs:
           set -euo pipefail
 
           mkdir -p dist
-          TARBALL="$(npm pack --pack-destination dist)"
-          echo "tarball=dist/$TARBALL" >> "$GITHUB_OUTPUT"
-          tar -tzf "dist/$TARBALL"
+          PACK_FILENAME="$(npm pack --pack-destination dist)"
+          TARBALL="./dist/$PACK_FILENAME"
+          echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
+          tar -tzf "$TARBALL"
         id: pack
 
       - name: 校验 npm 包内容
