@@ -1,0 +1,27 @@
+{
+  "git": {
+    "requireBranch": "test/release-automation",
+    "requireCleanWorkingDir": true,
+    "commitMessage": "chore(release): v${version}",
+    "tagName": "v${version}",
+    "tagAnnotation": "v${version}",
+    "tagArgs": ["--sign"],
+    "push": true
+  },
+  "npm": {
+    "publish": false
+  },
+  "github": {
+    "release": false
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "infile": "CHANGELOG.md",
+      "preset": "angular"
+    }
+  },
+  "hooks": {
+    "before:init": ["pnpm test:ci"],
+    "after:bump": ["pnpm build"]
+  }
+}
