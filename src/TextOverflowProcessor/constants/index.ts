@@ -7,7 +7,7 @@ import {
 } from '../types';
 
 const PROCESS_TYPE_LIST: ProcessTypeArr = ['ellipsis', 'shadow'];
-const DEFAULT_PROCESS_CHARS: {fullWidth: string; halfWidth: string} = {
+const DEFAULT_PROCESS_CHARS: { fullWidth: string; halfWidth: string } = {
   fullWidth: '，。！？；：“”‘’【】《》（）…—·￥、「」',
   halfWidth: `,.!?;:""''[]<>()^_\`$\\{}`,
 };
