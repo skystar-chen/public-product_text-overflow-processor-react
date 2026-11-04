@@ -17,7 +17,6 @@ const publishPackage = {
   types: packageJson.types,
   exports: packageJson.exports,
   files: packageJson.files,
-  sideEffects: packageJson.sideEffects,
 };
 
 for (const [key, value] of Object.entries(publishPackage)) {
