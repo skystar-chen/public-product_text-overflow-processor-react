@@ -1,6 +1,7 @@
 {
   "git": {
-    "requireBranch": "test/release-automation",
+    "requireBranch": ["main", "version-1x", "version-2x"],
+    "tagMatch": "v[0-9]*.[0-9]*.[0-9]*",
     "requireCleanWorkingDir": true,
     "commitMessage": "chore(release): v${version}",
     "tagName": "v${version}",
@@ -21,7 +22,14 @@
     }
   },
   "hooks": {
-    "before:init": ["pnpm test:ci"],
+    "before:init": [
+      "node scripts/check-node.mjs",
+      "pnpm format:check",
+      "pnpm lint",
+      "pnpm lint:style",
+      "pnpm typecheck",
+      "pnpm test:ci"
+    ],
     "after:bump": ["pnpm build"]
   }
 }
