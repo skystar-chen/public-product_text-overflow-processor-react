@@ -70,7 +70,7 @@ interface TextOverflowProcessorPropsType {
   isMustButton?: boolean; // 是否常驻显示按钮
   isMustNoButton?: boolean; // 是否不要显示按钮
   isRenderShowAllDOM?: boolean; // 是否渲染被隐藏的全部文案展示DOM
-  
+
   /** >>>>>>仅ellipsis配置 */
   ellipsisLineClamp?: number; // 控制显示的行数
   /**

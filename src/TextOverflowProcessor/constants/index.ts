@@ -1,11 +1,8 @@
-import {
-  ProcessTypeArr,
-  TextOverflowProcessorPropsType,
-} from '../types';
+import { ProcessTypeArr, TextOverflowProcessorPropsType } from '../types';
 
 const PROCESS_TYPE_LIST: ProcessTypeArr = ['shadow', 'ellipsis'];
 
-const DEFAULT_PROCESS_CHARS: {fullWidth: string; halfWidth: string} = {
+const DEFAULT_PROCESS_CHARS: { fullWidth: string; halfWidth: string } = {
   fullWidth: '，。！？；：“”‘’【】《》（）…—·￥、「」',
   halfWidth: `,.!?;:""''[]<>()^_\`$\\{}`,
 };
