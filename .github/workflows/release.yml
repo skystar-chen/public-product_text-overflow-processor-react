@@ -132,9 +132,24 @@ jobs:
         run: |
           set -euo pipefail
 
-          for file in lib/index.js lib/index.css lib/index.d.ts; do
+          if [ "${{ steps.validate.outputs.has_separate_css }}" = "true" ]; then
+            REQUIRED_FILES=(lib/index.js lib/index.css lib/index.d.ts)
+            FORBIDDEN_FILES=()
+          else
+            REQUIRED_FILES=(lib/index.js lib/index.d.ts)
+            FORBIDDEN_FILES=(lib/index.css)
+          fi
+
+          for file in "${REQUIRED_FILES[@]}"; do
             if [ ! -f "$file" ]; then
               echo "缺少构建产物：$file"
+              exit 1
+            fi
+          done
+
+          for file in "${FORBIDDEN_FILES[@]}"; do
+            if [ -f "$file" ]; then
+              echo "当前版本不应包含独立的 CSS 文件：$file"
               exit 1
             fi
           done
@@ -148,6 +163,7 @@ jobs:
 
           mkdir -p dist
           PACK_FILENAME="$(npm pack --pack-destination dist)"
+          # npm 的 tarball 参数必须是显式相对路径，否则可能被解析成 package-spec
           TARBALL="./dist/$PACK_FILENAME"
           echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
           tar -tzf "$TARBALL"
