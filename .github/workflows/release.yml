@@ -63,6 +63,7 @@ jobs:
           if [[ "$TAG_VERSION" == 0.0.0-test.* ]]; then
             REQUIRED_BRANCH="test/release-automation"
             IS_TEST="true"
+            HAS_SEPARATE_CSS="true"
           else
             IS_TEST="false"
             MAJOR="${TAG_VERSION%%.*}"
@@ -71,14 +72,17 @@ jobs:
               1)
                 REQUIRED_BRANCH="version-1x"
                 DIST_TAG="v1"
+                HAS_SEPARATE_CSS="false"
                 ;;
               2)
                 REQUIRED_BRANCH="version-2x"
                 DIST_TAG="v2"
+                HAS_SEPARATE_CSS="false"
                 ;;
               3)
                 REQUIRED_BRANCH="main"
                 DIST_TAG="latest"
+                HAS_SEPARATE_CSS="true"
                 ;;
               *)
                 echo "不支持发布主版本：$MAJOR"
@@ -95,6 +99,7 @@ jobs:
           {
             echo "is_test=$IS_TEST"
             echo "dist_tag=${DIST_TAG:-test}"
+            echo "has_separate_css=$HAS_SEPARATE_CSS"
           } >> "$GITHUB_OUTPUT"
         id: validate
 
@@ -155,13 +160,27 @@ jobs:
           TARBALL="${{ steps.pack.outputs.tarball }}"
           CONTENTS="$(tar -tzf "$TARBALL")"
 
-          for file in package/package.json package/lib/index.js package/lib/index.css package/lib/index.d.ts package/README.md package/LICENSE; do
+          for file in package/package.json package/lib/index.js package/lib/index.d.ts package/README.md package/LICENSE; do
             if ! grep -Fxq "$file" <<< "$CONTENTS"; then
               echo "npm 包中缺少文件：$file"
               echo "$CONTENTS"
               exit 1
             fi
           done
+
+          if [ "${{ steps.validate.outputs.has_separate_css }}" = "true" ]; then
+            if ! grep -Fxq "package/lib/index.css" <<< "$CONTENTS"; then
+              echo "npm 包中缺少文件：package/lib/index.css"
+              echo "$CONTENTS"
+              exit 1
+            fi
+          else
+            if grep -Fxq "package/lib/index.css" <<< "$CONTENTS"; then
+              echo "当前版本不应包含独立的 CSS 文件：package/lib/index.css"
+              echo "$CONTENTS"
+              exit 1
+            fi
+          fi
 
           if grep -Eq '^package/(src|public|assets)/' <<< "$CONTENTS"; then
             echo "npm 包中包含不应发布的文件："

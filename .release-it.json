@@ -2,6 +2,7 @@
   "git": {
     "requireBranch": ["main", "version-1x", "version-2x"],
     "tagMatch": "v[0-9]*.[0-9]*.[0-9]*",
+    "tagExclude": "*-*",
     "requireCleanWorkingDir": true,
     "commitMessage": "chore(release): v${version}",
     "tagName": "v${version}",
