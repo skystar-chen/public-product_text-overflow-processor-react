@@ -101,6 +101,20 @@ jobs:
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
 
+      - name: 校验 Node.js 版本
+        run: node scripts/check-node.mjs
+
+      - name: 执行格式检查
+        run: pnpm format:check
+
+      - name: 执行代码和样式检查
+        run: |
+          pnpm lint
+          pnpm lint:style
+
+      - name: 执行类型检查
+        run: pnpm typecheck
+
       - name: 执行测试
         env:
           CI: true
@@ -128,9 +142,10 @@ jobs:
           set -euo pipefail
 
           mkdir -p dist
-          TARBALL="$(npm pack --pack-destination dist)"
-          echo "tarball=dist/$TARBALL" >> "$GITHUB_OUTPUT"
-          tar -tzf "dist/$TARBALL"
+          PACK_FILENAME="$(npm pack --pack-destination dist)"
+          TARBALL="./dist/$PACK_FILENAME"
+          echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
+          tar -tzf "$TARBALL"
         id: pack
 
       - name: 校验 npm 包内容
